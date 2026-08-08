@@ -16,7 +16,7 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
         <li>
           <Link
             href="/"
-            className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
+            className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground rounded-sm"
           >
             Home
           </Link>
@@ -27,12 +27,12 @@ export function Breadcrumbs({ items }: BreadcrumbsProps) {
             {item.href ? (
               <Link
                 href={item.href}
-                className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-lg"
+                className="hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground rounded-sm"
               >
                 {item.label}
               </Link>
             ) : (
-              <span aria-current="page">{item.label}</span>
+              <span aria-current="page" className="text-foreground">{item.label}</span>
             )}
           </li>
         ))}

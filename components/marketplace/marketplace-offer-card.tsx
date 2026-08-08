@@ -10,9 +10,9 @@ interface MarketplaceOfferCardProps {
 
 export function MarketplaceOfferCard({ offer, className }: MarketplaceOfferCardProps) {
   const platformColors: Record<string, string> = {
-    tokopedia: "bg-green-500 hover:bg-green-600",
+    tokopedia: "bg-green hover:bg-green/90",
     shopee: "bg-orange-500 hover:bg-orange-600",
-    tiktok: "bg-pink-500 hover:bg-pink-600",
+    tiktok: "bg-pink hover:bg-pink/90",
   };
 
   return (
@@ -21,8 +21,8 @@ export function MarketplaceOfferCard({ offer, className }: MarketplaceOfferCardP
       target="_blank"
       rel={offer.affiliate ? "noopener noreferrer sponsored" : "noopener noreferrer"}
       className={cn(
-        "flex items-center justify-between rounded-xl border border-border p-4 transition-colors hover:border-accent/50",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+        "arcade-card group flex items-center justify-between p-4",
+        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent",
         className
       )}
     >
@@ -44,7 +44,7 @@ export function MarketplaceOfferCard({ offer, className }: MarketplaceOfferCardP
         )}
         <span
           className={cn(
-            "rounded-lg px-3 py-1 text-xs font-medium text-white",
+            "arcade-btn px-3 py-1 text-xs font-semibold text-white transition-transform duration-500 ease-expo group-hover:scale-105",
             platformColors[offer.platform] || "bg-accent"
           )}
         >

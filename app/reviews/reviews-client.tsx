@@ -2,14 +2,13 @@
 
 import { useState, useMemo, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { SearchInput } from "@/components/ui/search-input";
-import { ReviewGrid } from "@/components/review/review-grid";
-import { FilterSheet } from "@/components/filters/filter-sheet";
-import { ActiveFilters } from "@/components/filters/active-filters";
+import { GsapReveal, StaggerReveal, StaggerItem } from "@/components/animation";
+import { ScoreBadge } from "@/components/review/score-badge";
 import { categories } from "@/data/categories";
 import { brands } from "@/data/brands";
+import { formatCurrency } from "@/lib/formatters";
 import type { ReviewSummary } from "@/types";
 
 interface ReviewsClientProps {
@@ -40,7 +39,6 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const [sortBy, setSortBy] = useState<SortOption>(
     (searchParams.get("sort") as SortOption) || "newest"
   );
-  const [filterSheetOpen, setFilterSheetOpen] = useState(false);
 
   const updateURL = useCallback(
     (params: Record<string, string | null>) => {
@@ -92,7 +90,6 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const filteredReviews = useMemo(() => {
     let result = [...reviews];
 
-    // Search
     if (search) {
       const query = search.toLowerCase();
       result = result.filter(
@@ -104,19 +101,16 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
       );
     }
 
-    // Category
     if (selectedCategory) {
       result = result.filter((r) => r.category === selectedCategory);
     }
 
-    // Brand
     if (selectedBrand) {
       result = result.filter(
         (r) => r.brand.toLowerCase() === selectedBrand.toLowerCase()
       );
     }
 
-    // Sort
     switch (sortBy) {
       case "newest":
         result.sort(
@@ -148,145 +142,257 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
     return result;
   }, [reviews, search, selectedCategory, selectedBrand, sortBy]);
 
-  const activeFilters = useMemo(() => {
-    const filters: { label: string; onRemove: () => void }[] = [];
-    if (selectedCategory) {
-      const cat = categories.find((c) => c.slug === selectedCategory);
-      filters.push({
-        label: cat?.name || selectedCategory,
-        onRemove: () => handleCategoryChange(null),
-      });
-    }
-    if (selectedBrand) {
-      filters.push({
-        label: selectedBrand,
-        onRemove: () => handleBrandChange(null),
-      });
-    }
-    return filters;
-  }, [selectedCategory, selectedBrand, handleCategoryChange, handleBrandChange]);
-
-  const filterContent = (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-sm font-medium mb-3">Kategori</h3>
-        <div className="space-y-2">
-          {categories.map((cat) => (
-            <label
-              key={cat.slug}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="category"
-                checked={selectedCategory === cat.slug}
-                onChange={() =>
-                  handleCategoryChange(
-                    selectedCategory === cat.slug ? null : cat.slug
-                  )
-                }
-                className="h-4 w-4 accent-accent"
-              />
-              <span className="text-sm">{cat.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-medium mb-3">Brand</h3>
-        <div className="space-y-2">
-          {brands.map((brand) => (
-            <label
-              key={brand.slug}
-              className="flex items-center gap-2 cursor-pointer"
-            >
-              <input
-                type="radio"
-                name="brand"
-                checked={
-                  selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
-                }
-                onChange={() =>
-                  handleBrandChange(
-                    selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
-                      ? null
-                      : brand.slug
-                  )
-                }
-                className="h-4 w-4 accent-accent"
-              />
-              <span className="text-sm">{brand.name}</span>
-            </label>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="text-sm font-medium mb-3">Urutkan</h3>
-        <select
-          value={sortBy}
-          onChange={(e) => handleSortChange(e.target.value as SortOption)}
-          className="w-full h-10 px-3 rounded-lg border border-border bg-background text-foreground text-sm"
-        >
-          {sortOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      </div>
-    </div>
-  );
+  const hasActiveFilters = selectedCategory || selectedBrand || search;
 
   return (
     <div className="min-h-screen">
-      <Container className="py-8 sm:py-12">
-        <SectionHeading description="Temukan review produk gaming gear yang sudah kami uji.">
-          Semua Review
-        </SectionHeading>
+      {/* Hero Header */}
+      <section className="border-b border-border bg-background">
+        <Container className="py-10 sm:py-14">
+          <GsapReveal>
+            <h1 className="text-3xl font-heading sm:text-4xl lg:text-5xl">
+              Semua <span className="italic">Review</span>
+            </h1>
+            <p className="mt-3 text-muted max-w-lg">
+              Jelajahi seluruh review gaming gear yang sudah kami uji dan
+              bandingkan.
+            </p>
+          </GsapReveal>
+        </Container>
+      </section>
 
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-          <div className="flex-1">
-            <SearchInput
+      <section className="border-b border-border bg-surface">
+        <Container className="py-5">
+          {/* Search Bar */}
+          <div className="relative">
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <circle cx="11" cy="11" r="8" strokeLinecap="round" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" />
+            </svg>
+            <input
+              type="text"
               placeholder="Cari produk, brand, atau kategori..."
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              onClear={() => handleSearch("")}
+              className="w-full h-11 pl-11 pr-4 rounded-xl bg-surface-alt text-foreground text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-foreground"
             />
+            {search && (
+              <button
+                type="button"
+                onClick={() => handleSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center rounded-full bg-muted/20 text-muted text-xs hover:bg-muted/30 transition-colors"
+              >
+                ✕
+              </button>
+            )}
           </div>
-          <button
-            type="button"
-            onClick={() => setFilterSheetOpen(true)}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-medium hover:bg-surface transition-colors md:hidden"
-          >
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-            </svg>
-            Filter
-          </button>
-        </div>
+        </Container>
+      </section>
 
-        <div className="hidden md:block mt-4">
-          {filterContent}
-        </div>
+      {/* Main Content */}
+      <Container className="py-6 sm:py-8">
+        <div className="flex flex-col lg:flex-row gap-6">
+          {/* Sidebar Filters */}
+          <aside className="w-full lg:w-64 shrink-0 space-y-4">
+            {/* Sort */}
+            <div className="arcade-card p-4">
+              <h3 className="text-xs font-medium text-muted mb-3">
+                Urutkan
+              </h3>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1.5">
+                {sortOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => handleSortChange(opt.value)}
+                    className={`px-3 py-2 text-xs font-medium text-left rounded-lg transition-colors ${
+                      sortBy === opt.value
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-surface-alt text-foreground hover:bg-surface-strong"
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <ActiveFilters filters={activeFilters} className="mt-4" />
+            {/* Categories */}
+            <div className="arcade-card p-4">
+              <h3 className="text-xs font-medium text-muted mb-3">
+                Kategori
+              </h3>
+              <div className="flex flex-wrap lg:flex-col gap-1.5">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.slug}
+                    type="button"
+                    onClick={() =>
+                      handleCategoryChange(
+                        selectedCategory === cat.slug ? null : cat.slug
+                      )
+                    }
+                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors text-left ${
+                      selectedCategory === cat.slug
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-surface-alt text-foreground hover:bg-surface-strong"
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </div>
 
-        <div className="mt-6">
-          <p className="text-sm text-muted mb-4">
-            {filteredReviews.length} review ditemukan
-          </p>
-          <ReviewGrid reviews={filteredReviews} />
+            {/* Brands */}
+            <div className="arcade-card p-4">
+              <h3 className="text-xs font-medium text-muted mb-3">
+                Brand
+              </h3>
+              <div className="flex flex-wrap lg:flex-col gap-1.5">
+                {brands.map((brand) => (
+                  <button
+                    key={brand.slug}
+                    type="button"
+                    onClick={() =>
+                      handleBrandChange(
+                        selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
+                          ? null
+                          : brand.slug
+                      )
+                    }
+                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors text-left ${
+                      selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
+                        ? "bg-accent text-accent-foreground"
+                        : "bg-surface-alt text-foreground hover:bg-surface-strong"
+                    }`}
+                  >
+                    {brand.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Reset */}
+            {hasActiveFilters && (
+              <button
+                type="button"
+                onClick={() => {
+                  setSearch("");
+                  setSelectedCategory(null);
+                  setSelectedBrand(null);
+                  setSortBy("newest");
+                  router.push("/reviews", { scroll: false });
+                }}
+                className="arcade-btn w-full h-10 bg-surface text-foreground text-xs border border-border"
+              >
+                Reset Semua Filter
+              </button>
+            )}
+          </aside>
+
+          {/* Results */}
+          <div className="flex-1 min-w-0">
+            <div className="mb-4 flex items-center justify-between">
+              <p className="text-sm text-muted">
+                {filteredReviews.length} review ditemukan
+              </p>
+              {hasActiveFilters && (
+                <div className="flex items-center gap-2 flex-wrap">
+                  {selectedCategory && (
+                    <span className="arcade-badge bg-surface-alt px-3 py-1 text-[10px] inline-flex items-center gap-1.5 text-foreground">
+                      {categories.find((c) => c.slug === selectedCategory)?.name}
+                      <button type="button" onClick={() => handleCategoryChange(null)} className="text-muted hover:text-foreground transition-colors">
+                        ✕
+                      </button>
+                    </span>
+                  )}
+                  {selectedBrand && (
+                    <span className="arcade-badge bg-surface-alt px-3 py-1 text-[10px] inline-flex items-center gap-1.5 text-foreground">
+                      {selectedBrand}
+                      <button type="button" onClick={() => handleBrandChange(null)} className="text-muted hover:text-foreground transition-colors">
+                        ✕
+                      </button>
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {filteredReviews.length === 0 ? (
+              <div className="arcade-card py-16 text-center">
+                <p className="text-lg font-heading mb-2">Tidak ada review ditemukan</p>
+                <p className="text-sm text-muted">
+                  Coba filter atau pencarian yang berbeda.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch("");
+                    setSelectedCategory(null);
+                    setSelectedBrand(null);
+                    router.push("/reviews", { scroll: false });
+                  }}
+                  className="arcade-btn mt-4 h-10 px-5 bg-accent text-accent-foreground text-xs"
+                >
+                  Reset Filter
+                </button>
+              </div>
+            ) : (
+              <StaggerReveal className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3" stagger={0.08}>
+                {filteredReviews.map((review) => (
+                  <StaggerItem key={review.slug}>
+                    <Link
+                      href={`/reviews/${review.slug}`}
+                      className="arcade-card group flex flex-col overflow-hidden"
+                    >
+                      <div className="relative aspect-[16/10] overflow-hidden bg-surface-alt">
+                        <img
+                          src={review.thumbnail.src}
+                          alt={review.thumbnail.alt}
+                          className="h-full w-full object-cover transition-transform duration-700 ease-expo group-hover:scale-105"
+                        />
+                      </div>
+                      <div className="flex flex-col p-3.5">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-1.5">
+                            <span className="arcade-badge bg-surface-alt px-2 py-0.5 text-[10px] text-foreground">
+                              {review.category}
+                            </span>
+                            {review.featured && (
+                              <span className="arcade-badge bg-accent text-accent-foreground px-2 py-0.5 text-[10px]">
+                                Featured
+                              </span>
+                            )}
+                          </div>
+                          {review.score && <ScoreBadge score={review.score} />}
+                        </div>
+                        <h3 className="mt-2 font-heading leading-snug line-clamp-2 group-hover:text-muted transition-colors">
+                          {review.name}
+                        </h3>
+                        <p className="mt-0.5 text-xs text-muted">{review.brand}</p>
+                        <p className="mt-1.5 text-xs text-muted line-clamp-2">
+                          {review.verdict}
+                        </p>
+                        <div className="mt-auto pt-2.5 flex items-center justify-between">
+                          {review.priceFrom && (
+                            <p className="text-sm font-semibold">
+                              {formatCurrency(review.priceFrom)}
+                            </p>
+                          )}
+                          <span className="arcade-badge bg-foreground text-background px-2.5 py-0.5 text-[10px] group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                            Baca →
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  </StaggerItem>
+                ))}
+              </StaggerReveal>
+            )}
+          </div>
         </div>
       </Container>
-
-      <FilterSheet
-        isOpen={filterSheetOpen}
-        onClose={() => setFilterSheetOpen(false)}
-      >
-        {filterContent}
-      </FilterSheet>
     </div>
   );
 }

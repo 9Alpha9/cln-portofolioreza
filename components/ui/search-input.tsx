@@ -28,9 +28,9 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           type="search"
           value={value}
           className={cn(
-            "w-full h-10 pl-10 pr-10 rounded-lg border border-border bg-background text-foreground",
+            "w-full h-10 pl-10 pr-10 rounded-xl bg-surface-alt text-foreground font-medium",
             "placeholder:text-muted",
-            "focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent",
+            "focus:outline-none focus:ring-2 focus:ring-foreground",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "[&::-webkit-search-cancel-button]:hidden",
             "[&::-webkit-search-decoration]:hidden",
@@ -42,7 +42,7 @@ export const SearchInput = forwardRef<HTMLInputElement, SearchInputProps>(
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-foreground transition-colors"
             aria-label="Hapus pencarian"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">

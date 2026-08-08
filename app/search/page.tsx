@@ -64,7 +64,7 @@ export default function SearchPage() {
 
         {query.trim() && results.length === 0 && (
           <div className="mt-12 text-center">
-            <p className="text-lg text-muted mb-2">
+            <p className="text-lg font-heading text-muted mb-2">
               Tidak ada hasil ditemukan.
             </p>
             <p className="text-sm text-muted">

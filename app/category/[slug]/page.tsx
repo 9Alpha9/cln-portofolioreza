@@ -63,13 +63,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           <>
             {featured.length > 0 && (
               <div className="mb-8">
-                <h2 className="text-lg font-semibold mb-4">Featured</h2>
+                <h2 className="text-lg font-heading mb-4">Featured</h2>
                 <ReviewGrid reviews={featured} featured />
               </div>
             )}
 
             <div>
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="text-lg font-heading mb-4">
                 Semua Review {category.name}
               </h2>
               <ReviewGrid reviews={reviews} />
@@ -79,13 +79,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
 
         {relatedCategories.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-lg font-semibold mb-4">Kategori Lainnya</h2>
+            <h2 className="text-lg font-heading mb-4">Kategori Lainnya</h2>
             <div className="flex flex-wrap gap-2">
               {relatedCategories.map((cat) => (
                 <a
                   key={cat.slug}
                   href={`/category/${cat.slug}`}
-                  className="inline-flex rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="arcade-badge bg-surface px-4 py-2 text-sm text-foreground hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
                 >
                   {cat.name}
                 </a>

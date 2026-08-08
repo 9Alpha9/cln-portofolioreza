@@ -1,128 +1,328 @@
 @import "tailwindcss";
 
-/* ── Light Theme (default) ── */
+/* ══════════════════════════════════════════════
+   KIRK-INSPIRED MINIMAL THEME
+   ══════════════════════════════════════════════ */
 :root {
-  --background: 0 0% 100%;
-  --foreground: 222 24% 10%;
-  --surface: 220 20% 97%;
-  --surface-strong: 220 14% 93%;
-  --muted: 220 9% 46%;
-  --border: 220 14% 88%;
-  --accent: 152 100% 50%;
+  --background: 0 0% 98%;
+  --foreground: 0 0% 5%;
+  --surface: 0 0% 100%;
+  --surface-alt: 0 0% 96%;
+  --surface-strong: 0 0% 92%;
+  --muted: 0 0% 50%;
+  --border: 0 0% 90%;
+  --accent: 0 0% 5%;
   --accent-foreground: 0 0% 100%;
-  --accent-glow: 152 100% 50%;
-  --neon-green: 152 100% 50%;
-  --neon-cyan: 185 100% 50%;
-  --neon-purple: 270 100% 65%;
-  --success: 146 60% 36%;
-  --warning: 36 90% 48%;
-  --danger: 0 72% 52%;
-  --radius-sm: 0.5rem;
-  --radius-md: 0.875rem;
-  --radius-lg: 1.25rem;
+  --green: 146 40% 45%;
+  --green-foreground: 0 0% 100%;
+  --blue: 218 65% 55%;
+  --blue-foreground: 0 0% 100%;
+  --purple: 270 40% 60%;
+  --purple-foreground: 0 0% 100%;
+  --danger: 0 65% 55%;
+  --danger-foreground: 0 0% 100%;
+  --warning: 36 80% 55%;
+  --warning-foreground: 0 0% 0%;
+  --radius-sm: 0rem;
+  --radius-md: 0rem;
+  --radius-lg: 0rem;
+  --radius-xl: 0rem;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
 }
 
-/* ── Dark Theme ── */
 .dark {
-  --background: 230 25% 6%;
-  --foreground: 0 0% 95%;
-  --surface: 230 20% 10%;
-  --surface-strong: 230 16% 14%;
-  --muted: 220 9% 56%;
-  --border: 230 16% 18%;
-  --accent: 152 100% 50%;
-  --accent-foreground: 0 0% 100%;
-  --accent-glow: 152 100% 50%;
+  --background: 0 0% 5%;
+  --foreground: 0 0% 98%;
+  --surface: 0 0% 8%;
+  --surface-alt: 0 0% 10%;
+  --surface-strong: 0 0% 15%;
+  --muted: 0 0% 50%;
+  --border: 0 0% 20%;
+  --accent: 0 0% 98%;
+  --accent-foreground: 0 0% 5%;
+
+  --green: 146 40% 45%;
+  --green-foreground: 0 0% 0%;
+  --blue: 218 65% 55%;
+  --blue-foreground: 0 0% 0%;
+  --purple: 270 40% 60%;
+  --purple-foreground: 0 0% 0%;
+  --danger: 0 65% 55%;
+  --danger-foreground: 0 0% 100%;
+  --warning: 36 80% 55%;
+  --warning-foreground: 0 0% 0%;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
 }
 
 @theme inline {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-surface: hsl(var(--surface));
+  --color-surface-alt: hsl(var(--surface-alt));
   --color-surface-strong: hsl(var(--surface-strong));
   --color-muted: hsl(var(--muted));
   --color-border: hsl(var(--border));
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-neon-green: hsl(var(--neon-green));
-  --color-neon-cyan: hsl(var(--neon-cyan));
-  --color-neon-purple: hsl(var(--neon-purple));
-  --color-success: hsl(var(--success));
-  --color-warning: hsl(var(--warning));
+  --color-green: hsl(var(--green));
+  --color-green-foreground: hsl(var(--green-foreground));
+  --color-blue: hsl(var(--blue));
+  --color-blue-foreground: hsl(var(--blue-foreground));
+  --color-purple: hsl(var(--purple));
+  --color-purple-foreground: hsl(var(--purple-foreground));
   --color-danger: hsl(var(--danger));
+  --color-danger-foreground: hsl(var(--danger-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --radius-xl: var(--radius-xl);
+  --font-heading: var(--font-inter);
+  --font-body: var(--font-inter);
+  --font-sans: var(--font-inter);
+  --font-mono: monospace;
 }
 
+/* ══════════════════════════════════════════════
+   BASE
+   ══════════════════════════════════════════════ */
 body {
   background: hsl(var(--background));
   color: hsl(var(--foreground));
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
 }
 
-/* ── Gamer Glow Utilities ── */
-.glow-green {
-  box-shadow: 0 0 15px hsl(152 100% 50% / 0.3), 0 0 45px hsl(152 100% 50% / 0.1);
+.font-heading,
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), Georgia, serif;
 }
 
-.glow-green-sm {
-  box-shadow: 0 0 8px hsl(152 100% 50% / 0.25);
+html, body {
+  /* overflow-x: hidden removed to allow position: sticky to work */
 }
 
-.dark .glow-green {
-  box-shadow: 0 0 20px hsl(152 100% 50% / 0.4), 0 0 60px hsl(152 100% 50% / 0.15);
+/* ══════════════════════════════════════════════
+   CARD
+   ══════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   CARD
+   ══════════════════════════════════════════════ */
+.arcade-card {
+  border: 1px solid hsl(var(--foreground) / 0.15);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1),
+              border-color 0.35s ease;
 }
 
-.glow-cyan {
-  box-shadow: 0 0 15px hsl(185 100% 50% / 0.3), 0 0 45px hsl(185 100% 50% / 0.1);
+.arcade-card:hover {
+  border-color: hsl(var(--foreground) / 0.3);
 }
 
-.glow-purple {
-  box-shadow: 0 0 15px hsl(270 100% 65% / 0.3), 0 0 45px hsl(270 100% 65% / 0.1);
+.dark .arcade-card {
+  border-color: hsl(var(--foreground) / 0.15);
 }
 
-.text-glow-green {
-  text-shadow: 0 0 10px hsl(152 100% 50% / 0.5), 0 0 30px hsl(152 100% 50% / 0.2);
+.dark .arcade-card:hover {
+  border-color: hsl(var(--foreground) / 0.3);
 }
 
-.dark .text-glow-green {
-  text-shadow: 0 0 12px hsl(152 100% 50% / 0.6), 0 0 40px hsl(152 100% 50% / 0.25);
+/* ══════════════════════════════════════════════
+   BUTTON
+   ══════════════════════════════════════════════ */
+.arcade-btn {
+  border: 1px solid hsl(var(--foreground) / 0.15);
+  border-radius: 9999px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: transparent;
+  transition: background-color 0.2s ease,
+              color 0.2s ease,
+              border-color 0.2s ease;
+  cursor: pointer;
 }
 
-.border-glow-green {
-  border-color: hsl(152 100% 50% / 0.4);
+.arcade-btn:hover {
+  border-color: hsl(var(--foreground) / 0.5);
 }
 
-.dark .border-glow-green {
-  border-color: hsl(152 100% 50% / 0.5);
+.arcade-btn:active {
+  transform: translateY(0);
 }
 
-/* ── Gamer gradient backgrounds ── */
-.bg-gamer-gradient {
-  background: linear-gradient(135deg, hsl(230 25% 6%) 0%, hsl(250 20% 12%) 50%, hsl(230 25% 6%) 100%);
+/* ══════════════════════════════════════════════
+   BADGE
+   ══════════════════════════════════════════════ */
+.arcade-badge {
+  border: 1px solid hsl(var(--foreground) / 0.15);
+  border-radius: 9999px;
+  font-weight: 500;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: transparent;
+  transition: background-color 0.2s ease,
+              color 0.2s ease;
 }
 
-.bg-gamer-gradient-radial {
-  background: radial-gradient(ellipse at top, hsl(152 100% 50% / 0.08) 0%, transparent 60%),
-              radial-gradient(ellipse at bottom right, hsl(270 100% 65% / 0.06) 0%, transparent 50%),
-              hsl(var(--background));
+/* ══════════════════════════════════════════════
+   SMOOTH HOVER
+   ══════════════════════════════════════════════ */
+img {
+  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* ── Noise texture overlay ── */
-.noise-overlay::before {
+a {
+  transition: color 0.2s ease;
+}
+
+/* ══════════════════════════════════════════════
+   EXPO EASING UTILITY
+   ══════════════════════════════════════════════ */
+.ease-expo {
+  transition-timing-function: cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+/* ══════════════════════════════════════════════
+   HOVER LABEL REVEAL (TLB-style)
+   ══════════════════════════════════════════════ */
+.hover-label {
+  overflow: hidden;
+}
+
+.hover-label-inner {
+  transform: translateY(100%);
+  transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.group:hover .hover-label-inner {
+  transform: translateY(0);
+}
+
+/* Top label variant — slides down from above */
+.hover-label-top {
+  overflow: hidden;
+}
+
+.hover-label-top-inner {
+  transform: translateY(-100%);
+  transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.group:hover .hover-label-top-inner {
+  transform: translateY(0);
+}
+
+/* Arrow slide on hover */
+.arrow-slide {
+  overflow: hidden;
+}
+
+.arrow-slide-inner {
+  transform: translateX(-100%);
+  transition: transform 0.7s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.group:hover .arrow-slide-inner {
+  transform: translateX(0);
+}
+
+/* ══════════════════════════════════════════════
+   HORIZONTAL RULE
+   ══════════════════════════════════════════════ */
+.uline {
+  display: inline-flex;
+  position: relative;
+  white-space: nowrap;
+}
+
+.uline::before {
+  background-color: currentColor;
+  bottom: 0;
   content: "";
+  height: 0.05em;
+  left: 0;
+  min-height: 1px;
   position: absolute;
-  inset: 0;
-  opacity: 0.03;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 1;
+  right: 0;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.75s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
-/* ── Scrollbar ── */
+@media (hover: hover) and (pointer: fine) {
+  .uline:hover::before {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   CAROUSEL (TLB-style)
+   ══════════════════════════════════════════════ */
+.carousel-item {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+}
+
+.label {
+  font-family: var(--font-inter), sans-serif;
+  font-size: clamp(0.75rem, 0.875rem, 14px);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 400;
+}
+
+.media {
+  contain: content;
+}
+
+.media-fill img {
+  height: 100%;
+  left: 0;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+
+.mb-15 {
+  margin-bottom: 1.5rem;
+}
+
+.mt-15 {
+  margin-top: 1.5rem;
+}
+
+/* ══════════════════════════════════════════════
+   GRID (kept subtle for dark mode)
+   ══════════════════════════════════════════════ */
+.arcade-grid {
+  background-image: none;
+}
+
+.dark .arcade-grid {
+  background-image: none;
+}
+
+/* ══════════════════════════════════════════════
+   SCROLLBAR (HIDDEN FOR LENIS)
+   ══════════════════════════════════════════════ */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
@@ -132,15 +332,45 @@ body {
   scrollbar-width: none;
 }
 
-/* ── Base ── */
-html {
-  overflow-x: hidden;
+/* ══════════════════════════════════════════════
+   SWIPER CARD EFFECT — SHINTA STYLE LEFT-STACK
+   ══════════════════════════════════════════════ */
+.hero-card-stack {
+  perspective: 1000px;
 }
 
-body {
-  overflow-x: hidden;
+.hero-card-stack .swiper {
+  width: 100%;
+  height: 100%;
 }
 
+.hero-card-stack .swiper-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.hero-card-stack .swiper-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
+}
+
+.hero-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 24px;
+  overflow: hidden;
+  background-color: var(--surface-alt);
+}
+
+/* ══════════════════════════════════════════════
+   REDUCED MOTION
+   ══════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

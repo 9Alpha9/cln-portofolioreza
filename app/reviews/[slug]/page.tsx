@@ -89,7 +89,7 @@ export default async function ReviewDetailPage({
 
         <div className="flex flex-col gap-8 lg:flex-row">
           {/* Main Content */}
-          <article className="flex-1">
+          <article className="flex-1 min-w-0">
             <ProductHero review={review} />
 
             {/* Gallery */}
@@ -113,17 +113,19 @@ export default async function ReviewDetailPage({
             </section>
 
             {/* Video */}
-            <section className="mt-8" id="video">
-              <h2 className="text-xl font-semibold mb-4">Video Review</h2>
-              <LazyYouTubeEmbed
-                video={review.video}
-                productName={review.name}
-              />
-            </section>
+            {review.video && (
+              <section className="mt-8" id="video">
+                <h2 className="text-xl font-heading mb-4">Video Review</h2>
+                <LazyYouTubeEmbed
+                  video={review.video}
+                  productName={review.name}
+                />
+              </section>
+            )}
 
             {/* Pros and Cons Detail */}
             <section className="mt-8">
-              <h2 className="text-xl font-semibold mb-4">
+              <h2 className="text-xl font-heading mb-4">
                 Kelebihan dan Kekurangan
               </h2>
               <ProsCons pros={review.pros} cons={review.cons} />
@@ -142,7 +144,7 @@ export default async function ReviewDetailPage({
             {/* Related Reviews */}
             {relatedReviews.length > 0 && (
               <section className="mt-12">
-                <h2 className="text-xl font-semibold mb-4">Review Terkait</h2>
+                <h2 className="text-xl font-heading mb-4">Review Terkait</h2>
                 <ReviewGrid reviews={relatedReviews} />
               </section>
             )}
@@ -152,12 +154,12 @@ export default async function ReviewDetailPage({
           <aside className="hidden lg:block lg:w-80 shrink-0">
             <div className="sticky top-20 space-y-6">
               {/* Price & CTA */}
-              <div className="rounded-xl border border-border p-4">
+              <div className="arcade-card p-4">
                 <h3 className="text-sm font-medium text-muted mb-2">
                   Informasi Harga
                 </h3>
                 {review.priceFrom ? (
-                  <p className="text-xl font-bold">
+                  <p className="text-xl font-semibold">
                     Mulai dari{" "}
                     {new Intl.NumberFormat("id-ID", {
                       style: "currency",
@@ -180,7 +182,7 @@ export default async function ReviewDetailPage({
 
               {/* Quick Marketplace Links */}
               {review.marketplaces.length > 0 && (
-                <div className="rounded-xl border border-border p-4">
+                <div className="arcade-card p-4">
                   <h3 className="text-sm font-medium text-muted mb-3">
                     Link Pembelian
                   </h3>
@@ -195,9 +197,9 @@ export default async function ReviewDetailPage({
                             ? "noopener noreferrer sponsored"
                             : "noopener noreferrer"
                         }
-                        className="flex items-center justify-between rounded-lg border border-border p-3 text-sm hover:border-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                        className="flex items-center justify-between rounded-lg border border-border p-3 text-sm font-medium hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
                       >
-                        <span className="capitalize">{offer.platform}</span>
+                        <span>{offer.platform}</span>
                         {offer.storeName && (
                           <span className="text-xs text-muted">
                             {offer.storeName}
@@ -211,13 +213,13 @@ export default async function ReviewDetailPage({
 
               {/* Tags */}
               {review.tags.length > 0 && (
-                <div className="rounded-xl border border-border p-4">
+                <div className="arcade-card p-4">
                   <h3 className="text-sm font-medium text-muted mb-3">Tags</h3>
                   <div className="flex flex-wrap gap-2">
                     {review.tags.map((tag) => (
                       <span
                         key={tag}
-                        className="inline-flex rounded-full bg-surface px-3 py-1 text-xs"
+                        className="arcade-badge bg-surface-alt px-3 py-1 text-xs text-foreground"
                       >
                         {tag}
                       </span>
@@ -230,7 +232,7 @@ export default async function ReviewDetailPage({
         </div>
       </Container>
 
-        {/* Mobile Purchase Bar */}
+      {/* Mobile Purchase Bar */}
         <MobilePurchaseBar
           price={review.priceFrom}
           offers={review.marketplaces}

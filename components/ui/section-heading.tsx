@@ -15,7 +15,7 @@ export function SectionHeading({
 }: SectionHeadingProps) {
   return (
     <div className={cn("mb-6", className)}>
-      <Tag className="text-2xl font-bold tracking-tight sm:text-3xl">
+      <Tag className="text-2xl font-heading sm:text-3xl">
         {children}
       </Tag>
       {description && (

@@ -13,7 +13,7 @@ export function SpecificationList({ specifications, className }: SpecificationLi
 
   return (
     <div className={cn("space-y-6", className)}>
-      <h2 className="text-xl font-semibold">Spesifikasi</h2>
+      <h2 className="text-xl font-heading">Spesifikasi</h2>
       {specifications.map((group, groupIndex) => (
         <SpecificationGroup key={groupIndex} group={group} />
       ))}
@@ -23,7 +23,7 @@ export function SpecificationList({ specifications, className }: SpecificationLi
 
 function SpecificationGroup({ group }: { group: SpecificationGroupType }) {
   return (
-    <div>
+    <div className="arcade-card p-4">
       <h3 className="text-sm font-medium text-muted mb-3">{group.title}</h3>
       <dl className="grid gap-2">
         {group.items.map((item, itemIndex) => (
@@ -32,7 +32,7 @@ function SpecificationGroup({ group }: { group: SpecificationGroupType }) {
             className="flex items-baseline justify-between gap-4 py-2 border-b border-border last:border-0"
           >
             <dt className="text-sm text-muted">{item.label}</dt>
-            <dd className="text-sm font-medium text-right">{item.value}</dd>
+            <dd className="text-sm font-semibold text-right">{item.value}</dd>
           </div>
         ))}
       </dl>

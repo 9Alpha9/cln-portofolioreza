@@ -1,98 +1,93 @@
 import Link from "next/link";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { ScoreBadge } from "./score-badge";
-import { PriceDisplay } from "./price-display";
 import type { ReviewSummary } from "@/types";
 
 interface ReviewCardProps {
   review: ReviewSummary;
   variant?: "standard" | "featured" | "compact";
-  priorityImage?: boolean;
+  index?: number;
 }
 
 export function ReviewCard({
   review,
   variant = "standard",
-  priorityImage = false,
+  index,
 }: ReviewCardProps) {
   return (
     <article
       className={cn(
-        "group relative flex flex-col rounded-xl border border-border bg-background transition-colors hover:border-accent/50",
+        "group relative flex flex-col",
         variant === "featured" && "sm:flex-row sm:items-center",
         variant === "compact" && "flex-row items-center gap-4"
       )}
     >
       <Link
         href={`/reviews/${review.slug}`}
-        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded-xl"
+        className="absolute inset-0 z-10 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
         aria-label={`Baca review ${review.name}`}
       >
         <span className="sr-only">Baca review {review.name}</span>
       </Link>
 
-      <div
-        className={cn(
-          "relative overflow-hidden",
-          variant === "standard" && "aspect-[4/3] rounded-t-xl",
-          variant === "featured" && "aspect-[4/3] sm:aspect-auto sm:h-full sm:w-1/2 sm:rounded-l-xl sm:rounded-tr-none",
-          variant === "compact" && "h-20 w-20 shrink-0 rounded-lg"
+      <div className="relative">
+        {/* Giant Number Indicator */}
+        {index !== undefined && variant !== "compact" && (
+          <div className="absolute -left-4 -top-8 z-20 pointer-events-none select-none mix-blend-difference">
+            <span className="font-heading text-[8rem] leading-none font-bold tracking-tighter opacity-80 text-white">
+              {index}
+            </span>
+          </div>
         )}
-      >
-        <Image
-          src={review.thumbnail.src}
-          alt={review.thumbnail.alt}
-          fill
-          sizes={
-            variant === "compact"
-              ? "80px"
-              : variant === "featured"
-                ? "(min-width: 640px) 50vw, 100vw"
-                : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          }
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-          priority={priorityImage}
-        />
+        <div
+          className={cn(
+            "relative overflow-hidden bg-surface transition-transform duration-700 ease-expo group-hover:scale-[0.98]",
+            variant === "standard" && "aspect-[4/3]",
+            variant === "featured" && "aspect-[4/3] sm:aspect-auto sm:h-[400px]",
+            variant === "compact" && "h-20 w-20 shrink-0"
+          )}
+        >
+          <img
+            src={review.thumbnail.src}
+            alt={review.thumbnail.alt}
+            className="h-full w-full object-cover transition-transform duration-700 ease-expo group-hover:scale-110 grayscale group-hover:grayscale-0"
+          />
+        </div>
       </div>
 
       <div
         className={cn(
-          "flex flex-1 flex-col p-4",
-          variant === "compact" && "p-0"
+          "flex flex-1 flex-col pt-6",
+          variant === "compact" && "pt-0"
         )}
       >
         <div className="flex items-start justify-between gap-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge>{review.category}</Badge>
+          <div className="flex flex-wrap items-center gap-4 text-xs tracking-widest uppercase text-muted">
+            <span>{review.category}</span>
             {review.featured && (
-              <Badge variant="accent">Featured</Badge>
+              <span>* FEATURED</span>
             )}
           </div>
-          {review.score && <ScoreBadge score={review.score} />}
+          {review.score && (
+            <span className="text-xs font-mono tracking-widest">{review.score}/10</span>
+          )}
         </div>
 
         <h3
           className={cn(
-            "mt-2 font-semibold leading-snug line-clamp-2",
+            "mt-3 font-heading text-2xl uppercase tracking-tight leading-none",
             variant === "compact" && "mt-0 text-sm line-clamp-1"
           )}
         >
           {review.name}
         </h3>
 
-        <p className="mt-1 text-sm text-muted">{review.brand}</p>
+        <p className="mt-2 text-sm text-muted uppercase tracking-widest">{review.brand}</p>
 
         {variant !== "compact" && (
-          <p className="mt-2 text-sm text-muted line-clamp-2">
+          <p className="mt-4 text-sm text-foreground/70 leading-relaxed line-clamp-2 max-w-sm">
             {review.verdict}
           </p>
         )}
-
-        <div className="mt-auto pt-3">
-          <PriceDisplay price={review.priceFrom} currency={review.currency} />
-        </div>
       </div>
     </article>
   );

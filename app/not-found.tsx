@@ -5,7 +5,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <Container className="text-center">
-        <h1 className="text-6xl font-bold mb-4">404</h1>
+        <h1 className="text-6xl font-heading mb-4">404</h1>
         <p className="text-xl text-muted mb-2">Halaman tidak ditemukan.</p>
         <p className="text-muted mb-8">
           Halaman yang kamu cari mungkin sudah dipindahkan atau tidak tersedia.

@@ -56,7 +56,7 @@ export interface ReviewMetadata {
   currency: "IDR";
   thumbnail: ProductImage;
   gallery: ProductImage[];
-  video: ReviewVideo;
+  video?: ReviewVideo;
   pros: string[];
   cons: string[];
   specifications: SpecificationGroup[];

@@ -16,13 +16,13 @@ export function ReviewGrid({ reviews, featured = false }: ReviewGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 [&>*:nth-child(2n)]:mt-8 [&>*:nth-child(3n)]:mt-16 pb-16">
       {reviews.map((review, index) => (
         <ReviewCard
           key={review.slug}
           review={review}
           variant={featured && index === 0 ? "featured" : "standard"}
-          priorityImage={featured && index === 0}
+          index={index + 1}
         />
       ))}
     </div>

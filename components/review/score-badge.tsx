@@ -7,10 +7,10 @@ interface ScoreBadgeProps {
 
 export function ScoreBadge({ score, className }: ScoreBadgeProps) {
   const getColor = (s: number) => {
-    if (s >= 9) return "bg-success text-white";
+    if (s >= 9) return "bg-green text-green-foreground";
     if (s >= 7) return "bg-accent text-accent-foreground";
-    if (s >= 5) return "bg-warning text-white";
-    return "bg-danger text-white";
+    if (s >= 5) return "bg-warning text-warning-foreground";
+    return "bg-danger text-danger-foreground";
   };
 
   return (

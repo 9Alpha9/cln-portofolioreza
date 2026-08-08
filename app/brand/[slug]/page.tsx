@@ -66,13 +66,13 @@ export default async function BrandPage({ params }: BrandPageProps) {
 
         {relatedBrands.length > 0 && (
           <div className="mt-12">
-            <h2 className="text-lg font-semibold mb-4">Brand Lainnya</h2>
+            <h2 className="text-lg font-heading mb-4">Brand Lainnya</h2>
             <div className="flex flex-wrap gap-2">
               {relatedBrands.map((b) => (
                 <a
                   key={b.slug}
                   href={`/brand/${b.slug}`}
-                  className="inline-flex rounded-full border border-border px-4 py-2 text-sm font-medium hover:border-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="arcade-badge bg-surface px-4 py-2 text-sm text-foreground hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
                 >
                   {b.name}
                 </a>

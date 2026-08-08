@@ -26,14 +26,14 @@ export function MobilePurchaseBar({ price, offers }: MobilePurchaseBarProps) {
 
   return (
     <div
-      className={`fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 backdrop-blur-sm p-4 transition-transform duration-300 md:hidden ${
+      className={`fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background p-4 transition-transform duration-300 md:hidden ${
         isVisible ? "translate-y-0" : "translate-y-full"
       }`}
     >
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col">
           <span className="text-xs text-muted">Mulai dari</span>
-          <span className="text-lg font-bold">{formatCurrency(price)}</span>
+          <span className="text-lg font-semibold">{formatCurrency(price)}</span>
         </div>
         <a
           href={offers[0]?.url}
@@ -43,7 +43,7 @@ export function MobilePurchaseBar({ price, offers }: MobilePurchaseBarProps) {
               ? "noopener noreferrer sponsored"
               : "noopener noreferrer"
           }
-          className="inline-flex items-center justify-center h-10 px-4 rounded-lg bg-accent text-accent-foreground font-medium text-sm hover:opacity-90 transition-opacity"
+          className="arcade-btn inline-flex items-center justify-center h-10 px-4 bg-accent text-accent-foreground text-sm"
         >
           Lihat Harga
         </a>

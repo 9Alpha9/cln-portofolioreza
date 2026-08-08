@@ -63,11 +63,11 @@ export default function AboutPage() {
 
           {/* Creator Profile */}
           <section className="mb-12">
-            <div className="flex items-start gap-6">
-              <div className="h-24 w-24 shrink-0 rounded-full bg-surface-strong" />
+            <div className="arcade-card flex items-start gap-6 p-6">
+              <div className="h-24 w-24 shrink-0 rounded-xl bg-surface-alt" />
               <div>
-                <h2 className="text-xl font-bold">Gaming Gear Review</h2>
-                <p className="text-muted">Content Creator</p>
+                <h2 className="text-xl font-heading">Gaming Gear Review</h2>
+                <p className="text-muted font-medium text-sm">Content Creator</p>
                 <p className="mt-4 text-muted">
                   Sebagai gamer dan tech enthusiast, saya memahami betul
                   kesulitan menemukan gaming gear yang tepat. Setiap orang
@@ -84,11 +84,11 @@ export default function AboutPage() {
 
           {/* Review Principles */}
           <section className="mb-12">
-            <h2 className="text-xl font-bold mb-6">Prinsip Review</h2>
-            <div className="grid gap-6 sm:grid-cols-2">
+            <h2 className="text-xl font-heading mb-6">Prinsip Review</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
               {reviewPrinciples.map((principle) => (
-                <div key={principle.title} className="rounded-xl border border-border p-4">
-                  <h3 className="font-semibold">{principle.title}</h3>
+                <div key={principle.title} className="arcade-card p-4">
+                  <h3 className="font-heading text-muted">{principle.title}</h3>
                   <p className="mt-2 text-sm text-muted">
                     {principle.description}
                   </p>
@@ -99,7 +99,7 @@ export default function AboutPage() {
 
           {/* Social Links */}
           <section className="mb-12">
-            <h2 className="text-xl font-bold mb-6">Ikuti Saya</h2>
+            <h2 className="text-xl font-heading mb-6">Ikuti Saya</h2>
             <div className="space-y-3">
               {socialLinks.map((link) => (
                 <a
@@ -107,7 +107,7 @@ export default function AboutPage() {
                   href={link.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between rounded-xl border border-border p-4 hover:border-accent/50 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="arcade-card flex items-center justify-between p-4 hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
                 >
                   <div>
                     <span className="font-medium">{link.platform}</span>
@@ -134,21 +134,21 @@ export default function AboutPage() {
 
           {/* Contact / Collaboration */}
           <section className="mb-12">
-            <h2 className="text-xl font-bold mb-4">Kolaborasi</h2>
+            <h2 className="text-xl font-heading mb-4">Kolaborasi</h2>
             <p className="text-muted mb-4">
               Tertarik untuk kolaborasi atau review produk? Kirim email ke:
             </p>
             <a
               href="mailto:hello@example.com"
-              className="inline-flex h-10 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-surface transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="arcade-btn inline-flex h-10 items-center justify-center bg-surface px-4 text-sm text-foreground border border-border"
             >
               hello@example.com
             </a>
           </section>
 
           {/* Affiliate Disclosure */}
-          <section className="rounded-xl bg-surface p-6">
-            <h2 className="text-lg font-bold mb-3">Affiliate Disclosure</h2>
+          <section className="arcade-card bg-surface p-6">
+            <h2 className="text-lg font-heading mb-3">Affiliate Disclosure</h2>
             <p className="text-sm text-muted">
               Beberapa tautan pembelian dapat berupa tautan afiliasi. Kreator
               dapat menerima komisi tanpa biaya tambahan bagi pembeli. Hal ini
