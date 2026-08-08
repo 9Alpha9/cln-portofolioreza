@@ -267,11 +267,12 @@ export function HeroSection() {
                         videoRefs.current[i] = el;
                       }}
                       className="w-full h-full object-cover pointer-events-none"
-                      muted
-                      loop
-                      playsInline
-                      preload="auto"
-                      style={{width: "100%", height: "100%"}}
+                       muted
+                       loop
+                       playsInline
+                       poster={review.thumbnail?.src}
+                       preload="metadata"
+                       style={{width: "100%", height: "100%"}}
                     >
                       <source src={VIDEO_SOURCES[i]} type="video/mp4" />
                       <img
