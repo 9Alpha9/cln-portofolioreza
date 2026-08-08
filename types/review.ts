@@ -80,6 +80,7 @@ export type ReviewSummary = Pick<
   | "priceFrom"
   | "currency"
   | "thumbnail"
+  | "video"
   | "featured"
   | "publishedAt"
   | "tags"

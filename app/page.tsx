@@ -1,16 +1,18 @@
 "use client";
 
-import { getAllReviews } from "@/lib/reviews";
+import { useEffect } from "react";
 import { HeroSection } from "@/components/home/hero-section";
-import { KierkegaardProducts } from "@/components/home/kierkegaard-products";
+import { BentoGrid } from "@/components/home/bento-grid";
 
 export default function Home() {
-  const allReviews = getAllReviews();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <main>
       <HeroSection />
-      <KierkegaardProducts reviews={allReviews} limit={6} />
+      <BentoGrid />
     </main>
   );
 }

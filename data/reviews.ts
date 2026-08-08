@@ -40,7 +40,7 @@ export const reviews: ReviewMetadata[] = [
     ],
     video: {
       platform: "youtube",
-      url: "https://www.youtube.com/watch?v=example1",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
       videoId: "example1",
       thumbnail: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&h=450&fit=crop",
     },
@@ -120,7 +120,7 @@ export const reviews: ReviewMetadata[] = [
     ],
     video: {
       platform: "youtube",
-      url: "https://www.youtube.com/watch?v=example2",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
       videoId: "example2",
       thumbnail: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&h=450&fit=crop",
     },
@@ -192,7 +192,7 @@ export const reviews: ReviewMetadata[] = [
     ],
     video: {
       platform: "youtube",
-      url: "https://www.youtube.com/watch?v=example3",
+      url: "https://www.w3schools.com/html/mov_bbb.mp4",
       videoId: "example3",
       thumbnail: "https://images.unsplash.com/photo-1599669454699-248893623440?w=800&h=450&fit=crop",
     },

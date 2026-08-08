@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/ui/navbar";
+import { Footer } from "@/components/footer";
 import { LenisProvider } from "@/components/lenis-provider";
 import "./globals.css";
 
@@ -60,6 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <main id="main-content" className="flex-1">
               {children}
             </main>
+            <Footer />
           </LenisProvider>
         </ThemeProvider>
       </body>
