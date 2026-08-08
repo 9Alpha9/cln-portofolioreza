@@ -6,14 +6,14 @@ import { gsap } from "@/lib/gsap";
 type BentoItem = {
   src: string;
   label: string;
-  span: number;
+  spanClassName: string;
 };
 
 const BENTO_ITEMS: BentoItem[] = [
-  { src: "/videos/vid-1.mp4", label: "Label Video_01", span: 2 },
-  { src: "/videos/vid-2.mp4", label: "Label Video_02", span: 3 },
-  { src: "/videos/vid-3.mp4", label: "Label Video_03", span: 2 },
-  { src: "/videos/vid-4.mp4", label: "Label Video_04", span: 3 },
+  { src: "/videos/vid-1.mp4", label: "Label Video_01", spanClassName: "row-span-2" },
+  { src: "/videos/vid-2.mp4", label: "Label Video_02", spanClassName: "row-span-2 min-[480px]:row-span-3" },
+  { src: "/videos/vid-3.mp4", label: "Label Video_03", spanClassName: "row-span-2" },
+  { src: "/videos/vid-4.mp4", label: "Label Video_04", spanClassName: "row-span-2 min-[480px]:row-span-3" },
 ];
 
 function BentoCard({ item }: { item: BentoItem }) {
@@ -36,8 +36,7 @@ function BentoCard({ item }: { item: BentoItem }) {
   return (
     <figure
       data-bento-card
-      className="group relative flex flex-col overflow-hidden"
-      style={{ gridRow: `span ${item.span}` }}
+      className={`group relative flex flex-col overflow-hidden ${item.spanClassName}`}
     >
       <div
         className="relative flex-1 overflow-hidden bg-muted"
@@ -91,10 +90,7 @@ export function BentoGrid() {
   return (
     <section ref={sectionRef} className="w-full">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4"
-          style={{ gridAutoRows: "minmax(220px, 1fr)" }}
-        >
+        <div className="grid grid-cols-2 auto-rows-[140px] gap-2 min-[480px]:auto-rows-[180px] min-[480px]:gap-3 sm:auto-rows-[200px] sm:gap-4 md:grid-cols-3 lg:grid-cols-4 lg:auto-rows-[220px]">
           {BENTO_ITEMS.map((item) => (
             <BentoCard key={item.label} item={item} />
           ))}
