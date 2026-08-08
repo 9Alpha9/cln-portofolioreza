@@ -29,7 +29,7 @@ export function HeroSection() {
 
   const [activeIndex, setActiveIndex] = useState(0);
   const isDragging = useRef(false);
-  const dragStartX = useRef(0);
+  const dragStart = useRef({ x: 0, y: 0 });
 
   const reviews = getAllReviews().slice(0, 3);
   const total = reviews.length;
@@ -121,33 +121,46 @@ export function HeroSection() {
       document.body.style.cursor = "auto";
       isDragging.current = false;
     };
-    const onMouseDown = (e: MouseEvent) => {
+    const onPointerDown = (e: PointerEvent) => {
+      if (!e.isPrimary) return;
       isDragging.current = true;
-      dragStartX.current = e.clientX;
-      gsap.to(cursor, {scale: 0.8, duration: 0.2});
-    };
-    const onMouseUp = (e: MouseEvent) => {
-      if (!isDragging.current) return;
-      isDragging.current = false;
-      gsap.to(cursor, {scale: 1, duration: 0.2, ease: "back.out(1.5)"});
-      const diff = e.clientX - dragStartX.current;
-      if (Math.abs(diff) < 10) return; // click, not swipe
-      if (diff > 0) {
-        setActiveIndex((prev) => (prev - 1 + total) % total);
-      } else {
-        setActiveIndex((prev) => (prev + 1) % total);
+      dragStart.current = { x: e.clientX, y: e.clientY };
+      container.setPointerCapture(e.pointerId);
+      if (e.pointerType === "mouse") {
+        gsap.to(cursor, {scale: 0.8, duration: 0.2});
       }
     };
+    const onPointerUp = (e: PointerEvent) => {
+      if (!e.isPrimary || !isDragging.current) return;
+      isDragging.current = false;
+      if (container.hasPointerCapture(e.pointerId)) {
+        container.releasePointerCapture(e.pointerId);
+      }
+      if (e.pointerType === "mouse") {
+        gsap.to(cursor, {scale: 1, duration: 0.2, ease: "back.out(1.5)"});
+      }
+      const diffX = e.clientX - dragStart.current.x;
+      const diffY = e.clientY - dragStart.current.y;
+      if (Math.abs(diffX) < 40 || Math.abs(diffX) <= Math.abs(diffY)) return;
+      setActiveIndex((prev) =>
+        diffX > 0 ? (prev - 1 + total) % total : (prev + 1) % total
+      );
+    };
+    const onPointerCancel = () => {
+      isDragging.current = false;
+    };
 
-    container.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mouseup", onMouseUp);
+    container.addEventListener("pointerdown", onPointerDown);
+    container.addEventListener("pointerup", onPointerUp);
+    container.addEventListener("pointercancel", onPointerCancel);
     window.addEventListener("mousemove", onMouseMove);
     container.addEventListener("mouseenter", onMouseEnter);
     container.addEventListener("mouseleave", onMouseLeave);
 
     return () => {
-      container.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mouseup", onMouseUp);
+      container.removeEventListener("pointerdown", onPointerDown);
+      container.removeEventListener("pointerup", onPointerUp);
+      container.removeEventListener("pointercancel", onPointerCancel);
       window.removeEventListener("mousemove", onMouseMove);
       container.removeEventListener("mouseenter", onMouseEnter);
       container.removeEventListener("mouseleave", onMouseLeave);
@@ -231,7 +244,7 @@ export function HeroSection() {
             {/* Card Stack (no click, swipe-only) */}
             <div
               ref={stackContainerRef}
-              className="relative w-60 sm:w-96 h-[420px] sm:h-[680px] select-none touch-none"
+              className="relative w-60 sm:w-96 h-[420px] sm:h-[680px] select-none touch-pan-y"
             >
               {reviews.map((review, i) => {
                 const offset = (((i - activeIndex) % total) + total) % total;
