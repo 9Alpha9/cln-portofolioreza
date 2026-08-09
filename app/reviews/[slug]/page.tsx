@@ -6,7 +6,7 @@ import { QuickVerdict } from "@/components/review/quick-verdict";
 import { ProsCons } from "@/components/review/pros-cons";
 import { ReviewGrid } from "@/components/review/review-grid";
 import { ProductGallery } from "@/components/media/product-gallery";
-import { LazyYouTubeEmbed } from "@/components/media/lazy-youtube-embed";
+import { ReviewVideoPlayer } from "@/components/media/review-video-player";
 import { SpecificationList } from "@/components/product/specification-list";
 import { MarketplaceOfferList } from "@/components/marketplace/marketplace-offer-list";
 import { MobilePurchaseBar } from "@/components/marketplace/mobile-purchase-bar";
@@ -93,14 +93,11 @@ export default async function ReviewDetailPage({
             <ProductHero review={review} />
 
             {/* Gallery */}
-            {review.gallery.length > 0 && (
-              <section className="mt-8">
-                <ProductGallery
-                  images={review.gallery}
-                  productName={review.name}
-                />
-              </section>
-            )}
+            <section className="mt-8">
+              <ProductGallery
+                images={review.gallery.length > 0 ? review.gallery : [review.thumbnail]}
+              />
+            </section>
 
             {/* Quick Verdict */}
             <section className="mt-8">
@@ -116,7 +113,7 @@ export default async function ReviewDetailPage({
             {review.video && (
               <section className="mt-8" id="video">
                 <h2 className="text-xl font-heading mb-4">Video Review</h2>
-                <LazyYouTubeEmbed
+                <ReviewVideoPlayer
                   video={review.video}
                   productName={review.name}
                 />

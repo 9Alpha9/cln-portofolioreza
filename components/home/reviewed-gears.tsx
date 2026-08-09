@@ -26,12 +26,13 @@ export function ReviewedGears() {
         {/* LEFT COLUMN: Static Image Banner with Quote */}
         <div className="relative py-8 flex min-h-[420px] w-full items-center justify-center overflow-hidden border-l border-border  md:min-h-[650px] sm:h-[850px] h-[450px]">
           <video
-            src="/videos/vid-3.mp4"
+            src="/videos/vid-2.mp4"
             autoPlay
             muted
             loop
             playsInline
             preload="auto"
+            controls
             className="relative z-10 h-full w-full object-cover"
           />
         </div>

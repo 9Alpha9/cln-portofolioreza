@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, type ReactNode } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { GsapReveal, StaggerReveal, StaggerItem } from "@/components/animation";
-import { ScoreBadge } from "@/components/review/score-badge";
 import { categories } from "@/data/categories";
 import { brands } from "@/data/brands";
 import { formatCurrency } from "@/lib/formatters";
@@ -143,29 +142,42 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   }, [reviews, search, selectedCategory, selectedBrand, sortBy]);
 
   const hasActiveFilters = selectedCategory || selectedBrand || search;
+  const resetAll = () => {
+    setSearch("");
+    setSelectedCategory(null);
+    setSelectedBrand(null);
+    setSortBy("newest");
+    router.push("/reviews", { scroll: false });
+  };
 
   return (
-    <div className="min-h-screen">
-      {/* Hero Header */}
-      <section className="border-b border-border bg-background">
-        <Container className="py-10 sm:py-14">
+    <div className="min-h-screen pt-32">
+      {/* <section className="border-b border-border bg-background">
+        <Container className="pt-32 pb-10">
           <GsapReveal>
-            <h1 className="text-3xl font-heading sm:text-4xl lg:text-5xl">
-              Semua <span className="italic">Review</span>
-            </h1>
-            <p className="mt-3 text-muted max-w-lg">
-              Jelajahi seluruh review gaming gear yang sudah kami uji dan
-              bandingkan.
-            </p>
+            <div className="max-w-3xl">
+              <h1 className="text-3xl font-heading sm:text-4xl lg:text-5xl">
+                Semua Review
+              </h1>
+              <p className="mt-3 text-muted">
+                Jelajahi seluruh review gaming gear yang sudah kami uji dan
+                bandingkan.
+              </p>
+            </div>
           </GsapReveal>
         </Container>
-      </section>
+      </section> */}
 
-      <section className="border-b border-border bg-surface">
+      <section className="border-b border-t border-border bg-background">
         <Container className="py-5">
-          {/* Search Bar */}
-          <div className="relative">
-            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+          <div className="relative border border-border focus-within:border-foreground transition-colors">
+            <svg
+              className="absolute left-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-muted"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+            >
               <circle cx="11" cy="11" r="8" strokeLinecap="round" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" />
             </svg>
@@ -174,13 +186,13 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
               placeholder="Cari produk, brand, atau kategori..."
               value={search}
               onChange={(e) => handleSearch(e.target.value)}
-              className="w-full h-11 pl-11 pr-4 rounded-xl bg-surface-alt text-foreground text-sm placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-foreground"
+              className="h-12 w-full bg-transparent pl-11 pr-12 text-sm text-foreground placeholder:text-muted focus:outline-none"
             />
             {search && (
               <button
                 type="button"
                 onClick={() => handleSearch("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 h-6 w-6 flex items-center justify-center rounded-full bg-muted/20 text-muted text-xs hover:bg-muted/30 transition-colors"
+                className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center text-xs text-muted transition-colors hover:text-foreground"
               >
                 ✕
               </button>
@@ -189,203 +201,179 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
         </Container>
       </section>
 
-      {/* Main Content */}
-      <Container className="py-6 sm:py-8">
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar Filters */}
-          <aside className="w-full lg:w-64 shrink-0 space-y-4">
-            {/* Sort */}
-            <div className="arcade-card p-4">
-              <h3 className="text-xs font-medium text-muted mb-3">
+      <Container className="py-8 sm:py-10">
+        <div className="grid gap-8 lg:grid-cols-[240px_1fr]">
+          <details className="border border-border lg:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-3 text-xs font-semibold uppercase tracking-wider">
+              Filter dan urutkan
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" className="h-4 w-4">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+            <div className="grid gap-4 border-t border-border p-4 sm:grid-cols-3">
+              <label className="grid gap-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Urutkan
-              </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-1 gap-1.5">
-                {sortOptions.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => handleSortChange(opt.value)}
-                    className={`px-3 py-2 text-xs font-medium text-left rounded-lg transition-colors ${
-                      sortBy === opt.value
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-surface-alt text-foreground hover:bg-surface-strong"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Categories */}
-            <div className="arcade-card p-4">
-              <h3 className="text-xs font-medium text-muted mb-3">
+                <select
+                  value={sortBy}
+                  onChange={(event) => handleSortChange(event.target.value as SortOption)}
+                  className="h-11 border border-border bg-background px-3 text-sm font-normal normal-case tracking-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  {sortOptions.map((option) => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Kategori
-              </h3>
-              <div className="flex flex-wrap lg:flex-col gap-1.5">
-                {categories.map((cat) => (
-                  <button
-                    key={cat.slug}
-                    type="button"
-                    onClick={() =>
-                      handleCategoryChange(
-                        selectedCategory === cat.slug ? null : cat.slug
-                      )
-                    }
-                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors text-left ${
-                      selectedCategory === cat.slug
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-surface-alt text-foreground hover:bg-surface-strong"
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Brands */}
-            <div className="arcade-card p-4">
-              <h3 className="text-xs font-medium text-muted mb-3">
+                <select
+                  value={selectedCategory ?? ""}
+                  onChange={(event) => handleCategoryChange(event.target.value || null)}
+                  className="h-11 border border-border bg-background px-3 text-sm font-normal normal-case tracking-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">Semua kategori</option>
+                  {categories.map((category) => (
+                    <option key={category.slug} value={category.slug}>{category.name}</option>
+                  ))}
+                </select>
+              </label>
+              <label className="grid gap-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Brand
-              </h3>
-              <div className="flex flex-wrap lg:flex-col gap-1.5">
-                {brands.map((brand) => (
-                  <button
-                    key={brand.slug}
-                    type="button"
-                    onClick={() =>
-                      handleBrandChange(
-                        selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
-                          ? null
-                          : brand.slug
-                      )
-                    }
-                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors text-left ${
-                      selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
-                        ? "bg-accent text-accent-foreground"
-                        : "bg-surface-alt text-foreground hover:bg-surface-strong"
-                    }`}
-                  >
-                    {brand.name}
-                  </button>
-                ))}
-              </div>
+                <select
+                  value={selectedBrand ?? ""}
+                  onChange={(event) => handleBrandChange(event.target.value || null)}
+                  className="h-11 border border-border bg-background px-3 text-sm font-normal normal-case tracking-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+                >
+                  <option value="">Semua brand</option>
+                  {brands.map((brand) => (
+                    <option key={brand.slug} value={brand.slug}>{brand.name}</option>
+                  ))}
+                </select>
+              </label>
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={resetAll}
+                  className="h-11 border border-border px-4 text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-muted sm:col-span-3"
+                >
+                  Reset semua filter
+                </button>
+              )}
             </div>
+          </details>
 
-            {/* Reset */}
+          <aside className="hidden flex-col gap-0 divide-y divide-border self-start border border-border lg:sticky lg:top-24 lg:flex">
+            <FilterGroup title="Urutkan">
+              {sortOptions.map((opt) => (
+                <FilterButton
+                  key={opt.value}
+                  active={sortBy === opt.value}
+                  onClick={() => handleSortChange(opt.value)}
+                >
+                  {opt.label}
+                </FilterButton>
+              ))}
+            </FilterGroup>
+
+            <FilterGroup title="Kategori">
+              {categories.map((cat) => (
+                <FilterButton
+                  key={cat.slug}
+                  active={selectedCategory === cat.slug}
+                  onClick={() =>
+                    handleCategoryChange(
+                      selectedCategory === cat.slug ? null : cat.slug
+                    )
+                  }
+                >
+                  {cat.name}
+                </FilterButton>
+              ))}
+            </FilterGroup>
+
+            <FilterGroup title="Brand">
+              {brands.map((brand) => (
+                <FilterButton
+                  key={brand.slug}
+                  active={
+                    selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
+                  }
+                  onClick={() =>
+                    handleBrandChange(
+                      selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
+                        ? null
+                        : brand.slug
+                    )
+                  }
+                >
+                  {brand.name}
+                </FilterButton>
+              ))}
+            </FilterGroup>
+
             {hasActiveFilters && (
               <button
                 type="button"
-                onClick={() => {
-                  setSearch("");
-                  setSelectedCategory(null);
-                  setSelectedBrand(null);
-                  setSortBy("newest");
-                  router.push("/reviews", { scroll: false });
-                }}
-                className="arcade-btn w-full h-10 bg-surface text-foreground text-xs border border-border"
+                onClick={resetAll}
+                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:bg-muted"
               >
-                Reset Semua Filter
+                Reset semua filter
               </button>
             )}
           </aside>
 
-          {/* Results */}
-          <div className="flex-1 min-w-0">
-            <div className="mb-4 flex items-center justify-between">
+          <div className="min-w-0">
+            <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
               <p className="text-sm text-muted">
                 {filteredReviews.length} review ditemukan
               </p>
               {hasActiveFilters && (
-                <div className="flex items-center gap-2 flex-wrap">
+                <div className="flex flex-wrap items-center gap-2">
                   {selectedCategory && (
-                    <span className="arcade-badge bg-surface-alt px-3 py-1 text-[10px] inline-flex items-center gap-1.5 text-foreground">
-                      {categories.find((c) => c.slug === selectedCategory)?.name}
-                      <button type="button" onClick={() => handleCategoryChange(null)} className="text-muted hover:text-foreground transition-colors">
-                        ✕
-                      </button>
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCategoryChange(null)}
+                      className="border border-border px-2 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors hover:bg-muted"
+                    >
+                      {categories.find((c) => c.slug === selectedCategory)?.name} ✕
+                    </button>
                   )}
                   {selectedBrand && (
-                    <span className="arcade-badge bg-surface-alt px-3 py-1 text-[10px] inline-flex items-center gap-1.5 text-foreground">
-                      {selectedBrand}
-                      <button type="button" onClick={() => handleBrandChange(null)} className="text-muted hover:text-foreground transition-colors">
-                        ✕
-                      </button>
-                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleBrandChange(null)}
+                      className="border border-border px-2 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors hover:bg-muted"
+                    >
+                      {selectedBrand} ✕
+                    </button>
                   )}
                 </div>
               )}
             </div>
 
             {filteredReviews.length === 0 ? (
-              <div className="arcade-card py-16 text-center">
-                <p className="text-lg font-heading mb-2">Tidak ada review ditemukan</p>
+              <div className="border border-border py-20 text-center">
+                <p className="mb-2 font-heading text-lg">
+                  Tidak ada review ditemukan
+                </p>
                 <p className="text-sm text-muted">
                   Coba filter atau pencarian yang berbeda.
                 </p>
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearch("");
-                    setSelectedCategory(null);
-                    setSelectedBrand(null);
-                    router.push("/reviews", { scroll: false });
-                  }}
-                  className="arcade-btn mt-4 h-10 px-5 bg-accent text-accent-foreground text-xs"
+                  onClick={resetAll}
+                  className="mt-6 border border-foreground bg-foreground px-6 py-2.5 text-xs font-semibold uppercase tracking-wider text-background transition-opacity hover:opacity-80"
                 >
-                  Reset Filter
+                  Reset filter
                 </button>
               </div>
             ) : (
-              <StaggerReveal className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3" stagger={0.08}>
+              <StaggerReveal
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                stagger={0.07}
+              >
                 {filteredReviews.map((review) => (
                   <StaggerItem key={review.slug}>
-                    <Link
-                      href={`/reviews/${review.slug}`}
-                      className="arcade-card group flex flex-col overflow-hidden"
-                    >
-                      <div className="relative aspect-[16/10] overflow-hidden bg-surface-alt">
-                        <img
-                          src={review.thumbnail.src}
-                          alt={review.thumbnail.alt}
-                          className="h-full w-full object-cover transition-transform duration-700 ease-expo group-hover:scale-105"
-                        />
-                      </div>
-                      <div className="flex flex-col p-3.5">
-                        <div className="flex items-center justify-between gap-2">
-                          <div className="flex items-center gap-1.5">
-                            <span className="arcade-badge bg-surface-alt px-2 py-0.5 text-[10px] text-foreground">
-                              {review.category}
-                            </span>
-                            {review.featured && (
-                              <span className="arcade-badge bg-accent text-accent-foreground px-2 py-0.5 text-[10px]">
-                                Featured
-                              </span>
-                            )}
-                          </div>
-                          {review.score && <ScoreBadge score={review.score} />}
-                        </div>
-                        <h3 className="mt-2 font-heading leading-snug line-clamp-2 group-hover:text-muted transition-colors">
-                          {review.name}
-                        </h3>
-                        <p className="mt-0.5 text-xs text-muted">{review.brand}</p>
-                        <p className="mt-1.5 text-xs text-muted line-clamp-2">
-                          {review.verdict}
-                        </p>
-                        <div className="mt-auto pt-2.5 flex items-center justify-between">
-                          {review.priceFrom && (
-                            <p className="text-sm font-semibold">
-                              {formatCurrency(review.priceFrom)}
-                            </p>
-                          )}
-                          <span className="arcade-badge bg-foreground text-background px-2.5 py-0.5 text-[10px] group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                            Baca →
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+                    <ReviewCardLink review={review} />
                   </StaggerItem>
                 ))}
               </StaggerReveal>
@@ -394,5 +382,101 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
         </div>
       </Container>
     </div>
+  );
+}
+
+function FilterGroup({
+  title,
+  children,
+}: {
+  title: string;
+  children: ReactNode;
+}) {
+  return (
+    <div>
+      <p className="border-b border-border px-4 py-3 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground bg-gray-400/18">
+        {title}
+      </p>
+      <div className="flex flex-col">{children}</div>
+    </div>
+  );
+}
+
+function FilterButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`border-b border-border px-4 py-2.5 text-left text-sm transition-colors last:border-b-0 ${active
+        ? "bg-foreground font-semibold text-background"
+        : "text-foreground hover:bg-muted"
+        }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ReviewCardLink({ review }: { review: ReviewSummary }) {
+  return (
+    <Link
+      href={`/reviews/${review.slug}`}
+      className="group flex h-full flex-col border border-border bg-background"
+    >
+      <div className="relative aspect-[16/10] overflow-hidden bg-surface-alt">
+        <img
+          src={review.thumbnail.src}
+          alt={review.thumbnail.alt}
+          className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        />
+        <div className="absolute left-0 top-0 flex flex-wrap gap-px">
+          <span className="bg-background/95 px-2 py-1 text-[9px] font-semibold uppercase tracking-widest text-foreground">
+            {review.category}
+          </span>
+          {review.featured && (
+            <span className="bg-foreground px-2 py-1 text-[9px] font-semibold uppercase tracking-widest text-background">
+              Featured
+            </span>
+          )}
+        </div>
+        {review.score && (
+          <span className="absolute right-2 top-2 border border-border bg-background/95 px-2 py-1 font-mono text-[10px] font-bold tabular-nums text-foreground">
+            {review.score.toFixed(1)}
+          </span>
+        )}
+      </div>
+
+      <div className="flex flex-1 flex-col p-4">
+        <h3 className="font-heading text-lg leading-snug transition-colors group-hover:text-muted-foreground">
+          {review.name}
+        </h3>
+        <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          {review.brand}
+        </p>
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
+          {review.verdict}
+        </p>
+        <div className="mt-auto flex items-center justify-between border-t border-border pt-3">
+          {review.priceFrom ? (
+            <span className="text-sm font-bold tabular-nums">
+              {formatCurrency(review.priceFrom)}
+            </span>
+          ) : (
+            <span className="text-sm text-muted">Harga bervariasi</span>
+          )}
+          <span className="text-[10px] font-semibold uppercase tracking-wider transition-colors group-hover:text-muted-foreground">
+            Baca →
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }

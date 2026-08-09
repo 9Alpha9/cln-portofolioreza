@@ -7,11 +7,10 @@ import gsap from "gsap";
 import { Menu, X, Sun, Moon } from "lucide-react";
 
 const navItems = [
-  { href: "/#reviews", label: "Reviews" },
-  { href: "/#projects", label: "Projects" },
-  { href: "/#services", label: "Services" },
+  { href: "/", label: "Home" },
+  { href: "/reviews", label: "Gear Review" },
+  { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
 ];
 
 export function Navbar() {

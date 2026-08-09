@@ -42,11 +42,14 @@ export function ProductHero({ review }: ProductHeroProps) {
           )}
         </div>
 
-        <h1 className="mt-6 flex flex-col font-heading text-[12vw] sm:text-6xl md:text-8xl font-bold tracking-tighter uppercase leading-[0.85]">
+        <h1 className="mt-6 flex flex-col font-heading text-[12vw] sm:text-3xl md:text-5xl font-bold tracking-tighter uppercase leading-[0.85]">
+          {review.name}
+        </h1>
+        {/* <h1 className="mt-6 flex flex-col font-heading text-[12vw] sm:text-3xl md:text-5xl font-bold tracking-tighter uppercase leading-[0.85]">
           {review.name.split(' ').map((word, i) => (
             <span key={i} className="block hover:text-white transition-colors duration-500 text-foreground/90">{word}</span>
           ))}
-        </h1>
+        </h1> */}
 
         <div className="mt-8 flex flex-col gap-6 max-w-md">
           <p className="text-base text-muted font-serif italic">{review.shortDescription}</p>
