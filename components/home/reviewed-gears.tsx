@@ -21,11 +21,10 @@ export function ReviewedGears() {
   const next = () => setIndex((i) => (i + 1) % total);
 
   return (
-    <section className="w-full border-t border-border bg-background text-foreground mt-24">
+    <section className="w-full border-t border-border text-foreground mt-24 bg-surface-alt">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 md:grid-cols-2 px-4 lg:px-8">
-
         {/* LEFT COLUMN: Static Image Banner with Quote */}
-        <div className="relative flex min-h-[420px] w-full items-center justify-center overflow-hidden border-r border-border bg-foreground md:min-h-[650px] sm:h-[850px] h-[450px]">
+        <div className="relative py-8 flex min-h-[420px] w-full items-center justify-center overflow-hidden border-l border-border  md:min-h-[650px] sm:h-[850px] h-[450px]">
           <video
             src="/videos/vid-3.mp4"
             autoPlay
@@ -38,8 +37,7 @@ export function ReviewedGears() {
         </div>
 
         {/* RIGHT COLUMN: Slide Area */}
-        <div className="flex min-h-[620px] flex-col justify-between bg-surface-alt md:min-h-[620px]">
-
+        <div className="flex min-h-[620px] flex-col justify-between  md:min-h-[620px] border-r border-l border-border py-8">
           {/* Header Title */}
           <div className="p-8 pb-0 sm:p-12 sm:pb-0 lg:p-16 lg:pb-0">
             <h3 className="font-heading text-4xl sm:text-3xl font-black leading-[0.95] tracking-tight uppercase">
