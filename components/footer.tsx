@@ -48,6 +48,7 @@ export function Footer() {
 
   return (
     <footer ref={footerRef} className="overflow-hidden bg-foreground text-background mt-24">
+
       <div className="mx-auto max-w-[1440px] px-6 sm:px-8 lg:px-12">
         <div className="grid gap-12 border-b border-background/15 py-16 sm:py-20 lg:grid-cols-12 lg:gap-8 lg:py-24">
           <div data-footer-reveal className="lg:col-span-6">
@@ -87,10 +88,12 @@ export function Footer() {
         </div>
 
         <div data-footer-reveal className="flex flex-col gap-8 py-7 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <Link href="/" className="text-2xl font-bold tracking-tighter transition-opacity hover:opacity-60">
-              GGR<span className="text-background/50">.</span>
-            </Link>
+          <div className="flex flex-row items-start gap-6">
+            <img
+              src="/logos/tahutechs-logos.png"
+              alt="TahuTech"
+              className="w-full max-w-[60px]"
+            />
             <p className="mt-2 text-xs text-background/50">© 2026 Gaming Gear Review. Indonesia.</p>
           </div>
           <div className="flex items-center gap-4">
@@ -120,7 +123,7 @@ export function Footer() {
           </div>
         </div>
       </div>
-    </footer>
+    </footer >
   );
 }
 

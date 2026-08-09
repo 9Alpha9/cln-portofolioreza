@@ -18,13 +18,6 @@ const BENTO_ITEMS: BentoItem[] = [
 function BentoCard({ item }: { item: BentoItem }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const showThumbnail = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.currentTime = 0.1;
-  }, []);
-
   const playVideo = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -56,7 +49,6 @@ function BentoCard({ item }: { item: BentoItem }) {
         loop
         playsInline
         preload="metadata"
-        onLoadedData={showThumbnail}
         className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 group-focus-within:scale-105"
       />
     </figure>

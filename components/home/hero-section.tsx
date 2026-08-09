@@ -1,9 +1,9 @@
 "use client";
 
-import {useRef, useEffect, useState} from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
-import {gsap} from "@/lib/gsap";
-import {getAllReviews} from "@/lib/reviews";
+import { gsap } from "@/lib/gsap";
+import { getAllReviews } from "@/lib/reviews";
 
 const VIDEO_SOURCES = [
   "/videos/vid-1.mp4",
@@ -13,19 +13,19 @@ const VIDEO_SOURCES = [
 
 const OFFSET_STYLE: Record<
   number,
-  {x: number; scale: number; rotate: number; opacity: number; z: number}
+  { x: number; scale: number; rotate: number; opacity: number; z: number }
 > = {
-  0: {x: 0, scale: 1, rotate: 0, opacity: 1, z: 3},
-  1: {x: -28, scale: 0.92, rotate: -6, opacity: 1, z: 2},
-  2: {x: -66, scale: 0.82, rotate: -9, opacity: 1, z: 1},
+  0: { x: 0, scale: 1, rotate: 0, opacity: 1, z: 3 },
+  1: { x: -28, scale: 0.92, rotate: -6, opacity: 1, z: 2 },
+  2: { x: -66, scale: 0.82, rotate: -9, opacity: 1, z: 1 },
 };
 
 export function HeroSection() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stackContainerRef = useRef<HTMLDivElement>(null);
   const customCursorRef = useRef<HTMLDivElement>(null);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const activeIndexRef = useRef(0);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const isDragging = useRef(false);
@@ -38,20 +38,18 @@ export function HeroSection() {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
 
-  // Play active video, pause others
   useEffect(() => {
     videoRefs.current.forEach((video, i) => {
       if (!video) return;
+      video.currentTime = 0;
       if (activeIndex === i) {
-        video.currentTime = 0;
-        video.play().catch(() => {});
+        video.play().catch(() => { });
       } else {
         video.pause();
       }
     });
   }, [activeIndex]);
 
-  // Entrance animation
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from("[data-hero-title]", {
@@ -92,7 +90,7 @@ export function HeroSection() {
     const container = stackContainerRef.current;
     if (!cursor || !container) return;
 
-    gsap.set(cursor, {opacity: 0, scale: 0.5, xPercent: -50, yPercent: -50});
+    gsap.set(cursor, { opacity: 0, scale: 0.5, xPercent: -50, yPercent: -50 });
 
     const onMouseMove = (e: MouseEvent) => {
       gsap.to(cursor, {
@@ -127,7 +125,7 @@ export function HeroSection() {
       dragStart.current = { x: e.clientX, y: e.clientY };
       container.setPointerCapture(e.pointerId);
       if (e.pointerType === "mouse") {
-        gsap.to(cursor, {scale: 0.8, duration: 0.2});
+        gsap.to(cursor, { scale: 0.8, duration: 0.2 });
       }
     };
     const onPointerUp = (e: PointerEvent) => {
@@ -137,7 +135,7 @@ export function HeroSection() {
         container.releasePointerCapture(e.pointerId);
       }
       if (e.pointerType === "mouse") {
-        gsap.to(cursor, {scale: 1, duration: 0.2, ease: "back.out(1.5)"});
+        gsap.to(cursor, { scale: 1, duration: 0.2, ease: "back.out(1.5)" });
       }
       const diffX = e.clientX - dragStart.current.x;
       const diffY = e.clientY - dragStart.current.y;
@@ -216,7 +214,7 @@ export function HeroSection() {
               <svg
                 viewBox="0 0 600 600"
                 className="w-full h-full opacity-25"
-                style={{transform: "rotate(-10deg)"}}
+                style={{ transform: "rotate(-10deg)" }}
               >
                 <defs>
                   <path
@@ -261,26 +259,17 @@ export function HeroSection() {
                       opacity: style.opacity,
                     }}
                   >
-                    {/* Video (autoplay muted loop only when active) */}
                     <video
-                      ref={(el) => {
-                        videoRefs.current[i] = el;
-                      }}
-                      className="w-full h-full object-cover pointer-events-none"
+                      ref={(el) => { videoRefs.current[i] = el; }}
+                       className="w-full h-full object-cover pointer-events-none"
                        muted
                        loop
-                       playsInline
-                       poster={review.thumbnail?.src}
+                      playsInline
                        preload="metadata"
-                       style={{width: "100%", height: "100%"}}
+                       style={{ width: "100%", height: "100%" }}
                     >
                       <source src={VIDEO_SOURCES[i]} type="video/mp4" />
-                      <img
-                        src={review.thumbnail?.src}
-                        alt={review.thumbnail?.alt}
-                        className="w-full h-full object-cover"
-                        draggable={false}
-                      />
+
                     </video>
                   </div>
                 );
@@ -292,15 +281,8 @@ export function HeroSection() {
           <div className="lg:col-span-3 z-10 space-y-10 flex flex-col justify-end h-full">
             <div
               data-hero-right
-              className="bg-white rounded-xl p-4 shadow-sm border border-border flex items-center gap-4"
+              className="bg-white rounded-xl p-4 shadow-sm border border-border flex flex-col justify-center"
             >
-              <div className="w-16 h-16 rounded-lg overflow-hidden shrink-0">
-                <img
-                  src={reviews[activeIndex]?.thumbnail.src}
-                  alt={reviews[activeIndex]?.name}
-                  className="w-full h-full object-cover"
-                />
-              </div>
               <div>
                 <p className="text-[10px] font-mono tracking-widest uppercase text-muted">
                   REVIEW TERBARU

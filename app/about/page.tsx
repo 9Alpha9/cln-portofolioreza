@@ -1,162 +1,154 @@
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
 import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "About | Gaming Gear Review",
+  title: "Tentang",
   description:
-    "Tentang Gaming Gear Review dan content creator di balik review produk gaming gear.",
+    "Kenali Tahutech ID, pendekatan review gaming gear, dan cara pengujian produk.",
 };
 
-const socialLinks = [
+const reviewSteps = [
   {
-    platform: "YouTube",
-    url: "https://youtube.com/@creator",
-    description: "Channel utama dengan video review lengkap.",
+    index: "01",
+    title: "Pakai langsung",
+    description:
+      "Gear dicoba dalam penggunaan harian dan sesi bermain untuk memahami rasa pakai, kenyamanan, serta karakter utamanya.",
   },
   {
-    platform: "Instagram",
-    url: "https://instagram.com/creator",
-    description: "Update harian dan behind the scenes.",
+    index: "02",
+    title: "Uji detail penting",
+    description:
+      "Fitur, build quality, konektivitas, software, dan performa dibahas dari hal yang paling relevan untuk calon pengguna.",
   },
   {
-    platform: "TikTok",
-    url: "https://tiktok.com/@creator",
-    description: "Review singkat dan tips gaming gear.",
+    index: "03",
+    title: "Nilai dengan konteks",
+    description:
+      "Kesimpulan mempertimbangkan harga, alternatif, kebutuhan pengguna, dan kompromi yang perlu diketahui sebelum membeli.",
   },
 ];
 
-const reviewPrinciples = [
+const coverage = ["Keyboard", "Mouse", "Headset", "Microphone", "Monitor", "Controller"];
+
+const socialLinks = [
   {
-    title: "Objektif",
-    description:
-      "Setiap review ditulis berdasarkan pengujian langsung tanpa dipengaruhi sponsor.",
+    label: "Instagram",
+    handle: "@tahutech.idn",
+    href: "https://www.instagram.com/tahutech.idn",
   },
   {
-    title: "Mendalam",
-    description:
-      "Pengujian dilakukan dalam berbagai skenario penggunaan untuk hasil yang akurat.",
-  },
-  {
-    title: "Transparan",
-    description:
-      "Harga dan link marketplace ditampilkan dengan disclaimer yang jelas.",
-  },
-  {
-    title: "Bermanfaat",
-    description:
-      "Fokus pada informasi yang membantu kamu membuat keputusan pembelian.",
+    label: "TikTok",
+    handle: "@tahutech.id",
+    href: "https://www.tiktok.com/@tahutech.id",
   },
 ];
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen">
-      <Container className="py-8 sm:py-12">
-        <Breadcrumbs items={[{ label: "About" }]} />
+    <div className="overflow-hidden">
+      <Container className="max-w-[1440px] pt-28 pb-16 sm:pt-36 sm:pb-24">
+        <Breadcrumbs items={[{ label: "Tentang" }]} />
 
-        <div className="max-w-2xl">
-          <SectionHeading description="Membantu kamu menemukan gear yang tepat.">
-            Tentang Gaming Gear Review
-          </SectionHeading>
+        <section className="grid gap-12 border-b border-border pb-16 sm:pb-24 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
+            <p className="mb-5 font-mono text-[10px] font-semibold tracking-[0.22em] text-muted-foreground">
+              TAHUTECH ID / REVIEWER GAMING GEAR
+            </p>
+            <h1 className="max-w-4xl text-5xl font-bold leading-[0.94] tracking-tighter sm:text-7xl lg:text-8xl">
+              Biar pilih gear
+              <br />
+              pakai alasan,
+              <br />
+              bukan tebakan.
+            </h1>
+          </div>
+          <div className="flex flex-col justify-end lg:col-span-4 lg:col-start-9">
+            <p className="max-w-md text-base leading-relaxed text-muted-foreground sm:text-lg">
+              Tahutech ID membahas gaming gear untuk membantu kamu memahami produk sebelum checkout. Fokusnya: pengalaman pakai, detail yang penting, dan rekomendasi yang sesuai kebutuhan.
+            </p>
+          </div>
+        </section>
 
-          {/* Creator Profile */}
-          <section className="mb-12">
-            <div className="arcade-card flex items-start gap-6 p-6">
-              <div className="h-24 w-24 shrink-0 rounded-xl bg-surface-alt" />
-              <div>
-                <h2 className="text-xl font-heading">Gaming Gear Review</h2>
-                <p className="text-muted font-medium text-sm">Content Creator</p>
-                <p className="mt-4 text-muted">
-                  Sebagai gamer dan tech enthusiast, saya memahami betul
-                  kesulitan menemukan gaming gear yang tepat. Setiap orang
-                  memiliki kebutuhan dan preferensi yang berbeda.
-                </p>
-                <p className="mt-3 text-muted">
-                  Melalui Gaming Gear Review, saya berusaha memberikan review
-                  yang objektif dan mendalam agar kamu bisa menemukan gear yang
-                  sesuai dengan kebutuhanmu.
-                </p>
-              </div>
+        <section className="grid gap-8 border-b border-border py-16 sm:py-24 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <p className="font-mono text-[10px] font-semibold tracking-[0.22em] text-muted-foreground">TENTANG KANAL</p>
+          </div>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <h2 className="max-w-3xl text-3xl font-semibold leading-tight tracking-tight sm:text-5xl">
+              Review dibuat untuk menjawab: gear ini cocok buat siapa?
+            </h2>
+            <div className="mt-8 grid gap-6 text-muted-foreground sm:grid-cols-2">
+              <p className="leading-relaxed">
+                Tidak semua produk mahal cocok untuk semua orang. Tahutech ID melihat tiap gear dari kebutuhan nyata, mulai dari kerja, bermain kompetitif, hingga setup harian.
+              </p>
+              <p className="leading-relaxed">
+                Konten dirancang ringkas namun tetap memberi konteks: kelebihan, kekurangan, serta hal yang perlu dipertimbangkan sebelum membeli.
+              </p>
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Review Principles */}
-          <section className="mb-12">
-            <h2 className="text-xl font-heading mb-6">Prinsip Review</h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {reviewPrinciples.map((principle) => (
-                <div key={principle.title} className="arcade-card p-4">
-                  <h3 className="font-heading text-muted">{principle.title}</h3>
-                  <p className="mt-2 text-sm text-muted">
-                    {principle.description}
-                  </p>
-                </div>
+        <section className="border-b border-border py-16 sm:py-24">
+          <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="font-mono text-[10px] font-semibold tracking-[0.22em] text-muted-foreground">CARA REVIEW</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-tight sm:text-5xl">Tiga langkah sebelum rekomendasi.</h2>
+            </div>
+            <p className="max-w-sm text-sm leading-relaxed text-muted-foreground">
+              Penilaian tidak berhenti pada spesifikasi. Pengalaman penggunaan dan konteks harga ikut menjadi pertimbangan.
+            </p>
+          </div>
+          <div className="grid gap-px bg-border md:grid-cols-3">
+            {reviewSteps.map((step) => (
+              <article key={step.index} className="bg-background p-6 sm:p-8">
+                <p className="font-mono text-xs tracking-[0.18em] text-muted-foreground">{step.index}</p>
+                <h3 className="mt-12 text-2xl font-semibold tracking-tight">{step.title}</h3>
+                <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">{step.description}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="grid gap-10 border-b border-border py-16 sm:py-24 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <p className="font-mono text-[10px] font-semibold tracking-[0.22em] text-muted-foreground">YANG DIBAHAS</p>
+          </div>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <div className="flex flex-wrap gap-x-5 gap-y-3">
+              {coverage.map((item) => (
+                <span key={item} className="text-2xl font-semibold tracking-tight sm:text-4xl">{item}</span>
               ))}
             </div>
-          </section>
+          </div>
+        </section>
 
-          {/* Social Links */}
-          <section className="mb-12">
-            <h2 className="text-xl font-heading mb-6">Ikuti Saya</h2>
-            <div className="space-y-3">
+        <section className="grid gap-10 py-16 sm:py-24 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-4">
+            <p className="font-mono text-[10px] font-semibold tracking-[0.22em] text-muted-foreground">IKUTI TAHUTECH ID</p>
+          </div>
+          <div className="lg:col-span-7 lg:col-start-6">
+            <div className="grid gap-px bg-border sm:grid-cols-2">
               {socialLinks.map((link) => (
-                <a
-                  key={link.platform}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="arcade-card flex items-center justify-between p-4 hover:bg-surface-alt transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-accent"
-                >
-                  <div>
-                    <span className="font-medium">{link.platform}</span>
-                    <p className="text-sm text-muted">{link.description}</p>
-                  </div>
-                  <svg
-                    className="h-5 w-5 text-muted"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                    />
-                  </svg>
+                <a key={link.label} href={link.href} target="_blank" rel="noopener noreferrer" className="group flex min-h-44 flex-col justify-between bg-background p-6 transition-colors hover:bg-muted sm:p-8">
+                  <span className="text-sm text-muted-foreground">{link.handle}</span>
+                  <span className="flex items-center justify-between text-2xl font-semibold tracking-tight">
+                    {link.label}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 17 17 7m0 0H8m9 0v9" />
+                    </svg>
+                  </span>
                 </a>
               ))}
             </div>
-          </section>
-
-          {/* Contact / Collaboration */}
-          <section className="mb-12">
-            <h2 className="text-xl font-heading mb-4">Kolaborasi</h2>
-            <p className="text-muted mb-4">
-              Tertarik untuk kolaborasi atau review produk? Kirim email ke:
-            </p>
-            <a
-              href="mailto:hello@example.com"
-              className="arcade-btn inline-flex h-10 items-center justify-center bg-surface px-4 text-sm text-foreground border border-border"
-            >
-              hello@example.com
-            </a>
-          </section>
-
-          {/* Affiliate Disclosure */}
-          <section className="arcade-card bg-surface p-6">
-            <h2 className="text-lg font-heading mb-3">Affiliate Disclosure</h2>
-            <p className="text-sm text-muted">
-              Beberapa tautan pembelian dapat berupa tautan afiliasi. Kreator
-              dapat menerima komisi tanpa biaya tambahan bagi pembeli. Hal ini
-              tidak memengaruhi hasil review. Setiap produk diuji secara independen
-              dan rekomendasi didasarkan pada pengalaman penggunaan nyata.
-            </p>
-          </section>
-        </div>
+            <div className="mt-10 border-l-2 border-foreground pl-5">
+              <h2 className="text-lg font-semibold">Transparansi</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+                Beberapa tautan pembelian dapat berupa tautan afiliasi. Komisi tidak menambah harga yang kamu bayar dan tidak mengubah penilaian produk. Kelebihan maupun kekurangan tetap disampaikan sesuai pengalaman review.
+              </p>
+            </div>
+          </div>
+        </section>
       </Container>
     </div>
   );

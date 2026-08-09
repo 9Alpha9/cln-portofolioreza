@@ -10,7 +10,7 @@ const navItems = [
   { href: "/#reviews", label: "Reviews" },
   { href: "/#projects", label: "Projects" },
   { href: "/#services", label: "Services" },
-  { href: "/#about", label: "About" },
+  { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -125,22 +125,23 @@ export function Navbar() {
       >
         <div
           ref={bgRef}
-          className={`relative flex items-center justify-between rounded-[100px] border transition-all duration-500 ease-out px-5 sm:px-8 py-3.5 ${
-            scrolled
-              ? "border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
-              : "border-white/20 bg-white/70 backdrop-blur-xl dark:bg-black/50 dark:border-white/10"
-          }`}
+          className={`relative flex h-16 items-center justify-between rounded-[100px] border transition-all duration-500 ease-out px-5 sm:px-8 ${scrolled
+            ? "border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
+            : "border-white/20 bg-white/70 backdrop-blur-xl dark:bg-black/50 dark:border-white/10"
+            }`}
         >
           {/* Logo */}
           <Link
             ref={logoRef}
             href="/"
-            className="flex items-center gap-2 text-xl sm:text-2xl font-bold tracking-tight text-foreground transition-colors duration-300 hover:opacity-70"
+            className="flex h-11 w-36 items-center justify-center overflow-hidden transition-opacity duration-300 hover:opacity-70"
+            aria-label="TahuTech beranda"
           >
-            <span className="relative">
-              GGR
-              <span className="absolute -right-1.5 top-0.5 text-[0.55em] font-light text-muted-foreground">.</span>
-            </span>
+            <img
+              src="/logos/tahutechs-logos.png"
+              alt="TahuTech"
+              className="max-w-none w-[90px]"
+            />
           </Link>
 
           {/* Desktop Nav */}
