@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { HeroSection } from "@/components/home/hero-section";
 import { BentoGrid } from "@/components/home/bento-grid";
+import { ReviewedGears } from "@/components/home/reviewed-gears";
 
 export default function Home() {
   useEffect(() => {
@@ -13,6 +14,7 @@ export default function Home() {
     <main>
       <HeroSection />
       <BentoGrid />
+      <ReviewedGears />
     </main>
   );
 }
