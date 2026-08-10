@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, type ReactNode } from "react";
 import { gsap } from "@/lib/gsap";
+import { onTransitionEnd } from "@/lib/animation-sync";
 
 interface GsapRevealProps {
   children: ReactNode;
@@ -24,22 +25,31 @@ export function GsapReveal({
     const el = ref.current;
     if (!el) return;
 
-    const ctx = gsap.context(() => {
-      gsap.from(el, {
-        y,
-        opacity: 0,
-        duration,
-        delay,
-        ease: "expo.out",
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-          once: true,
-        },
-      });
-    });
+    let ctx: gsap.Context | null = null;
 
-    return () => ctx.revert();
+    const run = () => {
+      if (!el.isConnected) return;
+      ctx = gsap.context(() => {
+        gsap.from(el, {
+          y,
+          opacity: 0,
+          duration,
+          delay,
+          ease: "expo.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        });
+      });
+    };
+
+    const cancel = onTransitionEnd(run);
+    return () => {
+      cancel();
+      ctx?.revert();
+    };
   }, [delay, y, duration]);
 
   return (

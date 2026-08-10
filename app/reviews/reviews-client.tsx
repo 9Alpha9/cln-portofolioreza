@@ -9,6 +9,7 @@ import { categories } from "@/data/categories";
 import { brands } from "@/data/brands";
 import { formatCurrency } from "@/lib/formatters";
 import type { ReviewSummary } from "@/types";
+import { Pagination } from "@/components/ui/pagination";
 
 interface ReviewsClientProps {
   reviews: ReviewSummary[];
@@ -38,6 +39,8 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const [sortBy, setSortBy] = useState<SortOption>(
     (searchParams.get("sort") as SortOption) || "newest"
   );
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 9;
 
   const updateURL = useCallback(
     (params: Record<string, string | null>) => {
@@ -57,6 +60,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const handleSearch = useCallback(
     (value: string) => {
       setSearch(value);
+      setCurrentPage(1);
       updateURL({ q: value || null });
     },
     [updateURL]
@@ -65,6 +69,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const handleCategoryChange = useCallback(
     (category: string | null) => {
       setSelectedCategory(category);
+      setCurrentPage(1);
       updateURL({ category });
     },
     [updateURL]
@@ -73,6 +78,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const handleBrandChange = useCallback(
     (brand: string | null) => {
       setSelectedBrand(brand);
+      setCurrentPage(1);
       updateURL({ brand });
     },
     [updateURL]
@@ -81,6 +87,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
   const handleSortChange = useCallback(
     (sort: SortOption) => {
       setSortBy(sort);
+      setCurrentPage(1);
       updateURL({ sort });
     },
     [updateURL]
@@ -147,8 +154,16 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
     setSelectedCategory(null);
     setSelectedBrand(null);
     setSortBy("newest");
+    setCurrentPage(1);
     router.push("/reviews", { scroll: false });
   };
+
+  const totalPages = Math.ceil(filteredReviews.length / ITEMS_PER_PAGE);
+  const activePage = Math.min(currentPage, Math.max(totalPages, 1));
+  const paginatedReviews = filteredReviews.slice(
+    (activePage - 1) * ITEMS_PER_PAGE,
+    activePage * ITEMS_PER_PAGE
+  );
 
   return (
     <div className="min-h-screen pt-32">
@@ -261,7 +276,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
             </div>
           </details>
 
-          <aside className="hidden flex-col gap-0 divide-y divide-border self-start border border-border lg:sticky lg:top-24 lg:flex">
+          <aside className="hidden flex-col gap-0 divide-y divide-border self-start border border-border lg:sticky lg:top-28 lg:flex">
             <FilterGroup title="Urutkan">
               {sortOptions.map((opt) => (
                 <FilterButton
@@ -367,16 +382,24 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
                 </button>
               </div>
             ) : (
-              <StaggerReveal
-                className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
-                stagger={0.07}
-              >
-                {filteredReviews.map((review) => (
-                  <StaggerItem key={review.slug}>
-                    <ReviewCardLink review={review} />
-                  </StaggerItem>
-                ))}
-              </StaggerReveal>
+              <>
+                <StaggerReveal
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3"
+                  stagger={0.07}
+                >
+                  {paginatedReviews.map((review) => (
+                    <StaggerItem key={review.slug}>
+                      <ReviewCardLink review={review} />
+                    </StaggerItem>
+                  ))}
+                </StaggerReveal>
+                <Pagination
+                  totalItems={filteredReviews.length}
+                  itemsPerPage={ITEMS_PER_PAGE}
+                  currentPage={activePage}
+                  onPageChange={setCurrentPage}
+                />
+              </>
             )}
           </div>
         </div>

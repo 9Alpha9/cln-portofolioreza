@@ -3,12 +3,14 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import gsap from "gsap";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { gsap } from "@/lib/gsap";
+import { onTransitionEnd } from "@/lib/animation-sync";
+import { Sun, Moon } from "lucide-react";
 
 const navItems = [
   { href: "/", label: "Home" },
   { href: "/reviews", label: "Gear Review" },
+  { href: "/tierlist", label: "Tier List" },
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
 ];
@@ -28,8 +30,16 @@ export function Navbar() {
   const panelRef = useRef<HTMLDivElement>(null);
   const backdropRef = useRef<HTMLDivElement>(null);
 
+  const line1Ref = useRef<SVGLineElement>(null);
+  const line2Ref = useRef<SVGLineElement>(null);
+  const line3Ref = useRef<SVGLineElement>(null);
+
   useEffect(() => {
-    setMounted(true);
+    // Avoid calling setState synchronously in effect
+    const frame = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   // Scroll effect
@@ -42,6 +52,10 @@ export function Navbar() {
 
   // Lock body scroll when mobile menu open
   useEffect(() => {
+    // Notify Lenis via custom event
+    const event = new CustomEvent("mobile-menu-state", { detail: { open } });
+    window.dispatchEvent(event);
+
     if (open) {
       document.body.style.overflow = "hidden";
       document.body.style.touchAction = "none";
@@ -55,64 +69,105 @@ export function Navbar() {
     };
   }, [open]);
 
-  // Entrance animation (desktop)
   useEffect(() => {
     if (!mounted) return;
     if (!bgRef.current || !linksRef.current || !ctaRef.current || !logoRef.current) return;
 
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
+    let ctx: gsap.Context | null = null;
+    const run = () => {
+      if (!bgRef.current?.isConnected || !logoRef.current?.isConnected || !linksRef.current?.isConnected || !ctaRef.current?.isConnected) return;
+      ctx = gsap.context(() => {
+        const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
 
-      tl.from(bgRef.current, {
-        y: -40,
-        opacity: 0,
-        duration: 1.2,
-        scale: 0.96,
-      })
-        .from(
-          logoRef.current,
-          { y: -20, opacity: 0, duration: 0.8 },
-          "-=0.9"
-        )
-        .from(
-          linksRef.current?.children ?? [],
-          { y: -20, opacity: 0, duration: 0.8, stagger: 0.06 },
-          "-=0.7"
-        )
-        .from(
-          ctaRef.current,
-          { y: -20, opacity: 0, scale: 0.9, duration: 0.7 },
-          "-=0.5"
-        );
-    });
+        tl.from(bgRef.current, {
+          y: -40,
+          opacity: 0,
+          duration: 1.2,
+          scale: 0.96,
+        })
+          .from(logoRef.current, { y: -20, opacity: 0, duration: 0.8 }, "-=0.9")
+          .from(linksRef.current?.children ?? [], { y: -20, opacity: 0, duration: 0.8, stagger: 0.06 }, "-=0.7")
+          .from(ctaRef.current, { y: -20, opacity: 0, scale: 0.9, duration: 0.7 }, "-=0.5");
+      });
+    };
 
-    return () => ctx.revert();
+    const cancel = onTransitionEnd(run);
+    return () => {
+      cancel();
+      ctx?.revert();
+    };
   }, [mounted]);
 
-  // Mobile menu: set open class on panel/backdrop
+  const isFirstRender = useRef(true);
+  const menuTlRef = useRef<gsap.core.Timeline | null>(null);
+
+  // Mobile menu: morph hamburger lines + animate full-screen menu panel
   useEffect(() => {
     const panel = panelRef.current;
     const backdrop = backdropRef.current;
-    if (!panel || !backdrop) return;
+    const l1 = line1Ref.current;
+    const l2 = line2Ref.current;
+    const l3 = line3Ref.current;
+    if (!panel || !backdrop || !l1 || !l2 || !l3) return;
+
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      gsap.set(panel, { x: "100%", opacity: 0 });
+      gsap.set(backdrop, { opacity: 0 });
+      if (!open) return;
+    }
+
+    menuTlRef.current?.kill();
+    const tl = gsap.timeline();
+    menuTlRef.current = tl;
 
     if (open) {
-      backdrop.style.opacity = "1";
-      panel.style.transform = "translateX(0)";
+      // Animate Hamburger to X & slide left from 100%
+      tl.to(l2, { opacity: 0, scaleX: 0, transformOrigin: "center", duration: 0.3, ease: "power2.inOut" })
+        .to(l1, { y: 6, rotation: 45, transformOrigin: "center", duration: 0.3, ease: "power2.inOut" }, 0)
+        .to(l3, { y: -6, rotation: -45, transformOrigin: "center", duration: 0.3, ease: "power2.inOut" }, 0)
+        .to(backdrop, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0)
+        .to(panel, { x: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "<0.05")
+        .fromTo(
+          "[data-mobile-link]",
+          { y: 30, x: 0, opacity: 0 },
+          { y: 0, x: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power3.out" },
+          "-=0.35"
+        );
     } else {
-      backdrop.style.opacity = "0";
-      panel.style.transform = "translateX(100%)";
+      // Morph X back to Hamburger & slide right to 100% to close
+      tl.to("[data-mobile-link]", {
+        x: 60,
+        opacity: 0,
+        duration: 0.3,
+        stagger: 0.08,
+        ease: "power3.in",
+      })
+        .to(l2, { opacity: 1, scaleX: 1, duration: 0.35, ease: "power2.inOut" }, "-=0.1")
+        .to(l1, { y: 0, rotation: 0, duration: 0.35, ease: "power2.inOut" }, "<")
+        .to(l3, { y: 0, rotation: 0, duration: 0.35, ease: "power2.inOut" }, "<")
+        .to(panel, { x: "100%", opacity: 0, duration: 0.6, ease: "power4.in" }, "-=0.2")
+        .to(backdrop, { opacity: 0, duration: 0.4, ease: "power2.in" }, "<");
     }
+
+    return () => {
+      menuTlRef.current?.kill();
+      menuTlRef.current = null;
+    };
   }, [open]);
 
-  // Close mobile menu on route change
+  // Close mobile menu on route change & custom event
   useEffect(() => {
+    const handleCloseMenu = () => setOpen(false);
+    window.addEventListener("close-mobile-menu", handleCloseMenu);
     if (!open) return;
-    const handleRouteChange = () => setOpen(false);
-    window.addEventListener("popstate", handleRouteChange);
-    return () => window.removeEventListener("popstate", handleRouteChange);
+    window.addEventListener("popstate", handleCloseMenu);
+    return () => {
+      window.removeEventListener("close-mobile-menu", handleCloseMenu);
+      window.removeEventListener("popstate", handleCloseMenu);
+    };
   }, [open]);
 
-  const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
   return (
@@ -124,7 +179,7 @@ export function Navbar() {
       >
         <div
           ref={bgRef}
-          className={`relative flex h-16 items-center justify-between rounded-[100px] border transition-all duration-500 ease-out px-5 sm:px-8 ${scrolled
+          className={`relative flex h-16 items-center justify-between rounded-[100px] border transition-all duration-500 ease-out px-3 sm:px-3 ${scrolled
             ? "border-white/10 bg-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] dark:shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
             : "border-white/20 bg-white/70 backdrop-blur-xl dark:bg-black/50 dark:border-white/10"
             }`}
@@ -133,7 +188,7 @@ export function Navbar() {
           <Link
             ref={logoRef}
             href="/"
-            className="flex h-11 w-36 items-center justify-center overflow-hidden transition-opacity duration-300 hover:opacity-70"
+            className="flex h-11 items-center justify-center overflow-hidden transition-opacity duration-300 hover:opacity-70"
             aria-label="TahuTech beranda"
           >
             <img
@@ -154,12 +209,14 @@ export function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="relative px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground rounded-full"
+                className="group relative px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground rounded-full overflow-hidden"
               >
-                {item.label}
-                <span
-                  className="absolute bottom-1 left-1/2 -translate-x-1/2 w-0 h-[2px] bg-foreground transition-all duration-300 group-hover:w-full"
-                />
+                <span className="block h-5 overflow-hidden">
+                  <span className="block transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1/2">
+                    <span className="flex h-5 items-center">{item.label}</span>
+                    <span className="flex h-5 items-center text-foreground font-semibold">{item.label}</span>
+                  </span>
+                </span>
               </Link>
             ))}
           </nav>
@@ -171,7 +228,7 @@ export function Navbar() {
               <button
                 ref={themeBtnRef}
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="relative flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-all duration-300 hover:bg-accent/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="relative cursor-pointer flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-all duration-300 hover:bg-accent/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
               >
                 <Sun
@@ -196,7 +253,8 @@ export function Navbar() {
             {/* CTA Button */}
             <Link
               ref={ctaRef}
-              href="/#reviews"
+              target="_blank"
+              href="https://www.instagram.com/tahutech.idn"
               className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
             >
               Watch Reviews
@@ -214,12 +272,26 @@ export function Navbar() {
             {/* Mobile Menu Button */}
             <button
               type="button"
-              onClick={handleOpen}
-              className="md:hidden flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-all duration-300 hover:bg-accent/10 active:scale-95"
-              aria-label="Open menu"
+              onClick={() => setOpen((value) => !value)}
+              className="relative md:hidden flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-colors duration-300 hover:bg-accent/10 active:scale-95 z-[60]"
+              aria-label={open ? "Tutup menu" : "Buka menu"}
               aria-expanded={open}
             >
-              <Menu className="h-5 w-5" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-foreground"
+              >
+                <line ref={line1Ref} x1="3" y1="6" x2="21" y2="6" />
+                <line ref={line2Ref} x1="3" y1="12" x2="21" y2="12" />
+                <line ref={line3Ref} x1="3" y1="18" x2="21" y2="18" />
+              </svg>
             </button>
           </div>
         </div>
@@ -228,7 +300,7 @@ export function Navbar() {
       {/* Mobile Menu Drawer */}
       <div
         id="mobile-menu"
-        className={`md:hidden fixed inset-0 z-50 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
+        className={`md:hidden fixed inset-0 z-40 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile menu"
@@ -236,36 +308,26 @@ export function Navbar() {
         {/* Backdrop */}
         <div
           ref={backdropRef}
-          className="absolute inset-0 bg-black/50 backdrop-blur-md"
-          style={{ opacity: 0, transition: "opacity 0.3s ease" }}
+          className="absolute inset-0 bg-background/95 backdrop-blur-md"
+          style={{ opacity: 0 }}
           onClick={handleClose}
           aria-hidden="true"
         />
 
-        {/* Menu Panel - slides from right */}
+        {/* Menu Panel - full screen height and width */}
         <div
           ref={panelRef}
-          className="fixed top-0 right-0 bottom-0 w-full max-w-sm bg-background border-l border-border shadow-2xl overflow-y-auto"
-          style={{ transform: "translateX(100%)", transition: "transform 0.4s cubic-bezier(0.19, 1, 0.22, 1)" }}
+          className="fixed inset-0 flex flex-col justify-center bg-transparent px-8"
+          style={{ transform: "translateX(100%)", opacity: 0 }}
         >
-          {/* Close button inside panel */}
-          <button
-            type="button"
-            onClick={handleClose}
-            className="absolute top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-background/80 backdrop-blur-sm border border-border transition-all duration-300 hover:bg-accent/10 active:scale-95"
-            aria-label="Close menu"
-          >
-            <X className="h-5 w-5 text-foreground" />
-          </button>
-
-          <div className="pt-20 pb-16 px-6 space-y-1">
+          <div className="flex flex-col space-y-6 text-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
                 data-mobile-link
                 onClick={handleClose}
-                className="block py-4 text-lg font-medium text-foreground hover:text-muted-foreground transition-colors border-b border-border"
+                className="block py-2 text-4xl font-heading font-black uppercase tracking-tight text-foreground hover:text-muted-foreground transition-colors"
               >
                 {item.label}
               </Link>
@@ -274,7 +336,7 @@ export function Navbar() {
               data-mobile-link
               href="/#reviews"
               onClick={handleClose}
-              className="block py-4 text-lg font-medium text-foreground hover:text-muted-foreground transition-colors border-b border-border"
+              className="block py-2 text-4xl font-heading font-black uppercase tracking-tight text-foreground hover:text-muted-foreground transition-colors"
             >
               Subscribe
             </Link>

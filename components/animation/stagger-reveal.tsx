@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, type ReactNode } from "react";
 import { gsap } from "@/lib/gsap";
+import { onTransitionEnd } from "@/lib/animation-sync";
 
 interface StaggerRevealProps {
   children: ReactNode;
@@ -24,26 +25,35 @@ export function StaggerReveal({
     const el = ref.current;
     if (!el) return;
 
-    const ctx = gsap.context(() => {
-      const items = el.querySelectorAll("[data-stagger-item]");
-      if (items.length === 0) return;
+    let ctx: gsap.Context | null = null;
 
-      gsap.from(items, {
-        y,
-        opacity: 0,
-        duration: 1,
-        delay,
-        ease: "expo.out",
-        stagger,
-        scrollTrigger: {
-          trigger: el,
-          start: "top 85%",
-          once: true,
-        },
+    const run = () => {
+      if (!el.isConnected) return;
+      ctx = gsap.context(() => {
+        const items = el.querySelectorAll("[data-stagger-item]");
+        if (items.length === 0) return;
+
+        gsap.from(items, {
+          y,
+          opacity: 0,
+          duration: 1,
+          delay,
+          ease: "expo.out",
+          stagger,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            once: true,
+          },
+        });
       });
-    });
+    };
 
-    return () => ctx.revert();
+    const cancel = onTransitionEnd(run);
+    return () => {
+      cancel();
+      ctx?.revert();
+    };
   }, [stagger, delay, y]);
 
   return (

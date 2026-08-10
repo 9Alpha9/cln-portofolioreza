@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ReviewGrid } from "@/components/review/review-grid";
+import { GsapReveal } from "@/components/animation";
 import { getBrandBySlug, brands } from "@/data/brands";
 import { getReviewsByBrand } from "@/lib/reviews";
 import type { Metadata } from "next";
@@ -42,17 +42,17 @@ export default async function BrandPage({ params }: BrandPageProps) {
   const relatedBrands = brands.filter((b) => b.slug !== brand.slug);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-28 md:pt-32">
       <Container className="py-8 sm:py-12">
-        <Breadcrumbs items={[{ label: "Brands" }, { label: brand.name }]} />
 
-        <SectionHeading description={brand.description}>
-          {brand.name}
-        </SectionHeading>
-
-        <p className="text-sm text-muted mb-6">
-          {reviews.length} review tersedia
-        </p>
+        <GsapReveal delay={0.15}>
+          <SectionHeading description={brand.description}>
+            {brand.name}
+          </SectionHeading>
+          <p className="text-sm text-muted mb-6">
+            {reviews.length} review tersedia
+          </p>
+        </GsapReveal>
 
         {reviews.length === 0 ? (
           <div className="py-12 text-center">

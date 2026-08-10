@@ -4,11 +4,14 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { gsap } from "@/lib/gsap";
+import { onTransitionEnd } from "@/lib/animation-sync";
 
 const exploreLinks = [
   { href: "/reviews", label: "Semua Review" },
+  { href: "/tierlist", label: "Tier List" },
+  { href: "/shop", label: "Shop" },
   { href: "/#reviews", label: "Review Terbaru" },
-  { href: "/#about", label: "Tentang Saya" },
+  { href: "/about", label: "About" },
 ];
 
 const topicLinks = [
@@ -20,30 +23,39 @@ const topicLinks = [
 const socialLinks = [
   { label: "Instagram", href: "https://www.instagram.com/tahutech.idn" },
   { label: "TikTok", href: "https://www.tiktok.com/@tahutech.id" },
+  { label: "YouTube", href: "https://www.youtube.com/@tahu_tech" },
 ];
 
 export function Footer() {
   const footerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      const elements = gsap.utils.toArray<HTMLElement>("[data-footer-reveal]");
+    let ctx: gsap.Context | null = null;
+    const run = () => {
+      if (!footerRef.current || !footerRef.current.isConnected) return;
+      ctx = gsap.context(() => {
+        const elements = gsap.utils.toArray<HTMLElement>("[data-footer-reveal]");
+        gsap.from(elements, {
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: "top 98%",
+            once: true,
+          },
+          y: 48,
+          opacity: 0,
+          duration: 1,
+          delay: 0.15,
+          stagger: 0.12,
+          ease: "power3.out",
+        });
+      }, footerRef);
+    };
 
-      gsap.from(elements, {
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top 98%",
-          once: true,
-        },
-        y: 48,
-        opacity: 0,
-        duration: 1,
-        stagger: 0.12,
-        ease: "power3.out",
-      });
-    }, footerRef);
-
-    return () => ctx.revert();
+    const cancel = onTransitionEnd(run);
+    return () => {
+      cancel();
+      ctx?.revert();
+    };
   }, []);
 
   return (
@@ -77,10 +89,10 @@ export function Footer() {
                 KONTAK
               </p>
               <a
-                href="mailto:hello@mail.com"
+                href="mailto:techtahu.id@gmail.com"
                 className="group inline-flex items-start gap-1 text-sm leading-relaxed transition-opacity hover:opacity-60"
               >
-                hello@mail.com
+                techtahu.id@gmail.com
                 <ArrowUpRight className="mt-0.5 h-3.5 w-3.5 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
             </div>
@@ -112,6 +124,11 @@ export function Footer() {
                     <circle cx="12" cy="12" r="4" />
                     <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
                   </svg>
+                ) : link.label === "YouTube" ? (
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25a29 29 0 0 0-.46-5.33z" />
+                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" stroke="none" />
+                  </svg>
                 ) : (
                   <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="currentColor">
                     <path d="M19.32 5.56a5.57 5.57 0 0 1-3.15-1.76A5.48 5.48 0 0 1 14.8.94h-3.26v14.18a2.7 2.7 0 1 1-1.86-2.57V9.24a6.04 6.04 0 1 0 5.12 5.98V8.03a8.76 8.76 0 0 0 5.12 1.65V6.42c-.2 0-.4-.03-.6-.06Z" />
@@ -119,7 +136,14 @@ export function Footer() {
                 )}
               </a>
             ))}
-            <p className="font-mono text-[10px] tracking-[0.18em] text-background/50">BUILT FOR BETTER SETUPS</p>
+            <a
+              href="https://www.bagian.web.id/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-[10px] tracking-[0.18em] text-background/50 transition-opacity hover:opacity-100 hover:underline"
+            >
+              CREATED BY BAGIAN CORPS
+            </a>
           </div>
         </div>
       </div>

@@ -1,27 +1,14 @@
 import type { Metadata } from "next";
-import { DM_Serif_Display, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Navbar } from "@/components/ui/navbar";
 import { Footer } from "@/components/footer";
 import { LenisProvider } from "@/components/lenis-provider";
+import { PageTransitionProvider } from "@/components/animation/page-transition";
 import "./globals.css";
-
-const dmSerifDisplay = DM_Serif_Display({
-  variable: "--font-dm-serif-display",
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
-});
-
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   title: {
-    default: "Gaming Gear Review",
+    default: "TahuTech.IDN | Gaming Gear Review",
     template: "%s | Gaming Gear Review",
   },
   description:
@@ -45,7 +32,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="id"
-      className={`${dmSerifDisplay.variable} ${inter.variable} h-full antialiased`}
+      className="h-full antialiased"
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
@@ -58,9 +45,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </a>
           <Navbar />
           <LenisProvider>
-            <main id="main-content" className="flex-1">
+            <PageTransitionProvider>
               {children}
-            </main>
+            </PageTransitionProvider>
             <Footer />
           </LenisProvider>
         </ThemeProvider>

@@ -13,8 +13,8 @@ export default function Home() {
   return (
     <main>
       <HeroSection />
-      <BentoGrid />
       <ReviewedGears />
+      <BentoGrid />
     </main>
   );
 }

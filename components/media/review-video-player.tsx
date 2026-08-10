@@ -25,6 +25,7 @@ export function ReviewVideoPlayer({ video, productName }: ReviewVideoPlayerProps
         controls
         preload="metadata"
         playsInline
+        suppressHydrationWarning
         className="absolute inset-0 h-full w-full"
       >
         <track kind="captions" />

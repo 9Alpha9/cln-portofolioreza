@@ -4,10 +4,11 @@ import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { getAllReviews } from "@/lib/reviews";
+import { onTransitionEnd } from "@/lib/animation-sync";
 
 const VIDEO_SOURCES = [
-  "/videos/vid-1.mp4",
   "/videos/vid-2.mp4",
+  "/videos/vid-1.mp4",
   "/videos/vid-3.mp4",
 ];
 
@@ -51,37 +52,47 @@ export function HeroSection() {
   }, [activeIndex]);
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      gsap.from("[data-hero-title]", {
-        yPercent: 105,
-        opacity: 0,
-        duration: 1.25,
-        ease: "expo.out",
-        delay: 0.2,
-      });
-      gsap.from("[data-hero-bullet]", {
-        x: -30,
-        opacity: 0,
-        duration: 0.8,
-        ease: "expo.out",
-        stagger: 0.1,
-        delay: 0.5,
-      });
-      gsap.from("[data-hero-right]", {
-        x: 50,
-        opacity: 0,
-        duration: 1,
-        ease: "expo.out",
-        delay: 0.6,
-      });
-      gsap.from("[data-hero-marquee]", {
-        opacity: 0,
-        duration: 1,
-        ease: "expo.out",
-        delay: 0.8,
-      });
-    }, sectionRef);
-    return () => ctx.revert();
+    let ctx: gsap.Context | null = null;
+
+    const run = () => {
+      if (!sectionRef.current || !sectionRef.current.isConnected) return;
+      ctx = gsap.context(() => {
+        gsap.from("[data-hero-title]", {
+          yPercent: 105,
+          opacity: 0,
+          duration: 1.25,
+          ease: "expo.out",
+          delay: 0.2,
+        });
+        gsap.from("[data-hero-bullet]", {
+          x: -30,
+          opacity: 0,
+          duration: 0.8,
+          ease: "expo.out",
+          stagger: 0.1,
+          delay: 0.5,
+        });
+        gsap.from("[data-hero-right]", {
+          x: 50,
+          opacity: 0,
+          duration: 1,
+          ease: "expo.out",
+          delay: 0.6,
+        });
+        gsap.from("[data-hero-marquee]", {
+          opacity: 0,
+          duration: 1,
+          ease: "expo.out",
+          delay: 0.8,
+        });
+      }, sectionRef);
+    };
+
+    const cancel = onTransitionEnd(run);
+    return () => {
+      cancel();
+      ctx?.revert();
+    };
   }, []);
 
   // Custom Cursor & Drag Logic via GSAP
@@ -261,12 +272,12 @@ export function HeroSection() {
                   >
                     <video
                       ref={(el) => { videoRefs.current[i] = el; }}
-                       className="w-full h-full object-cover pointer-events-none"
-                       muted
-                       loop
+                      className="w-full h-full object-cover pointer-events-none"
+                      muted
+                      loop
                       playsInline
-                       preload="metadata"
-                       style={{ width: "100%", height: "100%" }}
+                      preload="metadata"
+                      style={{ width: "100%", height: "100%" }}
                     >
                       <source src={VIDEO_SOURCES[i]} type="video/mp4" />
 

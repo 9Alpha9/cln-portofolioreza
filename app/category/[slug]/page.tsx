@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { Breadcrumbs } from "@/components/layout/breadcrumbs";
 import { ReviewGrid } from "@/components/review/review-grid";
+import { GsapReveal } from "@/components/animation";
 import { getCategoryBySlug, categories } from "@/data/categories";
 import { getReviewsByCategory, getFeaturedReviews } from "@/lib/reviews";
 import type { Metadata } from "next";
@@ -45,13 +45,13 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const relatedCategories = categories.filter((c) => c.slug !== category.slug);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-28 md:pt-32">
       <Container className="py-8 sm:py-12">
-        <Breadcrumbs items={[{ label: "Categories" }, { label: category.name }]} />
-
-        <SectionHeading description={category.description}>
-          {category.name}
-        </SectionHeading>
+        <GsapReveal delay={0.15}>
+          <SectionHeading description={category.description}>
+            {category.name}
+          </SectionHeading>
+        </GsapReveal>
 
         {reviews.length === 0 ? (
           <div className="py-12 text-center">

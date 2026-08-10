@@ -5,78 +5,22 @@ import { GsapReveal } from "@/components/animation";
 interface QuickVerdictProps {
   verdict: string;
   score?: number;
-  pros: string[];
-  cons: string[];
   className?: string;
 }
 
 export function QuickVerdict({
   verdict,
   score,
-  pros,
-  cons,
   className,
 }: QuickVerdictProps) {
   return (
     <GsapReveal>
-      <div className={cn("arcade-card p-4", className)}>
+      <div className={cn("arcade-card p-6", className)}>
         <div className="flex items-center gap-3 mb-3">
-          <h2 className="text-lg font-heading">Quick Verdict</h2>
+          <h2 className="text-xl font-heading font-bold">Quick Verdict</h2>
           {score && <ScoreBadge score={score} />}
         </div>
-        <p className="text-muted">{verdict}</p>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <div>
-            <h3 className="text-sm font-medium text-green mb-2">Kelebihan</h3>
-            <ul className="space-y-1">
-              {pros.map((pro, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <svg
-                    className="mt-0.5 h-4 w-4 shrink-0 text-green"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                  {pro}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-medium text-danger mb-2">Kekurangan</h3>
-            <ul className="space-y-1">
-              {cons.map((con, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <svg
-                    className="mt-0.5 h-4 w-4 shrink-0 text-danger"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2.5}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                  {con}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <p className="text-base leading-relaxed text-foreground/90">{verdict}</p>
       </div>
     </GsapReveal>
   );

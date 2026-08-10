@@ -6,6 +6,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { SearchInput } from "@/components/ui/search-input";
 import { ReviewCard } from "@/components/review/review-card";
+import { GsapReveal, StaggerItem, StaggerReveal } from "@/components/animation";
 import { getAllReviews } from "@/lib/reviews";
 
 export default function SearchPage() {
@@ -42,9 +43,11 @@ export default function SearchPage() {
   return (
     <div className="min-h-screen">
       <Container className="py-8 sm:py-12">
-        <SectionHeading description="Cari review produk gaming gear.">
-          Pencarian
-        </SectionHeading>
+        <GsapReveal delay={0.15}>
+          <SectionHeading description="Cari review produk gaming gear.">
+            Pencarian
+          </SectionHeading>
+        </GsapReveal>
 
         <div className="max-w-xl">
           <SearchInput
@@ -74,11 +77,13 @@ export default function SearchPage() {
         )}
 
         {results.length > 0 && (
-          <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <StaggerReveal className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3" stagger={0.08} delay={0.2}>
             {results.map((review) => (
-              <ReviewCard key={review.slug} review={review} />
+              <StaggerItem key={review.slug}>
+                <ReviewCard review={review} />
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerReveal>
         )}
 
         {!query.trim() && (

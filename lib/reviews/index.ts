@@ -1,5 +1,11 @@
 import { reviews } from "@/data/reviews";
-import type { ReviewMetadata, ReviewCategory, ReviewSummary } from "@/types";
+import type {
+  ReviewMetadata,
+  ReviewCategory,
+  ReviewSummary,
+  MarketplaceOffer,
+  MarketplacePlatform,
+} from "@/types";
 
 function toSummary(review: ReviewMetadata): ReviewSummary {
   return {
@@ -13,6 +19,7 @@ function toSummary(review: ReviewMetadata): ReviewSummary {
     priceFrom: review.priceFrom,
     currency: review.currency,
     thumbnail: review.thumbnail,
+    specifications: review.specifications,
     featured: review.featured,
     publishedAt: review.publishedAt,
     tags: review.tags,
@@ -72,4 +79,23 @@ export function getAllBrands(): string[] {
 
 export function getAllCategories(): ReviewCategory[] {
   return [...new Set(reviews.map((r) => r.category))];
+}
+
+export interface ProductOffer extends MarketplaceOffer {
+  productName: string;
+  productSlug: string;
+}
+
+export function getAllOffers(): ProductOffer[] {
+  return reviews.flatMap((review) =>
+    review.marketplaces.map((offer) => ({
+      ...offer,
+      productName: review.name,
+      productSlug: review.slug,
+    }))
+  );
+}
+
+export function getOffersByPlatform(platform: MarketplacePlatform): ProductOffer[] {
+  return getAllOffers().filter((offer) => offer.platform === platform);
 }

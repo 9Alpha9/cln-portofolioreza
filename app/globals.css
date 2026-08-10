@@ -1,8 +1,93 @@
 @import "tailwindcss";
 
-/* ══════════════════════════════════════════════
-   KIRK-INSPIRED MINIMAL THEME
-   ══════════════════════════════════════════════ */
+@font-face {
+  font-family: "ClashDisplay";
+  src: url("/fonts/ClashDisplay-Variable.woff2") format("woff2"),
+    url("/fonts/ClashDisplay-Variable.woff") format("woff"),
+    url("/fonts/ClashDisplay-Variable.ttf") format("truetype"),
+    url("/fonts/ClashDisplay-Variable.eot") format("embedded-opentype");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Variable.woff2") format("woff2"),
+    url("/fonts/Chillax-Variable.woff") format("woff"),
+    url("/fonts/Chillax-Variable.ttf") format("truetype"),
+    url("/fonts/Chillax-Variable.eot") format("embedded-opentype");
+  font-weight: 200 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Regular.woff2") format("woff2"),
+    url("/fonts/Chillax-Regular.woff") format("woff"),
+    url("/fonts/Chillax-Regular.ttf") format("truetype"),
+    url("/fonts/Chillax-Regular.eot") format("embedded-opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Medium.woff2") format("woff2"),
+    url("/fonts/Chillax-Medium.woff") format("woff"),
+    url("/fonts/Chillax-Medium.ttf") format("truetype"),
+    url("/fonts/Chillax-Medium.eot") format("embedded-opentype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Semibold.woff2") format("woff2"),
+    url("/fonts/Chillax-Semibold.woff") format("woff"),
+    url("/fonts/Chillax-Semibold.ttf") format("truetype"),
+    url("/fonts/Chillax-Semibold.eot") format("embedded-opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Bold.woff2") format("woff2"),
+    url("/fonts/Chillax-Bold.woff") format("woff"),
+    url("/fonts/Chillax-Bold.ttf") format("truetype"),
+    url("/fonts/Chillax-Bold.eot") format("embedded-opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Extralight.woff2") format("woff2"),
+    url("/fonts/Chillax-Extralight.woff") format("woff"),
+    url("/fonts/Chillax-Extralight.ttf") format("truetype"),
+    url("/fonts/Chillax-Extralight.eot") format("embedded-opentype");
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chillax";
+  src: url("/fonts/Chillax-Light.woff2") format("woff2"),
+    url("/fonts/Chillax-Light.woff") format("woff"),
+    url("/fonts/Chillax-Light.ttf") format("truetype"),
+    url("/fonts/Chillax-Light.eot") format("embedded-opentype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --background: 0 0% 98%;
   --foreground: 0 0% 5%;
@@ -82,9 +167,9 @@
   --radius-md: var(--radius-md);
   --radius-lg: var(--radius-lg);
   --radius-xl: var(--radius-xl);
-  --font-heading: var(--font-inter);
-  --font-body: var(--font-inter);
-  --font-sans: var(--font-inter);
+  --font-heading: "ClashDisplay", sans-serif;
+  --font-body: "Chillax", sans-serif;
+  --font-sans: "Chillax", sans-serif;
   --font-mono: monospace;
 }
 
@@ -98,11 +183,17 @@ body {
 }
 
 .font-heading,
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading), Georgia, serif;
 }
 
-html, body {
+html,
+body {
   /* overflow-x: hidden removed to allow position: sticky to work */
 }
 
@@ -125,15 +216,12 @@ html, body {
 /* ══════════════════════════════════════════════
    CARD
    ══════════════════════════════════════════════ */
-/* ══════════════════════════════════════════════
-   CARD
-   ══════════════════════════════════════════════ */
 .arcade-card {
   border: 1px solid hsl(var(--foreground) / 0.15);
   border-radius: var(--radius-sm);
   background: transparent;
   transition: transform 0.35s cubic-bezier(0.19, 1, 0.22, 1),
-              border-color 0.35s ease;
+    border-color 0.35s ease;
 }
 
 .arcade-card:hover {
@@ -159,8 +247,8 @@ html, body {
   letter-spacing: 0.05em;
   background: transparent;
   transition: background-color 0.2s ease,
-              color 0.2s ease,
-              border-color 0.2s ease;
+    color 0.2s ease,
+    border-color 0.2s ease;
   cursor: pointer;
 }
 
@@ -184,7 +272,7 @@ html, body {
   letter-spacing: 0.05em;
   background: transparent;
   transition: background-color 0.2s ease,
-              color 0.2s ease;
+    color 0.2s ease;
 }
 
 /* ══════════════════════════════════════════════
@@ -192,6 +280,10 @@ html, body {
    ══════════════════════════════════════════════ */
 img {
   transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.tier-card-image {
+  transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
 a {
@@ -349,7 +441,7 @@ a {
 }
 
 /* ══════════════════════════════════════════════
-   SWIPER CARD EFFECT — SHINTA STYLE LEFT-STACK
+   SWIPER CARD EFFECT
    ══════════════════════════════════════════════ */
 .hero-card-stack {
   perspective: 1000px;
@@ -388,6 +480,7 @@ a {
    REDUCED MOTION
    ══════════════════════════════════════════════ */
 @media (prefers-reduced-motion: reduce) {
+
   *,
   *::before,
   *::after {
@@ -395,5 +488,46 @@ a {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   TIER LIST SWIPER
+   ══════════════════════════════════════════════ */
+.tier-swiper {
+  padding-bottom: 2rem;
+}
+
+.tier-swiper .swiper-wrapper {
+  height: auto;
+}
+
+.tier-swiper .swiper-slide {
+  height: auto;
+  width: 100%;
+}
+
+.tier-swiper .swiper-pagination {
+  bottom: 0.5rem;
+}
+
+.tier-swiper .swiper-pagination-bullet {
+  background: hsl(var(--foreground) / 0.4);
+  width: 8px;
+  height: 8px;
+  opacity: 0.6;
+}
+
+.tier-swiper .swiper-pagination-bullet-active {
+  background: hsl(var(--foreground));
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .tier-swiper .tl-card-img,
+  .tier-swiper .tl-card-body {
+    transition: none !important;
+    animation: none !important;
   }
 }
