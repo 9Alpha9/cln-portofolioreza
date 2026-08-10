@@ -3,6 +3,14 @@
 import { useRef, useState } from "react";
 import Link from "next/link";
 import { getAllReviews } from "@/lib/reviews";
+import instagramMedia from "@/data/instagram-media.json";
+
+type InstagramMedia = {
+  media_type: string;
+  media_url: string;
+  thumbnail_url?: string;
+  timestamp: string;
+};
 
 function formatPrice(value: number) {
   return new Intl.NumberFormat("de-DE", {
@@ -10,6 +18,16 @@ function formatPrice(value: number) {
     maximumFractionDigits: 2,
   }).format(value);
 }
+
+const videos = (instagramMedia as InstagramMedia[])
+  .filter((item) => item.media_type === "VIDEO")
+  .sort(
+    (a, b) =>
+      new Date(b.timestamp).getTime() -
+      new Date(a.timestamp).getTime()
+  );
+
+const latestVideo = videos[0];
 
 export function ReviewedGears() {
   const reviews = getAllReviews();
@@ -24,17 +42,30 @@ export function ReviewedGears() {
     <section className="w-full border-t border-border text-foreground mt-24 bg-surface-alt">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 md:grid-cols-2 px-4 lg:px-8">
         {/* LEFT COLUMN: Static Image Banner with Quote */}
-        <div className="relative py-8 flex min-h-[420px] w-full items-center justify-center overflow-hidden border-l border-border  md:min-h-[650px] sm:h-[850px] h-[450px]">
-          <video
-            src="/videos/vid-2.mp4"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            controls
-            className="relative z-10 h-full w-full object-cover"
-          />
+        <div className="relative py-8 flex min-h-[420px] w-full items-center justify-center overflow-hidden border-l border-r border-border  md:min-h-[650px] sm:h-[850px] h-[450px]">
+          {latestVideo ? (
+            <video
+              src={latestVideo.media_url}
+              poster={latestVideo.thumbnail_url}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="metadata"
+              className="relative z-10 h-full w-full object-cover"
+            />
+          ) : (
+            <video
+              src="/videos/vid-2.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              controls
+              className="relative z-10 h-full w-full object-cover"
+            />
+          )}
         </div>
 
         {/* RIGHT COLUMN: Slide Area */}
@@ -55,7 +86,7 @@ export function ReviewedGears() {
                 <div
                   key={review.slug}
                   aria-hidden={i !== index}
-                  className="w-full max-w-[380px] shrink-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] absolute"
+                  className="w-full max-w-[480px] shrink-0 transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] absolute"
                   style={{
                     opacity: i === index ? 1 : 0,
                     pointerEvents: i === index ? "auto" : "none",
@@ -68,7 +99,7 @@ export function ReviewedGears() {
                   }}
                 >
                   {/* Card Border wrapper */}
-                  <div className="relative flex aspect-[4.2/6] flex-col border border-border bg-background p-3 sm:p-4">
+                  <div className="relative flex sm:aspect-[5.2/6] aspect-[4.9/6]  flex-col border border-border bg-background p-3 sm:p-4">
 
                     {/* NEW Badge top right */}
                     <div className="absolute top-0 right-0 border-b border-l border-border bg-background px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase text-green">
