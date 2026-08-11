@@ -1,6 +1,8 @@
 import { Container } from "@/components/ui/container";
 import { InstagramVideos } from "@/components/about/instagram-videos";
 import { GsapReveal } from "@/components/animation";
+import { SplitTextLink } from "@/components/ui/split-text-link";
+import { ArrowUpRight } from "lucide-react";
 import {
   aboutMeta,
   heroKicker,
@@ -127,21 +129,23 @@ export default function AboutPage() {
                 const isLastInRow = (i + 1) % 2 === 0;
                 const isLastRow = Math.floor(i / 2) === Math.floor((socialLinks.length - 1) / 2);
                 return (
-                  <a
+                  <div
                     key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`group flex min-h-44 flex-col justify-between bg-background p-6 transition-colors hover:bg-muted sm:p-8 border-border ${!isLastInRow ? 'sm:border-r' : ''} ${!isLastRow ? 'border-b sm:border-b' : 'border-b sm:border-b-0'}`}
+                    className={`flex min-h-44 flex-col justify-between bg-background p-6 sm:p-8 border-border ${!isLastInRow ? 'sm:border-r' : ''} ${!isLastRow ? 'border-b sm:border-b' : 'border-b sm:border-b-0'}`}
                   >
                     <span className="text-sm text-muted-foreground">{link.handle}</span>
-                    <span className="flex items-center justify-between text-2xl font-semibold tracking-tight">
+                    <SplitTextLink
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full items-center justify-between text-2xl font-semibold tracking-tight text-foreground"
+                      textClassName="justify-between"
+                      activeTextClassName="text-muted-foreground"
+                      icon={<ArrowUpRight className="h-5 w-5" />}
+                    >
                       {link.label}
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true" className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M7 17 17 7m0 0H8m9 0v9" />
-                      </svg>
-                    </span>
-                  </a>
+                    </SplitTextLink>
+                  </div>
                 );
               })}
             </div>

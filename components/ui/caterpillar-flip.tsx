@@ -98,7 +98,6 @@ export function CaterpillarFlip({ items }: { items: ReviewSummary[] }) {
     const animation = Flip.from(state, {
       targets,
       fade: true,
-      absoluteOnLeave: true,
       duration: 0.6,
       ease: "power2.out",
       onEnter: (elements) => {
@@ -138,6 +137,9 @@ export function CaterpillarFlip({ items }: { items: ReviewSummary[] }) {
 
     return () => {
       animation.kill();
+      targets.forEach((element) => {
+        gsap.set(element, { clearProps: "all" });
+      });
       isAnimatingRef.current = false;
       flipStateRef.current = null;
     };

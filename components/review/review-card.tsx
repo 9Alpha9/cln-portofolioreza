@@ -93,7 +93,9 @@ export function ReviewCard({
           <div className="flex flex-wrap items-center gap-4 text-[10px] tracking-widest uppercase text-muted-foreground font-mono">
             <span>{review.category}</span>
             {review.featured && (
-              <span className="text-accent">* FEATURED</span>
+              <span className="border border-border bg-background px-2 py-0.5 font-mono text-[9px] font-bold tracking-widest text-green">
+                FEATURED
+              </span>
             )}
           </div>
           {review.score && (

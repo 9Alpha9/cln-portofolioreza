@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { SplitTextLink } from "@/components/ui/split-text-link";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 
@@ -72,13 +73,14 @@ export function Footer() {
               <br />
               bukti, bukan hype.
             </h2>
-            <Link
+            {/* <SplitTextLink
               href="/reviews"
               className="group mt-10 inline-flex items-center gap-3 border-b border-background pb-2 text-sm font-semibold transition-opacity hover:opacity-60"
+              textClassName="flex items-center"
+              activeTextClassName="text-background"
             >
               Mulai eksplorasi
-              <ArrowUpRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1" />
-            </Link>
+            </SplitTextLink> */}
           </div>
 
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:col-span-5 lg:col-start-8">
@@ -99,48 +101,50 @@ export function Footer() {
           </div>
         </div>
 
-        <div data-footer-reveal className="flex flex-col gap-8 py-7 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex flex-row items-start gap-6">
+        <div data-footer-reveal className="flex flex-col gap-6 py-7 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:items-start sm:gap-6 sm:text-left">
             <img
               src="/logos/tahutechs-logos.png"
               alt="TahuTech"
-              className="w-full max-w-[60px]"
+              className="w-[60px] shrink-0"
             />
-            <p className="mt-2 text-xs text-background/50">© 2026 Gaming Gear Review. Indonesia.</p>
+            <p className="text-xs leading-relaxed text-background/50 sm:mt-2">© 2026 Gaming Gear Review. Indonesia.</p>
           </div>
-          <div className="flex items-center gap-4">
-            {socialLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={link.label}
-                className="text-background/60 transition-colors hover:text-background"
-              >
-                {link.label === "Instagram" ? (
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5" stroke="currentColor" strokeWidth="1.8">
-                    <rect x="3" y="3" width="18" height="18" rx="5" />
-                    <circle cx="12" cy="12" r="4" />
-                    <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-                  </svg>
-                ) : link.label === "YouTube" ? (
-                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5" stroke="currentColor" strokeWidth="1.8">
-                    <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25a29 29 0 0 0-.46-5.33z" />
-                    <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" stroke="none" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="currentColor">
-                    <path d="M19.32 5.56a5.57 5.57 0 0 1-3.15-1.76A5.48 5.48 0 0 1 14.8.94h-3.26v14.18a2.7 2.7 0 1 1-1.86-2.57V9.24a6.04 6.04 0 1 0 5.12 5.98V8.03a8.76 8.76 0 0 0 5.12 1.65V6.42c-.2 0-.4-.03-.6-.06Z" />
-                  </svg>
-                )}
-              </a>
-            ))}
+          <div className="flex flex-col items-center gap-4 sm:items-end">
+            <div className="flex items-center gap-5">
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={link.label}
+                  className="text-background/60 transition-colors hover:text-background"
+                >
+                  {link.label === "Instagram" ? (
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5" stroke="currentColor" strokeWidth="1.8">
+                      <rect x="3" y="3" width="18" height="18" rx="5" />
+                      <circle cx="12" cy="12" r="4" />
+                      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                    </svg>
+                  ) : link.label === "YouTube" ? (
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" className="h-5 w-5" stroke="currentColor" strokeWidth="1.8">
+                      <path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.4 19c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.25a29 29 0 0 0-.46-5.33z" />
+                      <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor" stroke="none" />
+                    </svg>
+                  ) : (
+                    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5" fill="currentColor">
+                      <path d="M19.32 5.56a5.57 5.57 0 0 1-3.15-1.76A5.48 5.48 0 0 1 14.8.94h-3.26v14.18a2.7 2.7 0 1 1-1.86-2.57V9.24a6.04 6.04 0 1 0 5.12 5.98V8.03a8.76 8.76 0 0 0 5.12 1.65V6.42c-.2 0-.4-.03-.6-.06Z" />
+                    </svg>
+                  )}
+                </a>
+              ))}
+            </div>
             <a
               href="https://www.bagian.web.id/"
               target="_blank"
               rel="noopener noreferrer"
-              className="font-mono text-[10px] tracking-[0.18em] text-background/50 transition-opacity hover:opacity-100 hover:underline"
+              className="font-mono text-[9px] tracking-[0.14em] text-background/50 transition-opacity hover:opacity-100 hover:underline sm:text-[10px] sm:tracking-[0.18em]"
             >
               CREATED BY BAGIAN CORPS
             </a>

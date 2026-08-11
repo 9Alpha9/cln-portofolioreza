@@ -2,10 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import { Sun, Moon } from "lucide-react";
+import { SplitTextLink } from "@/components/ui/split-text-link";
 
 const navItems = [
   { href: "/", label: "Home" },
@@ -19,7 +20,7 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
 
   const navRef = useRef<HTMLElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
@@ -117,6 +118,8 @@ export function Navbar() {
       if (!open) return;
     }
 
+    const mobileLinks = Array.from(panel.querySelectorAll<HTMLElement>("[data-mobile-link]"));
+
     menuTlRef.current?.kill();
     const tl = gsap.timeline();
     menuTlRef.current = tl;
@@ -129,14 +132,14 @@ export function Navbar() {
         .to(backdrop, { opacity: 1, duration: 0.4, ease: "power2.out" }, 0)
         .to(panel, { x: 0, opacity: 1, duration: 0.6, ease: "power4.out" }, "<0.05")
         .fromTo(
-          "[data-mobile-link]",
+          mobileLinks,
           { y: 30, x: 0, opacity: 0 },
           { y: 0, x: 0, opacity: 1, duration: 0.5, stagger: 0.08, ease: "power3.out" },
           "-=0.35"
         );
     } else {
       // Morph X back to Hamburger & slide right to 100% to close
-      tl.to("[data-mobile-link]", {
+      tl.to(mobileLinks, {
         x: 60,
         opacity: 0,
         duration: 0.3,
@@ -160,13 +163,12 @@ export function Navbar() {
   useEffect(() => {
     const handleCloseMenu = () => setOpen(false);
     window.addEventListener("close-mobile-menu", handleCloseMenu);
-    if (!open) return;
     window.addEventListener("popstate", handleCloseMenu);
     return () => {
       window.removeEventListener("close-mobile-menu", handleCloseMenu);
       window.removeEventListener("popstate", handleCloseMenu);
     };
-  }, [open]);
+  }, []);
 
   const handleClose = () => setOpen(false);
 
@@ -206,18 +208,14 @@ export function Navbar() {
             aria-label="Main navigation"
           >
             {navItems.map((item) => (
-              <Link
+              <SplitTextLink
                 key={item.href}
                 href={item.href}
-                className="group relative px-4 py-2 text-sm font-medium text-muted-foreground transition-all duration-300 hover:text-foreground rounded-full overflow-hidden"
+                className="relative rounded-full px-4 py-2 text-sm font-medium text-muted-foreground"
+                activeTextClassName="font-semibold text-foreground"
               >
-                <span className="block h-5 overflow-hidden">
-                  <span className="block transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1/2">
-                    <span className="flex h-5 items-center">{item.label}</span>
-                    <span className="flex h-5 items-center text-foreground font-semibold">{item.label}</span>
-                  </span>
-                </span>
-              </Link>
+                {item.label}
+              </SplitTextLink>
             ))}
           </nav>
 
@@ -251,23 +249,16 @@ export function Navbar() {
             )}
 
             {/* CTA Button */}
-            <Link
+            <SplitTextLink
               ref={ctaRef}
               target="_blank"
               href="https://www.instagram.com/tahutech.idn"
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-foreground text-background text-sm font-medium transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+              className="hidden sm:inline-flex items-center px-5 h-10 rounded-full bg-foreground text-background text-sm font-medium transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-lg group"
+              textClassName="flex items-center"
+              activeTextClassName="text-background"
             >
               Watch Reviews
-              <svg
-                className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2.5}
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </Link>
+            </SplitTextLink>
 
             {/* Mobile Menu Button */}
             <button

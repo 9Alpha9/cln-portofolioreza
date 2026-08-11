@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
+import { SplitTextLink } from "@/components/ui/split-text-link";
 import { onTransitionEnd } from "@/lib/animation-sync";
 
 type BentoItem = {
@@ -134,8 +135,6 @@ function BentoCard({ item }: { item: BentoItem }) {
 
 export function BentoGrid() {
   const sectionRef = useRef<HTMLElement>(null);
-  const btnRef = useRef<HTMLAnchorElement>(null);
-  const btnTextRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -169,24 +168,6 @@ export function BentoGrid() {
     };
   }, []);
 
-  const handleBtnEnter = () => {
-    if (!btnTextRef.current) return;
-    gsap.to(btnTextRef.current, {
-      y: "-50%",
-      duration: 0.4,
-      ease: "power3.inOut",
-    });
-  };
-
-  const handleBtnLeave = () => {
-    if (!btnTextRef.current) return;
-    gsap.to(btnTextRef.current, {
-      y: "0%",
-      duration: 0.4,
-      ease: "power3.inOut",
-    });
-  };
-
   return (
     <section ref={sectionRef} className="mt-24 w-full py-12 sm:mt-32 sm:py-16">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
@@ -201,22 +182,14 @@ export function BentoGrid() {
           ))}
         </div>
         <div className="mt-12 flex justify-center">
-          <Link
+          <SplitTextLink
             href="/reviews"
-            ref={btnRef}
-            onMouseEnter={handleBtnEnter}
-            onMouseLeave={handleBtnLeave}
-            className="group relative inline-flex h-12 w-[220px] items-center justify-center overflow-hidden rounded-full bg-foreground text-background text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-muted"
+            className="h-12 w-[220px] items-center justify-center rounded-full bg-foreground px-8 text-xs uppercase tracking-wider text-background transition-colors hover:bg-muted"
+            textClassName="justify-center"
+            activeTextClassName="text-background"
           >
-            <div ref={btnTextRef} className="absolute left-0 top-0 w-full">
-              <span className="flex h-12 w-full items-center justify-center">
-                Lihat Lebih Banyak
-              </span>
-              <span className="flex h-12 w-full items-center justify-center">
-                Lihat Lebih Banyak
-              </span>
-            </div>
-          </Link>
+            Lihat Lebih Banyak
+          </SplitTextLink>
         </div>
       </div>
     </section>

@@ -268,15 +268,15 @@ export function TierListClient({ reviews }: TierListClientProps) {
           </>
         ) : (
           <>
-          <div className="overflow-x-auto border border-border bg-surface">
+          <div className="overflow-x-auto border border-border bg-surface scrollbar-hide">
             <table className="w-full border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-border bg-surface-alt text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <th className="p-4">Produk</th>
-                  <th className="p-4 w-24">Tier</th>
-                  <th className="p-4 w-32">Harga</th>
-                  <th className="p-4 w-32">Ukuran / Layout</th>
-                  <th className="p-4">Sensor / Switch</th>
+                  <th className="p-3 sm:p-4">Produk</th>
+                  <th className="p-3 w-20 sm:p-4 sm:w-24">Tier</th>
+                  <th className="p-3 w-24 sm:p-4 sm:w-32">Harga</th>
+                  <th className="p-4 w-32 hidden md:table-cell">Ukuran / Layout</th>
+                  <th className="p-4 hidden md:table-cell">Sensor / Switch</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border">
@@ -296,33 +296,33 @@ export function TierListClient({ reviews }: TierListClientProps) {
                       className="hover:bg-surface-alt/50 transition-colors cursor-pointer"
                       onClick={() => router.push(`/reviews/${item.slug}`)}
                     >
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <div className="flex items-center gap-3">
                           <img
                             src={item.thumbnail.src}
                             alt={item.thumbnail.alt}
                             className="h-10 w-10 object-cover shrink-0"
                           />
-                          <div>
+                          <div className="min-w-0">
                             <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
                               {item.brand}
                             </span>
-                            <span className="font-heading font-semibold text-foreground">{item.name}</span>
+                            <span className="font-heading font-semibold text-foreground block">{item.name}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="p-4">
+                      <td className="p-3 sm:p-4">
                         <span
                           className={`inline-block px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider ${styling.bg} ${styling.text}`}
                         >
                           {tier}
                         </span>
                       </td>
-                      <td className="p-4 font-mono font-semibold">
+                      <td className="p-3 font-mono text-xs font-semibold whitespace-nowrap sm:p-4 sm:text-sm">
                         {item.priceFrom ? formatCurrency(item.priceFrom) : "—"}
                       </td>
-                      <td className="p-4 text-muted-foreground">{layoutSpec}</td>
-                      <td className="p-4 text-muted-foreground">{sensorSpec}</td>
+                      <td className="p-4 text-muted-foreground hidden md:table-cell">{layoutSpec}</td>
+                      <td className="p-4 text-muted-foreground hidden md:table-cell">{sensorSpec}</td>
                     </tr>
                   );
                 })}

@@ -343,7 +343,24 @@ export const reviews: ReviewMetadata[] = [
     pros: ["Full alumunium", "Gasket mount smooth"],
     cons: ["Sangat berat", "Suara ping out-of-the-box"],
     specifications: [],
-    marketplaces: [],
+    marketplaces: [
+      {
+        platform: "tokopedia",
+        label: "Lihat di Tokopedia",
+        url: "https://tokopedia.com/example",
+        price: 2499000,
+        storeName: "Keychron Official",
+        affiliate: true,
+      },
+      {
+        platform: "shopee",
+        label: "Lihat di Shopee",
+        url: "https://shopee.co.id/example",
+        price: 2550000,
+        storeName: "Keychron Store",
+        affiliate: false,
+      },
+    ],
   },
   {
     slug: "dummy-glorious-gmmk-pro",
@@ -368,7 +385,16 @@ export const reviews: ReviewMetadata[] = [
     pros: ["Rotary knob", "RGB samping estetik"],
     cons: ["Stiff gasket feel", "Stabilizer lengket stock"],
     specifications: [],
-    marketplaces: [],
+    marketplaces: [
+      {
+        platform: "tokopedia",
+        label: "Lihat di Tokopedia",
+        url: "https://tokopedia.com/example",
+        price: 2699000,
+        storeName: "Glorious Official",
+        affiliate: true,
+      },
+    ],
   },
   {
     slug: "dummy-razer-huntsman-v3-pro",
@@ -393,7 +419,24 @@ export const reviews: ReviewMetadata[] = [
     pros: ["Rapid Trigger responsif", "Build alumunium solid"],
     cons: ["Harga premium", "Keycaps ABS tipis"],
     specifications: [],
-    marketplaces: [],
+    marketplaces: [
+      {
+        platform: "tokopedia",
+        label: "Lihat di Tokopedia",
+        url: "https://tokopedia.com/example",
+        price: 3499000,
+        storeName: "Razer Official",
+        affiliate: true,
+      },
+      {
+        platform: "shopee",
+        label: "Lihat di Shopee",
+        url: "https://shopee.co.id/example",
+        price: 3550000,
+        storeName: "Razer Store",
+        affiliate: false,
+      },
+    ],
   },
   {
     slug: "dummy-pulsar-x2v2",
@@ -418,7 +461,24 @@ export const reviews: ReviewMetadata[] = [
     pros: ["Berat 53g sangat ringan", "Optical click anti double-click"],
     cons: ["Coating agak licin", "Baterai standar"],
     specifications: [],
-    marketplaces: [],
+    marketplaces: [
+      {
+        platform: "tokopedia",
+        label: "Lihat di Tokopedia",
+        url: "https://tokopedia.com/example",
+        price: 1299000,
+        storeName: "Pulsar Official",
+        affiliate: true,
+      },
+      {
+        platform: "shopee",
+        label: "Lihat di Shopee",
+        url: "https://shopee.co.id/example",
+        price: 1350000,
+        storeName: "Pulsar Store",
+        affiliate: false,
+      },
+    ],
   },
   {
     slug: "dummy-lamzu-atlantis-og",
@@ -443,7 +503,16 @@ export const reviews: ReviewMetadata[] = [
     pros: ["Shape claw grip sempurna", "Berat 55g"],
     cons: ["Bawah mouse bolong (debu mudah masuk)", "Side button agak mushy"],
     specifications: [],
-    marketplaces: [],
+    marketplaces: [
+      {
+        platform: "tokopedia",
+        label: "Lihat di Tokopedia",
+        url: "https://tokopedia.com/example",
+        price: 1399000,
+        storeName: "Lamzu Official",
+        affiliate: true,
+      },
+    ],
   },
   {
     slug: "dummy-vaxee-xe-wireless",
@@ -468,6 +537,23 @@ export const reviews: ReviewMetadata[] = [
     pros: ["Build quality sangat kokoh", "Koneksi wireless anti-interferensi"],
     cons: ["Berat 76g (cukup berat sekarang)", "Kabel charge tebal kaku"],
     specifications: [],
-    marketplaces: [],
+    marketplaces: [
+      {
+        platform: "tokopedia",
+        label: "Lihat di Tokopedia",
+        url: "https://tokopedia.com/example",
+        price: 1999000,
+        storeName: "Vaxee Official",
+        affiliate: true,
+      },
+      {
+        platform: "shopee",
+        label: "Lihat di Shopee",
+        url: "https://shopee.co.id/example",
+        price: 2050000,
+        storeName: "Vaxee Store",
+        affiliate: false,
+      },
+    ],
   }
 ];

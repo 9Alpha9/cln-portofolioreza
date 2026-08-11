@@ -2,6 +2,7 @@
 
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
+import { SplitTextLink } from "@/components/ui/split-text-link";
 import { gsap } from "@/lib/gsap";
 import { getAllReviews } from "@/lib/reviews";
 import { onTransitionEnd } from "@/lib/animation-sync";
@@ -313,12 +314,14 @@ export function HeroSection() {
             </div>
 
             <div data-hero-right className="flex items-center gap-3">
-              <Link
+              <SplitTextLink
                 href="/reviews"
-                className="inline-flex items-center gap-2 bg-foreground text-background px-6 py-3 rounded-full text-sm font-semibold hover:bg-foreground/90 transition-colors"
+                className="inline-flex items-center gap-2 bg-foreground text-background px-6 h-12 rounded-full text-sm font-semibold hover:bg-foreground/90 transition-colors"
+                textClassName="flex items-center"
+                activeTextClassName="text-background"
               >
                 Lihat Semua Review
-              </Link>
+              </SplitTextLink>
               <Link
                 href="/reviews"
                 className="w-12 h-12 rounded-full bg-muted/20 flex items-center justify-center hover:bg-muted/30 transition-colors"

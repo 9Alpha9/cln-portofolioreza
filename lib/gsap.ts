@@ -6,6 +6,9 @@ if (typeof window !== "undefined") {
   if (!(window as unknown as { __gsapPluginsRegistered?: boolean }).__gsapPluginsRegistered) {
     try {
       gsap.registerPlugin(ScrollTrigger, Flip);
+      ScrollTrigger.config({
+        autoRefreshEvents: "visibilitychange,DOMContentLoaded,load",
+      });
       (window as unknown as { __gsapPluginsRegistered: boolean }).__gsapPluginsRegistered = true;
     } catch {}
   }

@@ -4,7 +4,7 @@ import { useState, useMemo, useCallback, type ReactNode } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
-import { GsapReveal, StaggerReveal, StaggerItem } from "@/components/animation";
+import { StaggerReveal, StaggerItem } from "@/components/animation";
 import { categories } from "@/data/categories";
 import { brands } from "@/data/brands";
 import { formatCurrency } from "@/lib/formatters";
@@ -465,8 +465,8 @@ function ReviewCardLink({ review }: { review: ReviewSummary }) {
             {review.category}
           </span>
           {review.featured && (
-            <span className="bg-foreground px-2 py-1 text-[9px] font-semibold uppercase tracking-widest text-background">
-              Featured
+            <span className="border-b border-l border-border bg-background px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase text-green">
+              FEATURED
             </span>
           )}
         </div>
