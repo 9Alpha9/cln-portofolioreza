@@ -23,9 +23,9 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
       gestureOrientation: "vertical",
       smoothWheel: true,
       wheelMultiplier: 0.85,
-      touchMultiplier: 1.5,
+      touchMultiplier: 1,
       syncTouch: true,
-      syncTouchLerp: 0.075,
+      syncTouchLerp: 0.12,
     });
     lenisRef.current = lenis;
     window.__lenis = lenis;
