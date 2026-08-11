@@ -10,6 +10,7 @@ import { MediaIndicator } from "@/components/ui/media-indicator";
 import instagramMedia from "@/data/instagram-media.json";
 
 type InstagramMedia = {
+  id: string;
   media_type: string;
   media_url: string;
   thumbnail_url?: string;
@@ -114,15 +115,18 @@ export function ReviewedGears() {
     return () => ctx.revert();
   }, []);
 
-  const togglePlay = () => {
-    if (videoRef.current) {
-      if (videoRef.current.paused) {
-        videoRef.current.play();
-        setIsPlaying(true);
-      } else {
-        videoRef.current.pause();
+  const togglePlay = async () => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (video.paused) {
+      try {
+        await video.play();
+      } catch {
         setIsPlaying(false);
       }
+    } else {
+      video.pause();
     }
   };
 
@@ -147,11 +151,12 @@ export function ReviewedGears() {
         >
           <CursorIndicator
             variant={isPlaying ? "pause" : "play"}
-            className="h-full w-full cursor-none"
+            className="isolate h-full w-full cursor-none"
           >
           <video
             ref={videoRef}
             src={latestVideo?.media_url ?? "/videos/vid-2.mp4"}
+            poster={latestVideo ? `/images/instagram/${latestVideo.id}.jpg` : undefined}
             muted={isMuted}
             loop
             playsInline
@@ -159,11 +164,24 @@ export function ReviewedGears() {
             onLoadedMetadata={(e) => {
               e.currentTarget.currentTime = 0.1;
             }}
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
             onEnded={() => setIsPlaying(false)}
+            onError={() => setIsPlaying(false)}
             suppressHydrationWarning
             style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
             className="absolute inset-0 z-0 outline-none border-none"
           />
+          {latestVideo && (
+            <img
+              src={`/images/instagram/${latestVideo.id}.jpg`}
+              alt="Thumbnail video Instagram Tahutech"
+              loading="eager"
+              fetchPriority="high"
+              decoding="sync"
+              className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? "opacity-0" : "opacity-100"}`}
+            />
+          )}
           <button
             type="button"
             onClick={togglePlay}

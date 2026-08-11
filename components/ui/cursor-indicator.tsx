@@ -60,7 +60,7 @@ export function CursorIndicator({ variant, className, children }: CursorIndicato
       <MediaIndicator
         ref={indicatorRef}
         variant={variant}
-        className="absolute left-0 top-0 scale-0 opacity-0"
+        className="absolute left-0 top-0 z-50 scale-0 opacity-0"
       />
     </div>
   );

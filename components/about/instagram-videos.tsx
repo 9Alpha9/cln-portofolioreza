@@ -95,63 +95,69 @@ export function InstagramVideos({ videos }: { videos: InstagramVideo[] }) {
       </div>
 
       <div className="sm:hidden">
-      {mounted && (
-        <Swiper
-          slidesPerView={1.15}
-          spaceBetween={16}
-          centeredSlides
-          grabCursor
-          watchSlidesProgress
-          onSlideChange={(swiper) => setSlideIndex(swiper.activeIndex)}
-          className="-mx-4 !overflow-hidden px-4"
-        >
-          {videos.map((video, index) => (
-            <SwiperSlide key={video.id} className="!h-auto">
-              <div
-                className="group relative aspect-[4/5] cursor-pointer select-none overflow-hidden border border-border bg-surface-alt"
-                onPointerDown={(event) => {
-                  swipeStartRef.current = { x: event.clientX, y: event.clientY };
-                  isSwipingRef.current = false;
-                }}
-                onPointerUp={(event) => {
-                  const dx = event.clientX - swipeStartRef.current.x;
-                  const dy = event.clientY - swipeStartRef.current.y;
-                  if (Math.abs(dx) > 8 || Math.abs(dy) > 8) isSwipingRef.current = true;
-                }}
-                onClick={() => toggleVideo(index)}
-              >
-                <video
-                  ref={(element) => { mobileVideoRefs.current[index] = element; }}
-                  src={video.media_url}
-                  loop
-                  playsInline
-                  preload="auto"
-                  suppressHydrationWarning
-                  onLoadedMetadata={(event) => {
-                    event.currentTarget.currentTime = 0.1;
+        {mounted && (
+          <Swiper
+            slidesPerView={1.15}
+            spaceBetween={16}
+            centeredSlides
+            grabCursor
+            watchSlidesProgress
+            onSlideChange={(swiper) => setSlideIndex(swiper.activeIndex)}
+            className="-mx-4 !overflow-hidden px-4"
+          >
+            {videos.map((video, index) => (
+              <SwiperSlide key={video.id} className="!h-auto">
+                <div
+                  className="group relative aspect-[4/6] cursor-pointer select-none overflow-hidden border border-border bg-surface-alt"
+                  onPointerDown={(event) => {
+                    swipeStartRef.current = { x: event.clientX, y: event.clientY };
+                    isSwipingRef.current = false;
                   }}
-                  onPause={() => setIndicatorState(index, false)}
-                  onPlay={() => setIndicatorState(index, true)}
-                  className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-                />
+                  onPointerUp={(event) => {
+                    const dx = event.clientX - swipeStartRef.current.x;
+                    const dy = event.clientY - swipeStartRef.current.y;
+                    if (Math.abs(dx) > 8 || Math.abs(dy) > 8) isSwipingRef.current = true;
+                  }}
+                  onClick={() => toggleVideo(index)}
+                >
+                  <video
+                    ref={(element) => { mobileVideoRefs.current[index] = element; }}
+                    src={video.media_url}
+                    poster={`/images/instagram/${video.id}.jpg`}
+                    loop
+                    playsInline
+                    preload="auto"
+                    suppressHydrationWarning
+                    onLoadedMetadata={(event) => {
+                      event.currentTarget.currentTime = 0.1;
+                    }}
+                    onPause={() => setIndicatorState(index, false)}
+                    onPlay={() => setIndicatorState(index, true)}
+                    className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+                  />
+                  <img
+                    src={`/images/instagram/${video.id}.jpg`}
+                    alt={video.caption?.split("\n")[0] || "Thumbnail video Instagram Tahutech"}
+                    className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${playingIndex === index ? "opacity-0" : "opacity-100"}`}
+                  />
 
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                  <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">Instagram Reel</span>
-                  <p className="mt-2 line-clamp-2 text-sm font-medium text-white">{video.caption?.split("\n")[0] || "Lihat video terbaru Tahutech"}</p>
-                  <Link href={video.permalink} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()} className="pointer-events-auto mt-4 inline-block cursor-pointer text-xs font-semibold uppercase tracking-wider text-white/80 hover:text-white">
-                    Buka Instagram ↗
-                  </Link>
-                </div>
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                  <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">Instagram Reel</span>
+                    <p className="mt-2 line-clamp-2 text-sm font-medium text-white">{video.caption?.split("\n")[0] || "Lihat video terbaru Tahutech"}</p>
+                    <Link href={video.permalink} target="_blank" rel="noopener noreferrer" onClick={(event) => event.stopPropagation()} className="pointer-events-auto mt-4 inline-block cursor-pointer text-xs font-semibold uppercase tracking-wider text-white/80 hover:text-white">
+                      Buka Instagram ↗
+                    </Link>
+                  </div>
 
-                <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
-                  <MediaIndicator variant={playingIndex === index ? "pause" : "play"} />
+                  <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2">
+                    <MediaIndicator variant={playingIndex === index ? "pause" : "play"} />
+                  </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      )}
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
 
       {/* Desktop grid */}
@@ -160,12 +166,13 @@ export function InstagramVideos({ videos }: { videos: InstagramVideo[] }) {
           <CursorIndicator
             key={video.id}
             variant={playingIndex === index ? "pause" : "play"}
-            className="aspect-[4/5] cursor-none select-none overflow-hidden border border-border bg-surface-alt"
+            className="aspect-[4/6] cursor-none select-none overflow-hidden border border-border bg-surface-alt"
           >
             <div onClick={() => toggleVideo(index)} className="h-full w-full">
               <video
                 ref={(element) => { desktopVideoRefs.current[index] = element; }}
                 src={video.media_url}
+                poster={`/images/instagram/${video.id}.jpg`}
                 loop
                 playsInline
                 preload="auto"
@@ -176,6 +183,11 @@ export function InstagramVideos({ videos }: { videos: InstagramVideo[] }) {
                 onPause={() => setIndicatorState(index, false)}
                 onPlay={() => setIndicatorState(index, true)}
                 className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+              />
+              <img
+                src={`/images/instagram/${video.id}.jpg`}
+                alt={video.caption?.split("\n")[0] || "Thumbnail video Instagram Tahutech"}
+                className={`pointer-events-none absolute inset-0 h-full w-full object-cover transition-opacity duration-300 ${playingIndex === index ? "opacity-0" : "opacity-100"}`}
               />
 
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />

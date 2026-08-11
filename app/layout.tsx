@@ -22,14 +22,30 @@ export const metadata: Metadata = {
   },
   description:
     "Portfolio review peripheral dan gaming gear. Temukan gear, pahami hasil review, tonton videonya, lalu pilih tempat membeli.",
-  metadataBase: new URL("https://gaminggear.review"),
+  metadataBase: new URL("https://www.tahutechsetup.my.id"),
   openGraph: {
     type: "website",
     locale: "id_ID",
     siteName: "Gaming Gear Review",
+    title: "TahuTech.IDN | Gaming Gear Review",
+    description:
+      "Portfolio review peripheral dan gaming gear. Temukan gear, pahami hasil review, tonton videonya, lalu pilih tempat membeli.",
+    url: "https://www.tahutechsetup.my.id",
+    images: [
+      {
+        url: "/images/og/www.tahutechsetup.my.id-og.png",
+        width: 1731,
+        height: 909,
+        alt: "TahuTech.IDN Gaming Gear Review",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
+    title: "TahuTech.IDN | Gaming Gear Review",
+    description:
+      "Portfolio review peripheral dan gaming gear. Temukan gear, pahami hasil review, tonton videonya, lalu pilih tempat membeli.",
+    images: ["/images/og/www.tahutechsetup.my.id-og.png"],
   },
   robots: {
     index: true,

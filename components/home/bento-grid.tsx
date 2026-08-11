@@ -184,7 +184,7 @@ export function BentoGrid() {
         <div className="mt-12 flex justify-center">
           <SplitTextLink
             href="/reviews"
-            className="h-12 w-[220px] items-center justify-center rounded-full bg-foreground px-8 text-xs uppercase tracking-wider text-background transition-colors hover:bg-muted"
+            className="h-12 w-[220px] items-center justify-center rounded-full bg-foreground px-8 text-xs uppercase tracking-wider text-background transition-opacity hover:opacity-85"
             textClassName="justify-center"
             activeTextClassName="text-background"
           >
