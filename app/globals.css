@@ -192,11 +192,6 @@ h6 {
   font-family: var(--font-heading), Georgia, serif;
 }
 
-html,
-body {
-  /* overflow-x: hidden removed to allow position: sticky to work */
-}
-
 @keyframes marquee-scroll {
   to {
     transform: translate3d(-50%, 0, 0);
@@ -372,54 +367,6 @@ a {
 }
 
 /* ══════════════════════════════════════════════
-   CAROUSEL (TLB-style)
-   ══════════════════════════════════════════════ */
-.carousel-item {
-  perspective: 1000px;
-  transform-style: preserve-3d;
-}
-
-.label {
-  font-family: var(--font-inter), sans-serif;
-  font-size: clamp(0.75rem, 0.875rem, 14px);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 400;
-}
-
-.media {
-  contain: content;
-}
-
-.media-fill img {
-  height: 100%;
-  left: 0;
-  object-fit: cover;
-  position: absolute;
-  top: 0;
-  width: 100%;
-}
-
-.mb-15 {
-  margin-bottom: 1.5rem;
-}
-
-.mt-15 {
-  margin-top: 1.5rem;
-}
-
-/* ══════════════════════════════════════════════
-   GRID (kept subtle for dark mode)
-   ══════════════════════════════════════════════ */
-.arcade-grid {
-  background-image: none;
-}
-
-.dark .arcade-grid {
-  background-image: none;
-}
-
-/* ══════════════════════════════════════════════
    SCROLLBAR (HIDDEN FOR LENIS)
    ══════════════════════════════════════════════ */
 ::-webkit-scrollbar {
@@ -504,29 +451,4 @@ a {
 
 .tier-swiper .swiper-slide {
   height: auto;
-}
-
-.tier-swiper .swiper-pagination {
-  bottom: 0.5rem;
-}
-
-.tier-swiper .swiper-pagination-bullet {
-  background: hsl(var(--foreground) / 0.4);
-  width: 8px;
-  height: 8px;
-  opacity: 0.6;
-}
-
-.tier-swiper .swiper-pagination-bullet-active {
-  background: hsl(var(--foreground));
-  opacity: 1;
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-  .tier-swiper .tl-card-img,
-  .tier-swiper .tl-card-body {
-    transition: none !important;
-    animation: none !important;
-  }
 }

@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { SplitTextLink } from "@/components/ui/split-text-link";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 
