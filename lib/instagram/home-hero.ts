@@ -59,7 +59,7 @@ export function getHomeHeroItems(reviews: ReviewSummary[]): HomeHeroItem[] {
       ? `Review Terbaru: ${match.review.name}`
       : getCaptionTitle(item.caption),
         videoUrl: item.media_url,
-        thumbnailUrl: item.thumbnail_url,
+        thumbnailUrl: `/api/instagram/thumbnail/${item.id}`,
         permalink: item.permalink,
         href: match ? `/reviews/${match.review.slug}` : item.permalink,
       };
