@@ -55,7 +55,9 @@ export function getHomeHeroItems(reviews: ReviewSummary[]): HomeHeroItem[] {
 
       return {
         id: item.id,
-        title: match?.review.name ?? getCaptionTitle(item.caption),
+        title: match
+      ? `Review Terbaru: ${match.review.name}`
+      : getCaptionTitle(item.caption),
         videoUrl: item.media_url,
         thumbnailUrl: item.thumbnail_url,
         permalink: item.permalink,

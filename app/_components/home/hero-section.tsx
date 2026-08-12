@@ -323,7 +323,7 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
                   REVIEW TERBARU
                 </p>
                 <p className="text-sm font-semibold mt-1 line-clamp-2 text-black">
-                  {items[activeIndex]?.title}
+                  {items[activeIndex]?.title.replace(/^review terbaru:\s*/i, "")}
                 </p>
               </div>
             </div>
