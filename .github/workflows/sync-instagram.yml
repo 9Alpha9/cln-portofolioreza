@@ -29,10 +29,26 @@ jobs:
       - name: Install instaloader
         run: python -m pip install --disable-pip-version-check instaloader
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install Node dependencies
+        run: npm ci
+
       - name: Fetch Instagram Media
         env:
           INSTAGRAM_USERNAME: tahutech.idn
+          INSTAGRAM_STRICT: "true"
         run: python scripts/sync-instagram.py
+
+      - name: Upload latest videos to Vercel Blob
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+          INSTAGRAM_BLOB_MAX_VIDEOS: "3"
+        run: node scripts/upload-instagram-videos.mjs
 
       - name: Commit and push if changed
         run: |

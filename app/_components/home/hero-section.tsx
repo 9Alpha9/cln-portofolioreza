@@ -5,13 +5,7 @@ import Link from "next/link";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
-import type { ReviewSummary } from "@/types";
-
-const VIDEO_SOURCES = [
-  "/videos/vid-2.mp4",
-  "/videos/vid-1.mp4",
-  "/videos/vid-3.mp4",
-];
+import type { HomeHeroItem } from "@/lib/instagram/home-hero";
 
 const OFFSET_STYLE: Record<
   number,
@@ -23,22 +17,23 @@ const OFFSET_STYLE: Record<
 };
 
 interface HeroSectionProps {
-  initialReviews?: ReviewSummary[];
+  items?: HomeHeroItem[];
 }
 
-export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
+export function HeroSection({ items = [] }: HeroSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stackContainerRef = useRef<HTMLDivElement>(null);
   const customCursorRef = useRef<HTMLDivElement>(null);
+  const marqueeCircleRef = useRef<SVGSVGElement>(null);
   const activeIndexRef = useRef(0);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
+  const [failedVideoIds, setFailedVideoIds] = useState<Set<string>>(() => new Set());
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
 
-  const reviews = initialReviews.slice(0, 3);
-  const total = reviews.length;
+  const total = items.length;
 
   useEffect(() => {
     activeIndexRef.current = activeIndex;
@@ -100,6 +95,24 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
     };
   }, []);
 
+  useEffect(() => {
+    const marquee = marqueeCircleRef.current;
+    if (!marquee || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
+
+    const animation = gsap.to(marquee, {
+      rotation: 360,
+      duration: 28,
+      ease: "none",
+      repeat: -1,
+      transformOrigin: "50% 50%",
+      force3D: true,
+    });
+
+    return () => {
+      animation.kill();
+    };
+  }, []);
+
   // Custom Cursor & Drag Logic via GSAP
   useEffect(() => {
     const cursor = customCursorRef.current;
@@ -155,7 +168,7 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
       }
       const diffX = e.clientX - dragStart.current.x;
       const diffY = e.clientY - dragStart.current.y;
-      if (Math.abs(diffX) < 40 || Math.abs(diffX) <= Math.abs(diffY)) return;
+      if (total < 2 || Math.abs(diffX) < 40 || Math.abs(diffX) <= Math.abs(diffY)) return;
       setActiveIndex((prev) =>
         diffX > 0 ? (prev - 1 + total) % total : (prev + 1) % total
       );
@@ -228,8 +241,9 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
               className="absolute inset-0 pointer-events-none z-0"
             >
               <svg
+                ref={marqueeCircleRef}
                 viewBox="0 0 600 600"
-                className="w-full h-full opacity-25"
+                className="h-full w-full opacity-25"
                 style={{ transform: "rotate(-10deg)" }}
               >
                 <defs>
@@ -239,19 +253,11 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
                     fill="none"
                   />
                 </defs>
-                <text className="fill-muted text-xs tracking-[0.3em] uppercase font-mono">
-                  <textPath href="#curve" startOffset="0%">
-                    KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR
-                    REVIEW •{" "}
-                    <animate
-                      attributeName="startOffset"
-                      from="0%"
-                      to="100%"
-                      dur="20s"
-                      repeatCount="indefinite"
-                    />
-                  </textPath>
-                </text>
+                  <text className="fill-muted text-xs tracking-[0.3em] uppercase font-mono">
+                    <textPath href="#curve" startOffset="0%">
+                      KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR REVIEW • CONTROLLER REVIEW • KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR REVIEW • CONTROLLER REVIEW •
+                    </textPath>
+                  </text>
               </svg>
             </div>
 
@@ -260,12 +266,12 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
               ref={stackContainerRef}
               className="relative w-60 sm:w-96 h-[420px] sm:h-[680px] select-none touch-pan-y"
             >
-              {reviews.map((review, i) => {
+              {items.map((item, i) => {
                 const offset = (((i - activeIndex) % total) + total) % total;
                 const style = OFFSET_STYLE[offset];
                 return (
                   <div
-                    key={review.slug}
+                    key={item.id}
                     data-card
                     data-offset={offset}
                     className="absolute inset-0 rounded-[2rem] overflow-hidden shadow-2xl transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
@@ -275,18 +281,31 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
                       opacity: style.opacity,
                     }}
                   >
-                    <video
-                      ref={(el) => { videoRefs.current[i] = el; }}
-                      className="w-full h-full object-cover pointer-events-none"
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                      style={{ width: "100%", height: "100%" }}
-                    >
-                      <source src={VIDEO_SOURCES[i]} type="video/mp4" />
-
-                    </video>
+                    {failedVideoIds.has(item.id) ? (
+                      item.thumbnailUrl ? (
+                        <img
+                          src={item.thumbnailUrl}
+                          alt={item.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : null
+                    ) : (
+                      <video
+                        ref={(el) => { videoRefs.current[i] = el; }}
+                        className="w-full h-full object-cover pointer-events-none"
+                        muted
+                        loop
+                        playsInline
+                        poster={item.thumbnailUrl}
+                        preload="metadata"
+                        onError={() => {
+                          setFailedVideoIds((current) => new Set(current).add(item.id));
+                        }}
+                        style={{ width: "100%", height: "100%" }}
+                      >
+                        <source src={item.videoUrl} type="video/mp4" />
+                      </video>
+                    )}
                   </div>
                 );
               })}
@@ -304,7 +323,7 @@ export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
                   REVIEW TERBARU
                 </p>
                 <p className="text-sm font-semibold mt-1 line-clamp-2 text-black">
-                  {reviews[activeIndex]?.name}
+                  {items[activeIndex]?.title}
                 </p>
               </div>
             </div>
