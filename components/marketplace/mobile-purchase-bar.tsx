@@ -115,7 +115,7 @@ export function MobilePurchaseBar({ price, offers }: MobilePurchaseBarProps) {
     };
   }, [isOpen, closeSheet]);
 
-  if (!price || offers.length === 0) return null;
+  if (price === undefined || offers.length === 0) return null;
 
   return (
     <>

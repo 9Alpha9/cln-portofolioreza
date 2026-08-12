@@ -29,10 +29,14 @@ function PlatformBadgeSmall({ platform }: { platform: ShopPlatform }) {
   );
 }
 
-export default function ShopPage() {
-  const platforms = shopPlatforms
-    .map((p) => ({ ...p, offers: getOffersByPlatform(p.id) }))
-    .filter((p) => p.offers.length > 0);
+export default async function ShopPage() {
+  const platformsWithOffers = await Promise.all(
+    shopPlatforms.map(async (p) => ({
+      ...p,
+      offers: await getOffersByPlatform(p.id),
+    }))
+  );
+  const platforms = platformsWithOffers.filter((p) => p.offers.length > 0);
 
   return (
     <div className="min-h-screen pt-32 pb-16">

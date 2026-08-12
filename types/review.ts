@@ -1,14 +1,6 @@
 export type MarketplacePlatform = "tokopedia" | "shopee" | "tiktok";
 
-export type ReviewCategory =
-  | "keyboard"
-  | "mouse"
-  | "headset"
-  | "microphone"
-  | "monitor"
-  | "controller"
-  | "mousepad"
-  | "accessories";
+export type ReviewCategory = string;
 
 export interface ProductImage {
   src: string;
@@ -49,6 +41,7 @@ export interface ReviewMetadata {
   name: string;
   brand: string;
   category: ReviewCategory;
+  tier?: string;
   shortDescription: string;
   verdict: string;
   score?: number;
@@ -72,8 +65,9 @@ export type ReviewSummary = Pick<
   ReviewMetadata,
   | "slug"
   | "name"
-  | "brand"
+   | "brand"
   | "category"
+  | "tier"
   | "shortDescription"
   | "verdict"
   | "score"

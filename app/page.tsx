@@ -1,20 +1,11 @@
-"use client";
+import { getAllReviews, getFeaturedReviews } from "@/lib/reviews";
+import { HomeClient } from "./home-client";
 
-import { useEffect } from "react";
-import { HeroSection } from "@/components/home/hero-section";
-import { BentoGrid } from "@/components/home/bento-grid";
-import { ReviewedGears } from "@/components/home/reviewed-gears";
+export default async function Home() {
+  const [reviews, featuredReviews] = await Promise.all([
+    getAllReviews(),
+    getFeaturedReviews(),
+  ]);
 
-export default function Home() {
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  return (
-    <main>
-      <HeroSection />
-      <ReviewedGears />
-      <BentoGrid />
-    </main>
-  );
+  return <HomeClient reviews={reviews} featuredReviews={featuredReviews} />;
 }

@@ -22,7 +22,8 @@ interface ReviewDetailPageProps {
 }
 
 export async function generateStaticParams() {
-  return getAllSlugs().map((slug) => ({
+  const slugs = await getAllSlugs();
+  return slugs.map((slug) => ({
     slug,
   }));
 }
@@ -31,7 +32,7 @@ export async function generateMetadata({
   params,
 }: ReviewDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const review = getReviewBySlug(slug);
+  const review = await getReviewBySlug(slug);
   if (!review) return {};
 
   return {
@@ -56,13 +57,13 @@ export default async function ReviewDetailPage({
   params,
 }: ReviewDetailPageProps) {
   const { slug } = await params;
-  const review = getReviewBySlug(slug);
+  const review = await getReviewBySlug(slug);
 
   if (!review) {
     notFound();
   }
 
-  const relatedReviews = getRelatedReviews(review);
+  const relatedReviews = await getRelatedReviews(review);
 
   return (
     <>
@@ -130,7 +131,7 @@ export default async function ReviewDetailPage({
                     <h3 className="text-sm font-medium text-muted mb-2">
                       Informasi Harga
                     </h3>
-                    {review.priceFrom ? (
+                    {review.priceFrom !== undefined ? (
                       <p className="text-xl font-semibold">
                         Mulai dari{" "}
                         {new Intl.NumberFormat("id-ID", {

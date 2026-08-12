@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { CaterpillarFlip } from "@/components/ui/caterpillar-flip";
+import { TierListSwipe } from "@/components/ui/tierlist-swipe";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { GsapReveal } from "@/components/animation";
@@ -10,13 +10,21 @@ import { formatCurrency } from "@/lib/formatters";
 import type { ReviewSummary } from "@/types";
 import { Search, LayoutGrid, Table, Trophy, PackageOpen } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
-import { TIER_ORDER, TIER_STYLING, getTierForProduct, TABS, type TierType, type TabValue } from "@/data/tierlist";
+import { TIER_ORDER, TIER_STYLING, TABS, type TierType, type TabValue } from "@/data/tierlist";
 
 interface TierListClientProps {
   reviews: ReviewSummary[];
 }
 
 type ViewMode = "grid" | "table" | "tierlist";
+
+function getReviewTier(review: ReviewSummary): TierType | null {
+  if (review.tier && TIER_ORDER.includes(review.tier as TierType)) {
+    return review.tier as TierType;
+  }
+
+  return null;
+}
 
 export function TierListClient({ reviews }: TierListClientProps) {
   const router = useRouter();
@@ -28,8 +36,7 @@ export function TierListClient({ reviews }: TierListClientProps) {
 
   const filteredReviews = useMemo(() => {
     return reviews.filter((review) => {
-      // Hanya tampilkan yang punya tier
-      const tier = getTierForProduct(review.slug);
+      const tier = getReviewTier(review);
       if (!tier) return false;
 
       if (activeTab !== "All") {
@@ -64,18 +71,13 @@ export function TierListClient({ reviews }: TierListClientProps) {
 
   const groupedByTier = useMemo(() => {
     const groups: Record<TierType, ReviewSummary[]> = {
-      "S+": [],
       S: [],
-      "A+": [],
       A: [],
-      "B+": [],
       B: [],
-      "C+": [],
-      C: [],
-      F: [],
+      D: [],
     };
     filteredReviews.forEach((review) => {
-      const tier = getTierForProduct(review.slug);
+      const tier = getReviewTier(review);
       if (tier) groups[tier].push(review);
     });
     return groups;
@@ -101,11 +103,10 @@ export function TierListClient({ reviews }: TierListClientProps) {
                 setActiveTab(tab.value);
                 setCurrentPage(1);
               }}
-              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all border rounded-full cursor-pointer hover:border-foreground/50 active:scale-95 ${
-                activeTab === tab.value
-                  ? "bg-foreground text-background border-foreground"
-                  : "border-border text-muted-foreground bg-transparent"
-              }`}
+              className={`px-4 py-2 text-xs font-semibold uppercase tracking-wider transition-all border rounded-full cursor-pointer hover:border-foreground/50 active:scale-95 ${activeTab === tab.value
+                ? "bg-foreground text-background border-foreground"
+                : "border-border text-muted-foreground bg-transparent"
+                }`}
             >
               {tab.label}
             </button>
@@ -132,7 +133,7 @@ export function TierListClient({ reviews }: TierListClientProps) {
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-xs text-muted hover:text-foreground"
+                className="absolute right-2 top-1/2 flex h-6 w-6 -translate-y-1/2 items-center justify-center text-xs text-muted hover:text-foreground cursor-pointer"
               >
                 ✕
               </button>
@@ -145,9 +146,8 @@ export function TierListClient({ reviews }: TierListClientProps) {
                 setViewMode("grid");
                 setCurrentPage(1);
               }}
-              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
-                viewMode === "grid" ? "bg-foreground text-background" : "text-muted hover:text-foreground"
-              }`}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${viewMode === "grid" ? "bg-foreground text-background" : "text-muted hover:text-foreground"
+                }`}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
               <span>Grid</span>
@@ -157,9 +157,8 @@ export function TierListClient({ reviews }: TierListClientProps) {
                 setViewMode("table");
                 setCurrentPage(1);
               }}
-              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
-                viewMode === "table" ? "bg-foreground text-background" : "text-muted hover:text-foreground"
-              }`}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${viewMode === "table" ? "bg-foreground text-background" : "text-muted hover:text-foreground"
+                }`}
             >
               <Table className="h-3.5 w-3.5" />
               <span>Tabel</span>
@@ -169,9 +168,8 @@ export function TierListClient({ reviews }: TierListClientProps) {
                 setViewMode("tierlist");
                 setCurrentPage(1);
               }}
-              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${
-                viewMode === "tierlist" ? "bg-foreground text-background" : "text-muted hover:text-foreground"
-              }`}
+              className={`flex items-center gap-2 px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-colors cursor-pointer ${viewMode === "tierlist" ? "bg-foreground text-background" : "text-muted hover:text-foreground"
+                }`}
             >
               <Trophy className="h-3.5 w-3.5" />
               <span>Tier List</span>
@@ -201,7 +199,7 @@ export function TierListClient({ reviews }: TierListClientProps) {
                     </span>
                   </div>
                   <div className="p-4 overflow-hidden">
-                    <CaterpillarFlip key={items.map((i) => i.slug).join("|")} items={items} />
+                    <TierListSwipe key={items.map((i) => i.slug).join("|")} items={items} />
                   </div>
                 </div>
               );
@@ -209,132 +207,136 @@ export function TierListClient({ reviews }: TierListClientProps) {
           </div>
         ) : viewMode === "grid" ? (
           <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
-            {paginatedReviews.map((item) => {
-              const tier = getTierForProduct(item.slug) || "F";
-              const styling = TIER_STYLING[tier];
-              return (
-                <Link
-                  key={item.slug}
-                  href={`/reviews/${item.slug}`}
-                  className="group flex h-full flex-col border border-border hover:border-foreground/50 bg-background transition-colors"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-surface-alt">
-                    <img
-                      src={item.thumbnail.src}
-                      alt={item.thumbnail.alt}
-                      className="tier-card-image h-full w-full object-cover group-hover:scale-[1.015]"
-                    />
-                    <div className="absolute left-0 top-0 flex flex-wrap gap-px">
-                      <span className="bg-background/95 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-foreground">
-                        {item.category}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+              {paginatedReviews.map((item) => {
+                const tier = getReviewTier(item);
+                if (!tier) return null;
+                const styling = TIER_STYLING[tier];
+                return (
+                  <Link
+                    key={item.slug}
+                    href={`/reviews/${item.slug}`}
+                    className="group flex h-full flex-col border border-border hover:border-foreground/50 bg-background transition-colors"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden bg-surface-alt">
+                      <img
+                        src={item.thumbnail.src}
+                        alt={item.thumbnail.alt}
+                        className="tier-card-image h-full w-full object-cover group-hover:scale-[1.015]"
+                      />
+                      <div className="absolute left-0 top-0 flex flex-wrap gap-px">
+                        <span className="bg-background/95 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-foreground">
+                          {item.category}
+                        </span>
+                      </div>
+                      <span
+                        className={`absolute right-2 top-2 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider ${styling.bg} ${styling.text}`}
+                      >
+                        {tier} Tier
                       </span>
                     </div>
-                    <span
-                      className={`absolute right-2 top-2 px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider ${styling.bg} ${styling.text}`}
-                    >
-                      {tier} Tier
-                    </span>
-                  </div>
-                  <div className="flex flex-1 flex-col p-4">
-                    <span className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">
-                      {item.brand}
-                    </span>
-                    <h3 className="font-heading text-base font-bold leading-tight text-foreground transition-colors group-hover:text-muted-foreground mt-0.5">
-                      {item.name}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
-                      {item.verdict}
-                    </p>
-                    <div className="mt-auto pt-3 border-t border-border flex items-center justify-between">
-                      <span className="text-sm font-bold font-mono">
-                        {item.priceFrom ? formatCurrency(item.priceFrom) : "Harga bervariasi"}
+                    <div className="flex flex-1 flex-col p-4">
+                      <span className="text-[9px] font-semibold uppercase tracking-widest text-muted-foreground">
+                        {item.brand}
                       </span>
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-muted group-hover:text-foreground">
-                        Detail
-                      </span>
+                      <h3 className="font-heading text-base font-bold leading-tight text-foreground transition-colors group-hover:text-muted-foreground mt-2">
+                        {item.name}
+                      </h3>
+                      <p className="mt-2 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+                        {item.verdict}
+                      </p>
+                      <div className="mt-10">
+                        <div className="mt-auto pt-3 border-t border-border flex items-center justify-between">
+                          <span className="text-sm font-bold font-mono">
+                            {item.priceFrom ? formatCurrency(item.priceFrom) : "Harga bervariasi"}
+                          </span>
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted group-hover:text-foreground">
+                            Detail
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </Link>
-              );
-            })}
-          </div>
-          <Pagination
-            totalItems={filteredReviews.length}
-            itemsPerPage={ITEMS_PER_PAGE}
-            currentPage={activePage}
-            onPageChange={setCurrentPage}
-          />
+                  </Link>
+                );
+              })}
+            </div>
+            <Pagination
+              totalItems={filteredReviews.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              currentPage={activePage}
+              onPageChange={setCurrentPage}
+            />
           </>
         ) : (
           <>
-          <div className="overflow-x-auto border border-border bg-surface scrollbar-hide">
-            <table className="w-full border-collapse text-left text-sm">
-              <thead>
-                <tr className="border-b border-border bg-surface-alt text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                  <th className="p-3 sm:p-4">Produk</th>
-                  <th className="p-3 w-20 sm:p-4 sm:w-24">Tier</th>
-                  <th className="p-3 w-24 sm:p-4 sm:w-32">Harga</th>
-                  <th className="p-4 w-32 hidden md:table-cell">Ukuran / Layout</th>
-                  <th className="p-4 hidden md:table-cell">Sensor / Switch</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {paginatedReviews.map((item) => {
-                  const tier = getTierForProduct(item.slug) || "F";
-                  const styling = TIER_STYLING[tier];
-                  const layoutSpec = item.specifications
-                    ?.flatMap((g) => g.items)
-                    .find((i) => i.label.toLowerCase() === "layout" || i.label.toLowerCase() === "berat")?.value || "—";
-                  const sensorSpec = item.specifications
-                    ?.flatMap((g) => g.items)
-                    .find((i) => i.label.toLowerCase() === "switch" || i.label.toLowerCase() === "sensor")?.value || "—";
+            <div className="overflow-x-auto border border-border bg-surface scrollbar-hide">
+              <table className="w-full border-collapse text-left text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-surface-alt text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    <th className="p-3 sm:p-4">Produk</th>
+                    <th className="p-3 w-20 sm:p-4 sm:w-24">Tier</th>
+                    <th className="p-3 w-24 sm:p-4 sm:w-32">Harga</th>
+                    <th className="p-4 w-32 hidden md:table-cell">Ukuran / Layout</th>
+                    <th className="p-4 hidden md:table-cell">Sensor / Switch</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border">
+                  {paginatedReviews.map((item) => {
+                    const tier = getReviewTier(item);
+                    if (!tier) return null;
+                    const styling = TIER_STYLING[tier];
+                    const layoutSpec = item.specifications
+                      ?.flatMap((g) => g.items)
+                      .find((i) => i.label.toLowerCase() === "layout" || i.label.toLowerCase() === "berat")?.value || "—";
+                    const sensorSpec = item.specifications
+                      ?.flatMap((g) => g.items)
+                      .find((i) => i.label.toLowerCase() === "switch" || i.label.toLowerCase() === "sensor")?.value || "—";
 
-                  return (
-                    <tr
-                      key={item.slug}
-                      className="hover:bg-surface-alt/50 transition-colors cursor-pointer"
-                      onClick={() => router.push(`/reviews/${item.slug}`)}
-                    >
-                      <td className="p-3 sm:p-4">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={item.thumbnail.src}
-                            alt={item.thumbnail.alt}
-                            className="h-10 w-10 object-cover shrink-0"
-                          />
-                          <div className="min-w-0">
-                            <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-                              {item.brand}
-                            </span>
-                            <span className="font-heading font-semibold text-foreground block">{item.name}</span>
+                    return (
+                      <tr
+                        key={item.slug}
+                        className="hover:bg-surface-alt/50 transition-colors cursor-pointer"
+                        onClick={() => router.push(`/reviews/${item.slug}`)}
+                      >
+                        <td className="p-3 sm:p-4">
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={item.thumbnail.src}
+                              alt={item.thumbnail.alt}
+                              className="h-10 w-10 object-cover shrink-0"
+                            />
+                            <div className="min-w-0">
+                              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
+                                {item.brand}
+                              </span>
+                              <span className="font-heading font-semibold text-foreground block">{item.name}</span>
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                      <td className="p-3 sm:p-4">
-                        <span
-                          className={`inline-block px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider ${styling.bg} ${styling.text}`}
-                        >
-                          {tier}
-                        </span>
-                      </td>
-                      <td className="p-3 font-mono text-xs font-semibold whitespace-nowrap sm:p-4 sm:text-sm">
-                        {item.priceFrom ? formatCurrency(item.priceFrom) : "—"}
-                      </td>
-                      <td className="p-4 text-muted-foreground hidden md:table-cell">{layoutSpec}</td>
-                      <td className="p-4 text-muted-foreground hidden md:table-cell">{sensorSpec}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          <Pagination
-            totalItems={filteredReviews.length}
-            itemsPerPage={ITEMS_PER_PAGE}
-            currentPage={activePage}
-            onPageChange={setCurrentPage}
-          />
+                        </td>
+                        <td className="p-3 sm:p-4">
+                          <span
+                            className={`inline-block px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider ${styling.bg} ${styling.text}`}
+                          >
+                            {tier}
+                          </span>
+                        </td>
+                        <td className="p-3 font-mono text-xs font-semibold whitespace-nowrap sm:p-4 sm:text-sm">
+                          {item.priceFrom ? formatCurrency(item.priceFrom) : "—"}
+                        </td>
+                        <td className="p-4 text-muted-foreground hidden md:table-cell">{layoutSpec}</td>
+                        <td className="p-4 text-muted-foreground hidden md:table-cell">{sensorSpec}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <Pagination
+              totalItems={filteredReviews.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              currentPage={activePage}
+              onPageChange={setCurrentPage}
+            />
           </>
         )}
       </Container>

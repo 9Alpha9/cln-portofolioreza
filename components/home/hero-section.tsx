@@ -4,8 +4,8 @@ import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { gsap } from "@/lib/gsap";
-import { getAllReviews } from "@/lib/reviews";
 import { onTransitionEnd } from "@/lib/animation-sync";
+import type { ReviewSummary } from "@/types";
 
 const VIDEO_SOURCES = [
   "/videos/vid-2.mp4",
@@ -22,7 +22,11 @@ const OFFSET_STYLE: Record<
   2: { x: -66, scale: 0.82, rotate: -9, opacity: 1, z: 1 },
 };
 
-export function HeroSection() {
+interface HeroSectionProps {
+  initialReviews?: ReviewSummary[];
+}
+
+export function HeroSection({ initialReviews = [] }: HeroSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const stackContainerRef = useRef<HTMLDivElement>(null);
   const customCursorRef = useRef<HTMLDivElement>(null);
@@ -33,7 +37,7 @@ export function HeroSection() {
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
 
-  const reviews = getAllReviews().slice(0, 3);
+  const reviews = initialReviews.slice(0, 3);
   const total = reviews.length;
 
   useEffect(() => {

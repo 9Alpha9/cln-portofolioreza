@@ -20,7 +20,7 @@ export function ProductGallery({ images }: { images: ProductImage[] }) {
 
   return (
     <div className="w-full">
-      <div className="relative aspect-[16/10] w-full overflow-hidden border border-border bg-surface-alt">
+      <div className="relative aspect-[8/10] w-full overflow-hidden border border-border bg-surface-alt">
         {slides.map((image, index) => (
           <div
             key={index}
@@ -50,18 +50,16 @@ export function ProductGallery({ images }: { images: ProductImage[] }) {
             onClick={() => setActive(index)}
             aria-label={`Lihat gambar ${index + 1}: ${image.alt}`}
             aria-current={index === active}
-            className={`shrink-0 overflow-hidden border transition-colors ${
-              index === active
-                ? "border-foreground"
-                : "border-border hover:border-muted-foreground"
-            }`}
+            className={`shrink-0 overflow-hidden border transition-colors ${index === active
+              ? "border-foreground"
+              : "border-border hover:border-muted-foreground"
+              }`}
           >
             <img
               src={image.src}
               alt={image.alt}
-              className={`h-16 w-24 object-cover sm:h-20 sm:w-32 ${
-                index === active ? "opacity-100" : "opacity-60"
-              }`}
+              className={`h-16 w-24 object-cover sm:h-20 sm:w-32 ${index === active ? "opacity-100" : "opacity-60"
+                }`}
               loading="lazy"
             />
           </button>

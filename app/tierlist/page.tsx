@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: "Tier list gaming gear terbaik: keyboard, mouse, headset, dan lainnya.",
 };
 
-export default function TierListPage() {
-  const reviews = getAllReviews();
+export default async function TierListPage() {
+  const reviews = await getAllReviews();
 
   return <TierListClient reviews={reviews} />;
 }

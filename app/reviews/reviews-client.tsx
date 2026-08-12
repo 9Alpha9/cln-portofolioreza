@@ -5,14 +5,19 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/ui/container";
 import { StaggerReveal, StaggerItem } from "@/components/animation";
-import { categories } from "@/data/categories";
-import { brands } from "@/data/brands";
 import { formatCurrency } from "@/lib/formatters";
 import type { ReviewSummary } from "@/types";
 import { Pagination } from "@/components/ui/pagination";
 
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
 interface ReviewsClientProps {
   reviews: ReviewSummary[];
+  categories: FilterOption[];
+  brands: FilterOption[];
 }
 
 type SortOption = "newest" | "oldest" | "price-low" | "price-high" | "score";
@@ -25,7 +30,11 @@ const sortOptions: { value: SortOption; label: string }[] = [
   { value: "score", label: "Skor Tertinggi" },
 ];
 
-export function ReviewsClient({ reviews }: ReviewsClientProps) {
+function toFilterValue(value: string): string {
+  return value.trim().toLocaleLowerCase("id");
+}
+
+export function ReviewsClient({ reviews, categories, brands }: ReviewsClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -40,7 +49,12 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
     (searchParams.get("sort") as SortOption) || "newest"
   );
   const [currentPage, setCurrentPage] = useState(1);
+  const [brandSearch, setBrandSearch] = useState("");
   const ITEMS_PER_PAGE = 9;
+  const filteredBrands = useMemo(
+    () => brands.filter((brand) => brand.label.toLocaleLowerCase("id").includes(brandSearch.toLocaleLowerCase("id"))),
+    [brands, brandSearch]
+  );
 
   const updateURL = useCallback(
     (params: Record<string, string | null>) => {
@@ -108,13 +122,11 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
     }
 
     if (selectedCategory) {
-      result = result.filter((r) => r.category === selectedCategory);
+      result = result.filter((review) => toFilterValue(review.category) === selectedCategory);
     }
 
     if (selectedBrand) {
-      result = result.filter(
-        (r) => r.brand.toLowerCase() === selectedBrand.toLowerCase()
-      );
+      result = result.filter((review) => toFilterValue(review.brand) === selectedBrand);
     }
 
     switch (sortBy) {
@@ -133,12 +145,18 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
         );
         break;
       case "price-low":
-        result.sort((a, b) => (a.priceFrom ?? 0) - (b.priceFrom ?? 0));
+        result.sort((a, b) => {
+          if (a.priceFrom === undefined) return 1;
+          if (b.priceFrom === undefined) return -1;
+          return a.priceFrom - b.priceFrom;
+        });
         break;
       case "price-high":
-        result.sort(
-          (a, b) => (b.priceFrom ?? Infinity) - (a.priceFrom ?? Infinity)
-        );
+        result.sort((a, b) => {
+          if (a.priceFrom === undefined) return 1;
+          if (b.priceFrom === undefined) return -1;
+          return b.priceFrom - a.priceFrom;
+        });
         break;
       case "score":
         result.sort((a, b) => (b.score ?? 0) - (a.score ?? 0));
@@ -148,7 +166,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
     return result;
   }, [reviews, search, selectedCategory, selectedBrand, sortBy]);
 
-  const hasActiveFilters = selectedCategory || selectedBrand || search;
+  const hasActiveFilters = selectedCategory || selectedBrand || search || sortBy !== "newest";
   const resetAll = () => {
     setSearch("");
     setSelectedCategory(null);
@@ -246,9 +264,9 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
                   className="h-11 border border-border bg-background px-3 text-sm font-normal normal-case tracking-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">Semua kategori</option>
-                  {categories.map((category) => (
-                    <option key={category.slug} value={category.slug}>{category.name}</option>
-                  ))}
+{categories.map((category) => (
+                     <option key={category.value} value={category.value}>{category.label}</option>
+                   ))}
                 </select>
               </label>
               <label className="grid gap-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -259,9 +277,9 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
                   className="h-11 border border-border bg-background px-3 text-sm font-normal normal-case tracking-normal text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <option value="">Semua brand</option>
-                  {brands.map((brand) => (
-                    <option key={brand.slug} value={brand.slug}>{brand.name}</option>
-                  ))}
+{brands.map((brand) => (
+                     <option key={brand.value} value={brand.value}>{brand.label}</option>
+                   ))}
                 </select>
               </label>
               {hasActiveFilters && (
@@ -290,39 +308,46 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
             </FilterGroup>
 
             <FilterGroup title="Kategori">
-              {categories.map((cat) => (
+              {categories.map((category) => (
                 <FilterButton
-                  key={cat.slug}
-                  active={selectedCategory === cat.slug}
+                  key={category.value}
+                  active={selectedCategory === category.value}
                   onClick={() =>
                     handleCategoryChange(
-                      selectedCategory === cat.slug ? null : cat.slug
+                      selectedCategory === category.value ? null : category.value
                     )
                   }
                 >
-                  {cat.name}
+                  {category.label}
                 </FilterButton>
               ))}
             </FilterGroup>
 
             <FilterGroup title="Brand">
-              {brands.map((brand) => (
-                <FilterButton
-                  key={brand.slug}
-                  active={
-                    selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
-                  }
-                  onClick={() =>
-                    handleBrandChange(
-                      selectedBrand?.toLowerCase() === brand.slug.toLowerCase()
-                        ? null
-                        : brand.slug
-                    )
-                  }
-                >
-                  {brand.name}
-                </FilterButton>
-              ))}
+              {brands.length > 12 && (
+                <div className="border-b border-border p-3">
+                  <input
+                    type="search"
+                    value={brandSearch}
+                    onChange={(event) => setBrandSearch(event.target.value)}
+                    placeholder="Cari brand..."
+                    className="h-9 w-full border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-ring"
+                  />
+                </div>
+              )}
+              <div className="max-h-80 overflow-y-auto">
+                {filteredBrands.map((brand) => (
+                  <FilterButton
+                    key={brand.value}
+                    active={selectedBrand === brand.value}
+                    onClick={() =>
+                      handleBrandChange(selectedBrand === brand.value ? null : brand.value)
+                    }
+                  >
+                    {brand.label}
+                  </FilterButton>
+                ))}
+              </div>
             </FilterGroup>
 
             {hasActiveFilters && (
@@ -349,7 +374,7 @@ export function ReviewsClient({ reviews }: ReviewsClientProps) {
                       onClick={() => handleCategoryChange(null)}
                       className="border border-border px-2 py-1 text-[10px] font-medium uppercase tracking-wider transition-colors hover:bg-muted"
                     >
-                      {categories.find((c) => c.slug === selectedCategory)?.name} ✕
+                      {categories.find((category) => category.value === selectedCategory)?.label} ✕
                     </button>
                   )}
                   {selectedBrand && (
@@ -487,17 +512,19 @@ function ReviewCardLink({ review }: { review: ReviewSummary }) {
         <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted-foreground">
           {review.verdict}
         </p>
-        <div className="mt-auto flex items-center justify-between border-t border-border pt-3">
-          {review.priceFrom ? (
-            <span className="text-sm font-bold tabular-nums">
-              {formatCurrency(review.priceFrom)}
+        <div className="my-2 pt-9">
+          <div className="mt-auto flex items-center justify-between border-t border-border pt-4">
+            {review.priceFrom !== undefined ? (
+              <span className="text-sm font-bold tabular-nums">
+                {formatCurrency(review.priceFrom)}
+              </span>
+            ) : (
+              <span className="text-sm text-muted">Harga bervariasi</span>
+            )}
+            <span className="text-[10px] font-semibold uppercase tracking-wider transition-colors group-hover:text-muted-foreground">
+              Baca →
             </span>
-          ) : (
-            <span className="text-sm text-muted">Harga bervariasi</span>
-          )}
-          <span className="text-[10px] font-semibold uppercase tracking-wider transition-colors group-hover:text-muted-foreground">
-            Baca →
-          </span>
+          </div>
         </div>
       </div>
     </Link>

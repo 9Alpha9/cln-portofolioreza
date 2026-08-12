@@ -5,6 +5,7 @@ import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { onTransitionEnd } from "@/lib/animation-sync";
+import type { ReviewSummary } from "@/types";
 
 type BentoItem = {
   src: string;
@@ -15,40 +16,27 @@ type BentoItem = {
   href: string;
 };
 
-const BENTO_ITEMS: BentoItem[] = [
-  {
-    src: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&h=600&fit=crop",
-    className: "md:row-span-2 md:col-span-1",
-    brand: "Keychron",
-    name: "Keychron K2 HE",
-    shortDescription: "Keyboard mekanik wireless dengan magnetic switch yang smooth dan build quality solid.",
-    href: "/reviews/keychron-k2-he",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1599669454699-248893623440?w=800&h=600&fit=crop",
-    className: "md:row-span-1 md:col-span-1",
-    brand: "Logitech",
-    name: "Logitech G PRO X 2",
-    shortDescription: "Headset gaming dengan audio yang jernih dan mikrofon yang baik.",
-    href: "/reviews/logitech-g-pro-x-2",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1527814050087-3793815479db?w=800&h=600&fit=crop",
-    className: "md:row-span-2 md:col-span-1",
-    brand: "Razer",
-    name: "Razer Viper V3 Pro",
-    shortDescription: "Mouse gaming ultralight dengan sensor terbaru dan performa kompetitif.",
-    href: "/reviews/razer-viper-v3-pro",
-  },
-  {
-    src: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&h=600&fit=crop",
-    className: "md:row-span-1 md:col-span-1",
-    brand: "Keychron Side",
-    name: "Keychron Side View",
-    shortDescription: "Tampilan samping Keychron K2 HE yang elegan.",
-    href: "/reviews/keychron-k2-he",
-  },
+const BENTO_LAYOUT = [
+  "md:row-span-2 md:col-span-1",
+  "md:row-span-1 md:col-span-1",
+  "md:row-span-2 md:col-span-1",
+  "md:row-span-1 md:col-span-1",
 ];
+
+function reviewToBentoItem(review: ReviewSummary, index: number): BentoItem {
+  return {
+    src: review.thumbnail.src,
+    className: BENTO_LAYOUT[index % BENTO_LAYOUT.length],
+    brand: review.brand,
+    name: review.name,
+    shortDescription: review.shortDescription,
+    href: `/reviews/${review.slug}`,
+  };
+}
+
+interface BentoGridProps {
+  featuredReviews?: ReviewSummary[];
+}
 
 function BentoCard({ item }: { item: BentoItem }) {
   const cardRef = useRef<HTMLAnchorElement>(null);
@@ -133,8 +121,9 @@ function BentoCard({ item }: { item: BentoItem }) {
   );
 }
 
-export function BentoGrid() {
+export function BentoGrid({ featuredReviews = [] }: BentoGridProps) {
   const sectionRef = useRef<HTMLElement>(null);
+  const bentoItems = featuredReviews.slice(0, 4).map(reviewToBentoItem);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -175,7 +164,7 @@ export function BentoGrid() {
           Featured
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[250px] md:auto-rows-[300px] gap-3 sm:gap-4">
-          {BENTO_ITEMS.map((item, idx) => (
+          {bentoItems.map((item, idx) => (
             <div key={idx} data-bento-card className={item.className}>
               <BentoCard item={item} />
             </div>

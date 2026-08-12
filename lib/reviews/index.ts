@@ -1,4 +1,13 @@
-import { reviews } from "@/data/reviews";
+import {
+  getGears,
+  getFeaturedGears,
+  getGearBySlug,
+  getGearsByCategory,
+  getAllSlugs as notionGetAllSlugs,
+  getAllCategories as notionGetAllCategories,
+  getAllBrands as notionGetAllBrands,
+} from "@/lib/notion/gears";
+import { gearToReviewMetadata, gearToReviewSummary } from "@/lib/notion/adapter";
 import type {
   ReviewMetadata,
   ReviewCategory,
@@ -26,30 +35,47 @@ function toSummary(review: ReviewMetadata): ReviewSummary {
   };
 }
 
-export function getAllReviews(): ReviewSummary[] {
-  return reviews.map(toSummary);
+export async function getAllReviews(): Promise<ReviewSummary[]> {
+  const gears = await getGears();
+  return gears.map(gearToReviewSummary);
 }
 
-export function getReviewBySlug(slug: string): ReviewMetadata | undefined {
-  return reviews.find((r) => r.slug === slug);
+export async function getReviewBySlug(
+  slug: string
+): Promise<ReviewMetadata | undefined> {
+  const gear = await getGearBySlug(slug);
+  if (!gear) return undefined;
+  return gearToReviewMetadata(gear);
 }
 
-export function getFeaturedReviews(): ReviewSummary[] {
-  return reviews.filter((r) => r.featured).map(toSummary);
+export async function getFeaturedReviews(): Promise<ReviewSummary[]> {
+  const gears = await getFeaturedGears();
+  return gears.map(gearToReviewSummary);
 }
 
-export function getReviewsByCategory(category: ReviewCategory): ReviewSummary[] {
-  return reviews.filter((r) => r.category === category).map(toSummary);
+export async function getReviewsByCategory(
+  category: ReviewCategory
+): Promise<ReviewSummary[]> {
+  const gears = await getGearsByCategory(category);
+  return gears.map(gearToReviewSummary);
 }
 
-export function getReviewsByBrand(brand: string): ReviewSummary[] {
-  return reviews.filter((r) => r.brand.toLowerCase() === brand.toLowerCase()).map(toSummary);
+export async function getReviewsByBrand(
+  brand: string
+): Promise<ReviewSummary[]> {
+  const gears = await getGears();
+  return gears
+    .filter((g) => g.brand?.toLowerCase() === brand.toLowerCase())
+    .map(gearToReviewSummary);
 }
 
-export function getRelatedReviews(
+export async function getRelatedReviews(
   review: ReviewMetadata,
   limit = 3
-): ReviewSummary[] {
+): Promise<ReviewSummary[]> {
+  const gears = await getGears();
+  const reviews = gears.map(gearToReviewMetadata);
+
   return reviews
     .filter((r) => r.slug !== review.slug)
     .sort((a, b) => {
@@ -61,7 +87,6 @@ export function getRelatedReviews(
         const diff = Math.abs(a.priceFrom - review.priceFrom);
         if (diff < 500000) score += 1;
       }
-      // Use b for secondary sort if needed
       void b;
       return score;
     })
@@ -69,16 +94,17 @@ export function getRelatedReviews(
     .map(toSummary);
 }
 
-export function getAllSlugs(): string[] {
-  return reviews.map((r) => r.slug);
+export async function getAllSlugs(): Promise<string[]> {
+  return notionGetAllSlugs();
 }
 
-export function getAllBrands(): string[] {
-  return [...new Set(reviews.map((r) => r.brand))];
+export async function getAllBrands(): Promise<string[]> {
+  return notionGetAllBrands();
 }
 
-export function getAllCategories(): ReviewCategory[] {
-  return [...new Set(reviews.map((r) => r.category))];
+export async function getAllCategories(): Promise<ReviewCategory[]> {
+  const categories = await notionGetAllCategories();
+  return categories as ReviewCategory[];
 }
 
 export interface ProductOffer extends MarketplaceOffer {
@@ -86,7 +112,10 @@ export interface ProductOffer extends MarketplaceOffer {
   productSlug: string;
 }
 
-export function getAllOffers(): ProductOffer[] {
+export async function getAllOffers(): Promise<ProductOffer[]> {
+  const gears = await getGears();
+  const reviews = gears.map(gearToReviewMetadata);
+
   return reviews.flatMap((review) =>
     review.marketplaces.map((offer) => ({
       ...offer,
@@ -96,6 +125,9 @@ export function getAllOffers(): ProductOffer[] {
   );
 }
 
-export function getOffersByPlatform(platform: MarketplacePlatform): ProductOffer[] {
-  return getAllOffers().filter((offer) => offer.platform === platform);
+export async function getOffersByPlatform(
+  platform: MarketplacePlatform
+): Promise<ProductOffer[]> {
+  const allOffers = await getAllOffers();
+  return allOffers.filter((offer) => offer.platform === platform);
 }

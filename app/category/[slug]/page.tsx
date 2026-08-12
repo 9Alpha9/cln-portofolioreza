@@ -38,8 +38,9 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
     notFound();
   }
 
-  const reviews = getReviewsByCategory(category.slug);
-  const featured = getFeaturedReviews().filter(
+  const reviews = await getReviewsByCategory(category.slug);
+  const featured = await getFeaturedReviews();
+  const categoryFeatured = featured.filter(
     (r) => r.category === category.slug
   );
   const relatedCategories = categories.filter((c) => c.slug !== category.slug);
@@ -61,10 +62,10 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
           </div>
         ) : (
           <>
-            {featured.length > 0 && (
+            {categoryFeatured.length > 0 && (
               <div className="mb-8">
                 <h2 className="text-lg font-heading mb-4">Featured</h2>
-                <ReviewGrid reviews={featured} featured />
+                <ReviewGrid reviews={categoryFeatured} featured />
               </div>
             )}
 

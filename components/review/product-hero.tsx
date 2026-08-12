@@ -37,7 +37,7 @@ export function ProductHero({ review }: ProductHeroProps) {
         </h1>
 
         <div className="mt-8 flex flex-col gap-6 max-w-md">
-          <p className="text-base text-muted font-serif italic">{review.shortDescription}</p>
+          <p className="text-base leading-7">{review.shortDescription}</p>
 
           <div className="h-px w-full bg-border" />
 
@@ -56,12 +56,6 @@ export function ProductHero({ review }: ProductHeroProps) {
             </div>
           </div>
 
-          <div className="h-px w-full bg-border" />
-
-          <div>
-            <p className="text-xs tracking-widest text-muted uppercase mb-2">Verdict</p>
-            <p className="text-sm leading-relaxed text-foreground/80">{review.verdict}</p>
-          </div>
         </div>
       </GsapReveal>
     </div>

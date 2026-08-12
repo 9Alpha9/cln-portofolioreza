@@ -3,11 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
-import { getAllReviews } from "@/lib/reviews";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import { CursorIndicator } from "@/components/ui/cursor-indicator";
 import { MediaIndicator } from "@/components/ui/media-indicator";
 import instagramMedia from "@/data/instagram-media.json";
+import type { ReviewSummary } from "@/types";
 
 type InstagramMedia = {
   id: string;
@@ -34,8 +34,12 @@ const videos = (instagramMedia as InstagramMedia[])
 
 const latestVideo = videos[0];
 
-export function ReviewedGears() {
-  const reviews = getAllReviews();
+interface ReviewedGearsProps {
+  initialReviews?: ReviewSummary[];
+}
+
+export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
+  const reviews = initialReviews;
   const total = reviews.length;
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -153,48 +157,48 @@ export function ReviewedGears() {
             variant={isPlaying ? "pause" : "play"}
             className="isolate h-full w-full cursor-none"
           >
-          <video
-            ref={videoRef}
-            src={latestVideo?.media_url ?? "/videos/vid-2.mp4"}
-            poster={latestVideo ? `/images/instagram/${latestVideo.id}.jpg` : undefined}
-            muted={isMuted}
-            loop
-            playsInline
-            preload="auto"
-            onLoadedMetadata={(e) => {
-              e.currentTarget.currentTime = 0.1;
-            }}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            onEnded={() => setIsPlaying(false)}
-            onError={() => setIsPlaying(false)}
-            suppressHydrationWarning
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
-            className="absolute inset-0 z-0 outline-none border-none"
-          />
-          {latestVideo && (
-            <img
-              src={`/images/instagram/${latestVideo.id}.jpg`}
-              alt="Thumbnail video Instagram Tahutech"
-              loading="eager"
-              fetchPriority="high"
-              decoding="sync"
-              className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? "opacity-0" : "opacity-100"}`}
+            <video
+              ref={videoRef}
+              src={latestVideo?.media_url ?? "/videos/vid-2.mp4"}
+              poster={latestVideo ? `/images/instagram/${latestVideo.id}.jpg` : undefined}
+              muted={isMuted}
+              loop
+              playsInline
+              preload="auto"
+              onLoadedMetadata={(e) => {
+                e.currentTarget.currentTime = 0.1;
+              }}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => setIsPlaying(false)}
+              onError={() => setIsPlaying(false)}
+              suppressHydrationWarning
+              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
+              className="absolute inset-0 z-0 outline-none border-none"
             />
-          )}
-          <button
-            type="button"
-            onClick={togglePlay}
-            aria-label={isPlaying ? "Pause Instagram video" : "Play Instagram video"}
-            className="absolute inset-0 z-20 cursor-none border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none md:cursor-none"
-          >
-            {!isPlaying && (
-              <MediaIndicator
-                variant="play"
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-foreground bg-background/90 text-foreground md:hidden"
+            {latestVideo && (
+              <img
+                src={`/images/instagram/${latestVideo.id}.jpg`}
+                alt="Thumbnail video Instagram Tahutech"
+                loading="eager"
+                fetchPriority="high"
+                decoding="sync"
+                className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? "opacity-0" : "opacity-100"}`}
               />
             )}
-          </button>
+            <button
+              type="button"
+              onClick={togglePlay}
+              aria-label={isPlaying ? "Pause Instagram video" : "Play Instagram video"}
+              className="absolute inset-0 z-20 cursor-none border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none md:cursor-none"
+            >
+              {!isPlaying && (
+                <MediaIndicator
+                  variant="play"
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-foreground bg-background/90 text-foreground md:hidden"
+                />
+              )}
+            </button>
           </CursorIndicator>
           {isPlaying && (
             <button
@@ -248,11 +252,13 @@ export function ReviewedGears() {
 
                     {/* Image Area */}
                     <div className="flex-1 flex items-center justify-center overflow-hidden">
-                      <img
-                        src={review.thumbnail.src}
-                        alt={review.thumbnail.alt}
-                        className="max-h-[90%] max-w-[90%] object-cover"
-                      />
+                      {review.thumbnail.src ? (
+                        <img
+                          src={review.thumbnail.src}
+                          alt={review.thumbnail.alt}
+                          className="max-h-[90%] max-w-[90%] object-cover"
+                        />
+                      ) : null}
                     </div>
 
                     {/* Bottom Info Bar */}

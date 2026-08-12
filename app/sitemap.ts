@@ -3,9 +3,9 @@ import { getAllSlugs } from "@/lib/reviews";
 import { categories } from "@/data/categories";
 import { brands } from "@/data/brands";
 
-const BASE_URL = "https://gaminggear.review";
+const BASE_URL = "https://www.tahutechsetup.my.id";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     {
       url: BASE_URL,
@@ -33,7 +33,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ];
 
-  const reviewPages = getAllSlugs().map((slug) => ({
+  const slugs = await getAllSlugs();
+  const reviewPages = slugs.map((slug) => ({
     url: `${BASE_URL}/reviews/${slug}`,
     lastModified: new Date(),
     changeFrequency: "monthly" as const,

@@ -38,7 +38,7 @@ export default async function BrandPage({ params }: BrandPageProps) {
     notFound();
   }
 
-  const reviews = getReviewsByBrand(brand.slug);
+  const reviews = await getReviewsByBrand(brand.slug);
   const relatedBrands = brands.filter((b) => b.slug !== brand.slug);
 
   return (
