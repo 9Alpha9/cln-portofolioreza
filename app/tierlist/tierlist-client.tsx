@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { TierListSwipe } from "@/components/ui/tierlist-swipe";
+import { TierListSwipe } from "./_components/tierlist-swipe";
 import { useRouter } from "next/navigation";
 import { Container } from "@/components/ui/container";
 import { GsapReveal } from "@/components/animation";
@@ -10,7 +10,7 @@ import { formatCurrency } from "@/lib/formatters";
 import type { ReviewSummary } from "@/types";
 import { Search, LayoutGrid, Table, Trophy, PackageOpen } from "lucide-react";
 import { Pagination } from "@/components/ui/pagination";
-import { TIER_ORDER, TIER_STYLING, TABS, type TierType, type TabValue } from "@/data/tierlist";
+import { TIER_ORDER, TIER_STYLING, TABS, type TierType, type TabValue } from "@/content/site/tierlist";
 
 interface TierListClientProps {
   reviews: ReviewSummary[];
@@ -24,6 +24,20 @@ function getReviewTier(review: ReviewSummary): TierType | null {
   }
 
   return null;
+}
+
+const TAB_CATEGORIES: Partial<Record<TabValue, string[]>> = {
+  mouse: ["mouse"],
+  mousepad: ["mousepad"],
+  keyboard: ["keyboard"],
+  controller: ["controller", "gamepad"],
+  accessories: ["accessories", "keycaps", "webcam"],
+  headset: ["headset", "audio"],
+  microphone: ["microphone"],
+};
+
+function matchesTabCategory(category: string, tab: TabValue): boolean {
+  return TAB_CATEGORIES[tab]?.includes(category.trim().toLowerCase()) ?? false;
 }
 
 export function TierListClient({ reviews }: TierListClientProps) {
@@ -44,9 +58,9 @@ export function TierListClient({ reviews }: TierListClientProps) {
           const hasRapidTrigger = review.tags.some(
             (tag) => tag.toLowerCase() === "rapid-trigger" || tag.toLowerCase() === "analog"
           );
-          if (review.category !== "keyboard" || !hasRapidTrigger) return false;
-        } else {
-          if (review.category !== activeTab) return false;
+          if (!matchesTabCategory(review.category, "keyboard") || !hasRapidTrigger) return false;
+        } else if (!matchesTabCategory(review.category, activeTab)) {
+          return false;
         }
       }
 
@@ -87,7 +101,7 @@ export function TierListClient({ reviews }: TierListClientProps) {
     <div className="min-h-screen pt-32 pb-16">
       <Container>
         <GsapReveal className="mb-8">
-          <h1 className="text-4xl font-heading font-bold uppercase tracking-tight text-center md:text-left">
+          <h1 className="text-4xl font-heading tracking-tight text-center md:text-left">
             Tier List
           </h1>
           <p className="mt-2 text-muted text-center md:text-left">
@@ -269,15 +283,53 @@ export function TierListClient({ reviews }: TierListClientProps) {
           </>
         ) : (
           <>
-            <div className="overflow-x-auto border border-border bg-surface scrollbar-hide">
-              <table className="w-full border-collapse text-left text-sm">
+            <div className="divide-y divide-border border border-border bg-surface sm:hidden">
+              {paginatedReviews.map((item) => {
+                const tier = getReviewTier(item);
+                if (!tier) return null;
+                const styling = TIER_STYLING[tier];
+
+                return (
+                  <button
+                    key={item.slug}
+                    type="button"
+                    onClick={() => router.push(`/reviews/${item.slug}`)}
+                    className="flex w-full items-center gap-3 p-3 text-left transition-colors hover:bg-surface-alt/50"
+                  >
+                    <img
+                      src={item.thumbnail.src}
+                      alt={item.thumbnail.alt}
+                      className="h-14 w-14 shrink-0 object-cover"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        {item.brand}
+                      </span>
+                      <span className="mt-0.5 block line-clamp-2 font-heading text-sm font-semibold text-foreground">
+                        {item.name}
+                      </span>
+                    </div>
+                    <div className="flex shrink-0 flex-col items-end gap-2">
+                      <span className={`px-2 py-0.5 font-mono text-xs font-bold ${styling.bg} ${styling.text}`}>
+                        {tier}
+                      </span>
+                      <span className="font-mono text-xs font-semibold tabular-nums text-foreground">
+                        {item.priceFrom !== undefined ? formatCurrency(item.priceFrom) : "—"}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <div className="hidden overflow-x-auto border border-border bg-surface sm:block">
+              <table className="min-w-[640px] w-full border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-border bg-surface-alt text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    <th className="p-3 sm:p-4">Produk</th>
-                    <th className="p-3 w-20 sm:p-4 sm:w-24">Tier</th>
-                    <th className="p-3 w-24 sm:p-4 sm:w-32">Harga</th>
-                    <th className="p-4 w-32 hidden md:table-cell">Ukuran / Layout</th>
-                    <th className="p-4 hidden md:table-cell">Sensor / Switch</th>
+                    <th className="p-4">Produk</th>
+                    <th className="w-24 p-4">Tier</th>
+                    <th className="w-36 p-4">Harga</th>
+                    <th className="hidden w-40 p-4 md:table-cell">Ukuran / Layout</th>
+                    <th className="hidden p-4 md:table-cell">Sensor / Switch</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
@@ -286,45 +338,35 @@ export function TierListClient({ reviews }: TierListClientProps) {
                     if (!tier) return null;
                     const styling = TIER_STYLING[tier];
                     const layoutSpec = item.specifications
-                      ?.flatMap((g) => g.items)
-                      .find((i) => i.label.toLowerCase() === "layout" || i.label.toLowerCase() === "berat")?.value || "—";
+                      ?.flatMap((group) => group.items)
+                      .find((specification) => specification.label.toLowerCase() === "layout" || specification.label.toLowerCase() === "berat")?.value || "—";
                     const sensorSpec = item.specifications
-                      ?.flatMap((g) => g.items)
-                      .find((i) => i.label.toLowerCase() === "switch" || i.label.toLowerCase() === "sensor")?.value || "—";
+                      ?.flatMap((group) => group.items)
+                      .find((specification) => specification.label.toLowerCase() === "switch" || specification.label.toLowerCase() === "sensor")?.value || "—";
 
                     return (
                       <tr
                         key={item.slug}
-                        className="hover:bg-surface-alt/50 transition-colors cursor-pointer"
+                        className="cursor-pointer transition-colors hover:bg-surface-alt/50"
                         onClick={() => router.push(`/reviews/${item.slug}`)}
                       >
-                        <td className="p-3 sm:p-4">
+                        <td className="p-4">
                           <div className="flex items-center gap-3">
-                            <img
-                              src={item.thumbnail.src}
-                              alt={item.thumbnail.alt}
-                              className="h-10 w-10 object-cover shrink-0"
-                            />
+                            <img src={item.thumbnail.src} alt={item.thumbnail.alt} className="h-12 w-12 shrink-0 object-cover" />
                             <div className="min-w-0">
-                              <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground block">
-                                {item.brand}
-                              </span>
-                              <span className="font-heading font-semibold text-foreground block">{item.name}</span>
+                              <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{item.brand}</span>
+                              <span className="block font-heading font-semibold text-foreground">{item.name}</span>
                             </div>
                           </div>
                         </td>
-                        <td className="p-3 sm:p-4">
-                          <span
-                            className={`inline-block px-2.5 py-0.5 text-xs font-mono font-bold tracking-wider ${styling.bg} ${styling.text}`}
-                          >
-                            {tier}
-                          </span>
+                        <td className="p-4">
+                          <span className={`inline-block px-2.5 py-0.5 font-mono text-xs font-bold tracking-wider ${styling.bg} ${styling.text}`}>{tier}</span>
                         </td>
-                        <td className="p-3 font-mono text-xs font-semibold whitespace-nowrap sm:p-4 sm:text-sm">
-                          {item.priceFrom ? formatCurrency(item.priceFrom) : "—"}
+                        <td className="whitespace-nowrap p-4 font-mono text-sm font-semibold tabular-nums">
+                          {item.priceFrom !== undefined ? formatCurrency(item.priceFrom) : "—"}
                         </td>
-                        <td className="p-4 text-muted-foreground hidden md:table-cell">{layoutSpec}</td>
-                        <td className="p-4 text-muted-foreground hidden md:table-cell">{sensorSpec}</td>
+                        <td className="hidden p-4 text-muted-foreground md:table-cell">{layoutSpec}</td>
+                        <td className="hidden p-4 text-muted-foreground md:table-cell">{sensorSpec}</td>
                       </tr>
                     );
                   })}

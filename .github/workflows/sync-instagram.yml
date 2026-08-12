@@ -5,12 +5,21 @@ on:
     - cron: "0 */6 * * *"
   workflow_dispatch:
 
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-instagram-media
+  cancel-in-progress: false
+
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -18,14 +27,21 @@ jobs:
           python-version: "3.12"
 
       - name: Install instaloader
-        run: pip install instaloader
+        run: python -m pip install --disable-pip-version-check instaloader
 
       - name: Fetch Instagram Media
+        env:
+          INSTAGRAM_USERNAME: tahutech.idn
         run: python scripts/sync-instagram.py
 
       - name: Commit and push if changed
         run: |
           git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add data/instagram-media.json
-          git diff --quiet && git diff --staged --quiet || (git commit -m "chore: sync instagram media [skip ci]" && git push)
+          git config --local user.name "github-actions[bot]"
+          git add content/media/instagram-media.json
+          if git diff --staged --quiet; then
+            echo "No Instagram media changes."
+            exit 0
+          fi
+          git commit -m "chore: sync instagram media [skip ci]"
+          git push

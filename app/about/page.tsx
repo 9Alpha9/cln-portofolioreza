@@ -1,8 +1,9 @@
 import { Container } from "@/components/ui/container";
-import { InstagramVideos } from "@/components/about/instagram-videos";
+import { InstagramVideos } from "./_components/instagram-videos";
 import { GsapReveal } from "@/components/animation";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { ArrowUpRight } from "lucide-react";
+import { CollaborationMarquee } from "../contact/_components/collaboration-marquee";
 import {
   aboutMeta,
   heroKicker,
@@ -14,13 +15,22 @@ import {
   socialLinks,
   transparency,
   instagramVideos,
-} from "@/data/about";
+} from "@/content/site/about";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: aboutMeta.title,
   description: aboutMeta.description,
 };
+
+const aboutMarqueeItems = [
+  "GAMING GEAR REVIEW",
+  "KEYBOARD",
+  "MOUSE",
+  "AUDIO",
+  "HONEST OPINION",
+  "BUYING GUIDE",
+];
 
 export default function AboutPage() {
   return (
@@ -48,6 +58,8 @@ export default function AboutPage() {
           </div>
           </section>
         </GsapReveal>
+
+        <CollaborationMarquee items={aboutMarqueeItems} label="Topik TahuTech" />
 
         <GsapReveal delay={0.15} y={36}>
           <section className="grid gap-8 border-b border-border py-16 sm:py-24 lg:grid-cols-12 lg:gap-8">

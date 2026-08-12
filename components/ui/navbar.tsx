@@ -14,6 +14,7 @@ const navItems = [
   { href: "/tierlist", label: "Tier List" },
   { href: "/shop", label: "Shop" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 export function Navbar() {
@@ -325,7 +326,7 @@ export function Navbar() {
             ))}
             <Link
               data-mobile-link
-              href="/#reviews"
+              href="https://www.youtube.com/@tahu_tech"
               onClick={handleClose}
               className="block py-2 text-4xl font-heading font-black uppercase tracking-tight text-foreground hover:text-muted-foreground transition-colors"
             >

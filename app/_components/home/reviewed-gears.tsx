@@ -6,7 +6,7 @@ import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import { CursorIndicator } from "@/components/ui/cursor-indicator";
 import { MediaIndicator } from "@/components/ui/media-indicator";
-import instagramMedia from "@/data/instagram-media.json";
+import instagramMedia from "@/content/media/instagram-media.json";
 import type { ReviewSummary } from "@/types";
 
 type InstagramMedia = {

@@ -7,15 +7,14 @@ from instaloader import Instaloader, Profile
 
 USERNAME = os.environ.get("INSTAGRAM_USERNAME", "tahutech.idn")
 MAX_POSTS = int(os.environ.get("INSTAGRAM_MAX_POSTS", "30"))
+STRICT_MODE = os.environ.get("INSTAGRAM_STRICT", "false").lower() == "true"
 
 ROOT = Path(__file__).resolve().parent.parent
-OUTPUT_PATH = ROOT / "data" / "instagram-media.json"
+OUTPUT_PATH = ROOT / "content" / "media" / "instagram-media.json"
 
 
 def main():
     loader = Instaloader(quiet=True, download_pictures=False, download_videos=False)
-    # anonymous, no login() call needed for public profile metadata
-
     profile = Profile.from_username(loader.context, USERNAME)
 
     posts = []
@@ -35,6 +34,9 @@ def main():
         if len(posts) >= MAX_POSTS:
             break
 
+    if not posts:
+        raise RuntimeError("Instagram returned no video posts")
+
     OUTPUT_PATH.write_text(json.dumps(posts, indent=2) + "\n", encoding="utf-8")
     print(f"Synced {len(posts)} Instagram videos to {OUTPUT_PATH}")
 
@@ -43,5 +45,6 @@ if __name__ == "__main__":
     try:
         main()
     except Exception as err:
-        print(f"Error syncing Instagram: {err}", file=sys.stderr)
-        sys.exit(1)
+        print(f"Instagram sync skipped: {err}", file=sys.stderr)
+        if STRICT_MODE:
+            sys.exit(1)

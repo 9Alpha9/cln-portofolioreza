@@ -81,9 +81,24 @@ export async function getGearBySlug(slug: string): Promise<Gear | null> {
   return gears.find((gear) => gear.slug === slug) ?? null;
 }
 
+const CATEGORY_ALIASES: Record<string, string[]> = {
+  keyboard: ["keyboard"],
+  mouse: ["mouse"],
+  headset: ["headset", "audio"],
+  microphone: ["microphone"],
+  monitor: ["monitor"],
+  controller: ["controller", "gamepad"],
+  mousepad: ["mousepad"],
+  accessories: ["accessories", "keycaps", "webcam"],
+};
+
 export async function getGearsByCategory(category: string): Promise<Gear[]> {
   const gears = await getGears();
-  return gears.filter((gear) => gear.category === category);
+  const categories = CATEGORY_ALIASES[category.toLowerCase()] ?? [category.toLowerCase()];
+
+  return gears.filter((gear) =>
+    categories.includes(gear.category.trim().toLowerCase())
+  );
 }
 
 export async function getAllSlugs(): Promise<string[]> {

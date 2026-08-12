@@ -12,14 +12,14 @@ type ThemeContextValue = {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("dark");
+  const [theme, setThemeState] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "dark";
+    return window.localStorage.getItem("theme") === "light" ? "light" : "dark";
+  });
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem("theme");
-    const nextTheme: Theme = savedTheme === "light" ? "light" : "dark";
-    setThemeState(nextTheme);
-    document.documentElement.classList.toggle("dark", nextTheme === "dark");
-  }, []);
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
 
   const setTheme = (nextTheme: Theme) => {
     setThemeState(nextTheme);

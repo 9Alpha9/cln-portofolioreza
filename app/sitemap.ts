@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getAllSlugs } from "@/lib/reviews";
-import { categories } from "@/data/categories";
-import { brands } from "@/data/brands";
+import { categories } from "@/content/site/categories";
+import { brands } from "@/content/site/brands";
 
 const BASE_URL = "https://www.tahutechsetup.my.id";
 

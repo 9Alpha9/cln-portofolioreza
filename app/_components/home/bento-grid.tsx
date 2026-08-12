@@ -5,6 +5,7 @@ import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { onTransitionEnd } from "@/lib/animation-sync";
+import { useParallaxMedia } from "@/components/animation/use-parallax-media";
 import type { ReviewSummary } from "@/types";
 
 type BentoItem = {
@@ -43,6 +44,7 @@ function BentoCard({ item }: { item: BentoItem }) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
+  const parallaxRef = useParallaxMedia(5);
 
   useEffect(() => {
     const card = cardRef.current;
@@ -93,12 +95,14 @@ function BentoCard({ item }: { item: BentoItem }) {
       onMouseLeave={handleLeave}
       className="group relative block h-full w-full overflow-hidden bg-muted"
     >
-      <img
-        ref={imgRef}
-        src={item.src}
-        alt={item.name}
-        className="absolute inset-0 h-full w-full object-cover will-change-transform"
-      />
+      <div ref={parallaxRef} className="absolute -inset-[5%]">
+        <img
+          ref={imgRef}
+          src={item.src}
+          alt={item.name}
+          className="h-full w-full object-cover will-change-transform"
+        />
+      </div>
       <div
         ref={overlayRef}
         className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"
@@ -160,9 +164,9 @@ export function BentoGrid({ featuredReviews = [] }: BentoGridProps) {
   return (
     <section ref={sectionRef} className="mt-24 w-full py-12 sm:mt-32 sm:py-16">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-        <h2 className="font-heading text-3xl sm:text-4xl font-black tracking-tight uppercase mb-12">
-          Featured
-        </h2>
+        <div className="py-4">
+          <h1 className="font-heading text-3xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Pilihan TahuTech</h1>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 auto-rows-[250px] md:auto-rows-[300px] gap-3 sm:gap-4">
           {bentoItems.map((item, idx) => (
             <div key={idx} data-bento-card className={item.className}>

@@ -3,6 +3,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useParallaxMedia } from "@/components/animation/use-parallax-media";
 import type { ReviewSummary } from "@/types";
 
 interface ReviewCardProps {
@@ -81,7 +82,7 @@ export function ReviewCard({
         )}
         <div
           className={cn(
-            "relative overflow-hidden bg-surface transition-transform duration-700 ease-out group-hover:scale-[0.98] w-full h-full rounded-xl"
+            "relative overflow-hidden bg-surface w-full h-full rounded-xl"
           )}
         >
           <ReviewMedia review={review} />
@@ -123,6 +124,7 @@ export function ReviewCard({
 
 function ReviewMedia({ review }: { review: ReviewSummary }) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const parallaxRef = useParallaxMedia();
   const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
@@ -146,28 +148,30 @@ function ReviewMedia({ review }: { review: ReviewSummary }) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img
-        src={review.thumbnail.src}
-        alt={review.thumbnail.alt}
-        className={cn(
-          "absolute inset-0 w-full h-full object-cover transition-opacity duration-500 grayscale group-hover:grayscale-0",
-          isHovered && review.video ? "opacity-0" : "opacity-100"
-        )}
-      />
-
-      {review.video && (
-        <video
-          ref={videoRef}
-          src={review.video.url} // In real app, this should be a direct video URL, not a youtube watch link unless handled differently. For demo, we assume URL is playable.
-          muted
-          loop
-          playsInline
+      <div ref={parallaxRef} className="absolute -inset-[7%]">
+        <img
+          src={review.thumbnail.src}
+          alt={review.thumbnail.alt}
           className={cn(
             "absolute inset-0 w-full h-full object-cover transition-opacity duration-500",
-            isHovered ? "opacity-100" : "opacity-0"
+            isHovered && review.video ? "opacity-0" : "opacity-100"
           )}
         />
-      )}
+
+        {review.video && (
+          <video
+            ref={videoRef}
+            src={review.video.url}
+            muted
+            loop
+            playsInline
+            className={cn(
+              "absolute inset-0 w-full h-full object-cover transition-opacity duration-500",
+              isHovered ? "opacity-100" : "opacity-0"
+            )}
+          />
+        )}
+      </div>
     </div>
   );
 }

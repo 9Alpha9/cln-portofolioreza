@@ -4,8 +4,8 @@ import { SectionHeading } from "@/components/ui/section-heading";
 import { GsapReveal, StaggerItem, StaggerReveal } from "@/components/animation";
 import { formatCurrency } from "@/lib/formatters";
 import { getOffersByPlatform } from "@/lib/reviews";
-import { shopPlatforms, shopPage } from "@/data/shop";
-import type { ShopPlatform } from "@/data/shop";
+import { shopPlatforms, shopPage } from "@/content/site/shop";
+import type { ShopPlatform } from "@/content/site/shop";
 import Link from "next/link";
 
 export const metadata: Metadata = {

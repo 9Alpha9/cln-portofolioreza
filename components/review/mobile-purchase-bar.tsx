@@ -4,7 +4,7 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react
 import { X } from "lucide-react";
 import { gsap } from "@/lib/gsap";
 import { formatCurrency } from "@/lib/formatters";
-import { getShopPlatform } from "@/data/shop";
+import { getShopPlatform } from "@/content/site/shop";
 import type { MarketplaceOffer } from "@/types";
 
 interface MobilePurchaseBarProps {

@@ -5,16 +5,16 @@ import { QuickVerdict } from "@/components/review/quick-verdict";
 import { ProsCons } from "@/components/review/pros-cons";
 import { ReviewGrid } from "@/components/review/review-grid";
 import { GsapReveal } from "@/components/animation";
-import { ReviewVideoPlayer } from "@/components/media/review-video-player";
-import { SpecificationList } from "@/components/product/specification-list";
-import { MobilePurchaseBar } from "@/components/marketplace/mobile-purchase-bar";
+import { ReviewVideoPlayer } from "@/components/review/review-video-player";
+import { SpecificationList } from "@/components/review/specification-list";
+import { MobilePurchaseBar } from "@/components/review/mobile-purchase-bar";
 import {
   ProductStructuredData,
   BreadcrumbStructuredData,
 } from "@/lib/metadata";
 import { getReviewBySlug, getAllSlugs, getRelatedReviews } from "@/lib/reviews";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { getShopPlatform } from "@/data/shop";
+import { getShopPlatform } from "@/content/site/shop";
 import type { Metadata } from "next";
 
 interface ReviewDetailPageProps {

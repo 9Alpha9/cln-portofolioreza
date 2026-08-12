@@ -1,4 +1,4 @@
-import instagramMedia from "@/data/instagram-media.json";
+import instagramMedia from "@/content/media/instagram-media.json";
 
 export const aboutMeta = {
   title: "About",

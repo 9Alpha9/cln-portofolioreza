@@ -9,14 +9,14 @@ interface ReviewGridProps {
 }
 
 const BENTO_PATTERN = [
-  "md:col-span-1 md:row-span-1",
-  "md:col-span-2 md:row-span-1",
   "md:col-span-1 md:row-span-2",
-  "md:col-span-1 md:row-span-1",
   "md:col-span-2 md:row-span-2",
-  "md:col-span-1 md:row-span-1",
   "md:col-span-1 md:row-span-2",
-  "md:col-span-2 md:row-span-1",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-2 md:row-span-2",
+  "md:col-span-4 md:row-span-2",
+  "md:col-span-1 md:row-span-2",
+  "md:col-span-2 md:row-span-2",
 ];
 
 export function ReviewGrid({ reviews, featured = false, compact = false }: ReviewGridProps) {

@@ -7,11 +7,12 @@ import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 
 const exploreLinks = [
+  { href: "/", label: "Home" },
   { href: "/reviews", label: "Semua Review" },
   { href: "/tierlist", label: "Tier List" },
   { href: "/shop", label: "Shop" },
-  { href: "/#reviews", label: "Review Terbaru" },
   { href: "/about", label: "About" },
+  { href: "/contact", label: "Contact" },
 ];
 
 const topicLinks = [

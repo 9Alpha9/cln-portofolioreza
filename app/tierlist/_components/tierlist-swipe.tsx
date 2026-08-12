@@ -6,6 +6,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import type { Swiper as SwiperInstance } from "swiper";
 import "swiper/css";
 import { formatCurrency } from "@/lib/formatters";
+import { useParallaxMedia } from "@/components/animation/use-parallax-media";
 import type { ReviewSummary } from "@/types";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -100,17 +101,21 @@ export function TierListSwipe({ items }: { items: ReviewSummary[] }) {
 }
 
 function FlipCard({ item }: { item: ReviewSummary }) {
+  const parallaxRef = useParallaxMedia(5);
+
   return (
     <Link
       href={`/reviews/${item.slug}`}
       className="group/card flex flex-col h-full border border-border hover:border-foreground/50 bg-background transition-colors overflow-hidden"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-surface-alt">
-        <img
-          src={item.thumbnail.src}
-          alt={item.thumbnail.alt}
-          className="tier-card-image h-full w-full object-cover group-hover/card:scale-[1.015]"
-        />
+        <div ref={parallaxRef} className="absolute -inset-[5%]">
+          <img
+            src={item.thumbnail.src}
+            alt={item.thumbnail.alt}
+            className="tier-card-image h-full w-full object-cover group-hover/card:scale-[1.015]"
+          />
+        </div>
         <div className="absolute left-0 top-0 flex flex-wrap gap-px">
           <span className="bg-background/95 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-foreground">
             {item.category}

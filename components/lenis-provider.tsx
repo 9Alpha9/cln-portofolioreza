@@ -16,37 +16,48 @@ export function LenisProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.6,
-      easing: (t) => 1 - Math.pow(1 - t, 5),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 0.85,
-      touchMultiplier: 1,
-      syncTouch: true,
-      syncTouchLerp: 0.12,
-    });
-    lenisRef.current = lenis;
-    window.__lenis = lenis;
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    let destroyLenis: (() => void) | undefined;
 
-    lenis.on('scroll', ScrollTrigger.update);
+    const syncLenis = () => {
+      destroyLenis?.();
+      destroyLenis = undefined;
 
-    const ticker = (time: number) => {
-      lenis.raf(time * 1000);
+      if (!mediaQuery.matches) return;
+
+      const lenis = new Lenis({
+        lerp: 0.06,
+        orientation: "vertical",
+        gestureOrientation: "vertical",
+        smoothWheel: true,
+        wheelMultiplier: 0.72,
+      });
+      lenisRef.current = lenis;
+      window.__lenis = lenis;
+      lenis.on("scroll", ScrollTrigger.update);
+
+      const ticker = (time: number) => {
+        lenis.raf(time * 1000);
+      };
+
+      gsap.ticker.add(ticker);
+      destroyLenis = () => {
+        gsap.ticker.remove(ticker);
+        lenis.off("scroll", ScrollTrigger.update);
+        lenis.destroy();
+        lenisRef.current = null;
+        if (window.__lenis === lenis) {
+          window.__lenis = undefined;
+        }
+      };
     };
 
-    gsap.ticker.add(ticker);
-    gsap.ticker.lagSmoothing(0);
+    syncLenis();
+    mediaQuery.addEventListener("change", syncLenis);
 
     return () => {
-      gsap.ticker.remove(ticker);
-      lenis.off('scroll', ScrollTrigger.update);
-      lenis.destroy();
-      lenisRef.current = null;
-      if (window.__lenis === lenis) {
-        window.__lenis = undefined;
-      }
+      mediaQuery.removeEventListener("change", syncLenis);
+      destroyLenis?.();
     };
   }, []);
 
