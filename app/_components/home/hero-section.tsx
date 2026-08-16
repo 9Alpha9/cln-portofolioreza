@@ -1,12 +1,9 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type YTPlayer = any;
 import Link from "next/link";
 import { SplitTextLink } from "@/components/ui/split-text-link";
-import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import type { HomeHeroItem } from "@/lib/instagram/home-hero";
@@ -30,7 +27,7 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
   const customCursorRef = useRef<HTMLDivElement>(null);
   const marqueeCircleRef = useRef<SVGSVGElement>(null);
   const activeIndexRef = useRef(0);
-  const playerRefs = useRef<(YTPlayer | null)[]>([]);
+  const playerRefs = useRef<(YouTubePlayerHandle | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const isDragging = useRef(false);
@@ -282,13 +279,13 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
                     }}
                   >
                     <YouTubePlayer
-                      videoId={item.videoId}
+                      videoUrl={item.videoUrl}
                       poster={item.thumbnailUrl}
                       autoplay={isActive}
                       muted
                       loop
                       className="w-full h-full"
-                      onReady={(player) => { playerRefs.current[i] = player; }}
+                      ref={(player) => { playerRefs.current[i] = player; }}
                     />
                   </div>
                 );

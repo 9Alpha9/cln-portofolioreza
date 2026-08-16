@@ -79,6 +79,7 @@ type YouTubeVideoItem = {
   id: string;
   title: string;
   thumbnail: string;
+  videoUrl?: string;
   publishedAt: string;
   views: number;
   url: string;

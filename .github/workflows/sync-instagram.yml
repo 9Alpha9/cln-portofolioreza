@@ -27,10 +27,18 @@ jobs:
           node-version: "22"
           cache: "npm"
 
-      - name: Sync YouTube Videos
+      - name: Install yt-dlp and ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          sudo curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o /usr/local/bin/yt-dlp
+          sudo chmod a+rx /usr/local/bin/yt-dlp
+
+      - name: Sync YouTube Videos & Upload to Vercel Blob
         env:
           YOUTUBE_CHANNEL_ID: "UCLd2quRGf0O-4DdDHpgkMTQ"
           YOUTUBE_MAX_VIDEOS: "15"
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
         run: node scripts/sync-youtube.mjs
 
       - name: Commit and push if changed
@@ -42,5 +50,5 @@ jobs:
             echo "No YouTube media changes."
             exit 0
           fi
-          git commit -m "chore: sync youtube media [skip ci]"
+          git commit -m "chore: sync youtube media with blob urls [skip ci]"
           git push

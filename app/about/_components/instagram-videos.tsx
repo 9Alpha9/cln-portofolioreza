@@ -1,20 +1,18 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type YTPlayer = any;
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { SplitTextLink } from "@/components/ui/split-text-link";
-import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
 
 interface YouTubeVideo {
   id: string;
   title: string;
   thumbnail: string;
+  videoUrl?: string;
   publishedAt: string;
   views: number;
   url: string;
@@ -23,7 +21,7 @@ interface YouTubeVideo {
 export function InstagramVideos({ videos }: { videos: YouTubeVideo[] }) {
   const [mounted, setMounted] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
-  const playerRefs = useRef<(YTPlayer | null)[]>([]);
+  const playerRefs = useRef<(YouTubePlayerHandle | null)[]>([]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => setMounted(true));
@@ -63,13 +61,12 @@ export function InstagramVideos({ videos }: { videos: YouTubeVideo[] }) {
               <SwiperSlide key={video.id} className="!h-auto">
                 <div className="group relative aspect-[4/5] overflow-hidden border border-border bg-surface-alt">
                   <YouTubePlayer
-                    videoId={video.id}
+                    videoUrl={video.videoUrl}
                     poster={video.thumbnail}
                     autoplay={false}
                     muted
                     loop
                     className="w-full h-full"
-                    onReady={(player) => { playerRefs.current[index] = player; }}
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
@@ -93,13 +90,12 @@ export function InstagramVideos({ videos }: { videos: YouTubeVideo[] }) {
             className="relative aspect-[4/5] overflow-hidden border border-border bg-surface-alt"
           >
             <YouTubePlayer
-              videoId={video.id}
+              videoUrl={video.videoUrl}
               poster={video.thumbnail}
               autoplay={false}
               muted
               loop
               className="w-full h-full"
-              onReady={(player) => { playerRefs.current[index] = player; }}
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">

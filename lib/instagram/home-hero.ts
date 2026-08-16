@@ -5,6 +5,7 @@ export type HomeHeroItem = {
   id: string;
   title: string;
   videoId: string;
+  videoUrl?: string;
   thumbnailUrl: string;
   permalink: string;
   href: string;
@@ -14,6 +15,7 @@ type YouTubeVideo = {
   id: string;
   title: string;
   thumbnail: string;
+  videoUrl?: string;
   publishedAt: string;
   views: number;
   url: string;
@@ -53,6 +55,7 @@ export function getHomeHeroItems(reviews: ReviewSummary[]): HomeHeroItem[] {
           ? `Review Terbaru: ${match.review.name}`
           : item.title.replace(/#[^\s]+/g, "").trim().slice(0, 60),
         videoId: item.id,
+        videoUrl: item.videoUrl,
         thumbnailUrl: item.thumbnail,
         permalink: item.url,
         href: match ? `/reviews/${match.review.slug}` : item.url,

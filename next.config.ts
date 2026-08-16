@@ -19,6 +19,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "s3.us-west-2.amazonaws.com",
       },
+      {
+        protocol: "https",
+        hostname: "*.vercel-storage.com",
+      },
     ],
   },
 };

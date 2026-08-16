@@ -1,15 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type YTPlayer = any;
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import { CursorIndicator } from "@/components/ui/cursor-indicator";
 import { MediaIndicator } from "@/components/ui/media-indicator";
-import { YouTubePlayer } from "@/components/ui/youtube-player";
+import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
 import youtubeMedia from "@/content/media/youtube-media.json";
 import type { ReviewSummary } from "@/types";
 
@@ -17,6 +14,7 @@ type YouTubeVideo = {
   id: string;
   title: string;
   thumbnail: string;
+  videoUrl?: string;
   publishedAt: string;
   views: number;
   url: string;
@@ -49,7 +47,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const playerRef = useRef<YTPlayer | null>(null);
+  const playerRef = useRef<YouTubePlayerHandle | null>(null);
   const prevArrowRef = useRef<SVGSVGElement>(null);
   const nextArrowRef = useRef<SVGSVGElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
@@ -124,7 +122,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
     return () => ctx.revert();
   }, []);
 
-  const handlePlayerReady = useCallback((player: YTPlayer) => {
+  const handlePlayerReady = useCallback((player: YouTubePlayerHandle) => {
     playerRef.current = player;
   }, []);
 
@@ -169,13 +167,13 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
           >
             {latestVideo && (
               <YouTubePlayer
-                videoId={latestVideo.id}
+                videoUrl={latestVideo.videoUrl}
                 poster={latestVideo.thumbnail}
                 autoplay={false}
                 muted={false}
                 loop
                 className="w-full h-full"
-                onReady={handlePlayerReady}
+                ref={handlePlayerReady}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
               />
