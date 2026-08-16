@@ -1,4 +1,4 @@
-import instagramMedia from "@/content/media/instagram-media.json";
+import youtubeMedia from "@/content/media/youtube-media.json";
 
 export const aboutMeta = {
   title: "About",
@@ -75,25 +75,19 @@ export const transparency = {
     "Beberapa tautan pembelian dapat berupa tautan afiliasi. Komisi tidak menambah harga yang kamu bayar dan tidak mengubah penilaian produk. Kelebihan maupun kekurangan tetap disampaikan sesuai pengalaman review.",
 };
 
-type InstagramMediaItem = {
+type YouTubeVideoItem = {
   id: string;
-  media_type: string;
-  media_url: string;
-  blob_url?: string;
-  thumbnail_url?: string;
-  permalink: string;
-  caption?: string;
-  timestamp: string;
+  title: string;
+  thumbnail: string;
+  publishedAt: string;
+  views: number;
+  url: string;
 };
 
-export const instagramVideos = (instagramMedia as InstagramMediaItem[])
-  .filter((item) => item.media_type === "VIDEO")
+export const youtubeVideos = (youtubeMedia as YouTubeVideoItem[])
+  .filter((item) => item.id)
   .sort(
     (a, b) =>
-      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
   )
-  .slice(0, 3)
-  .map((item) => ({
-    ...item,
-    media_url: item.blob_url || item.media_url,
-  }));
+  .slice(0, 3);

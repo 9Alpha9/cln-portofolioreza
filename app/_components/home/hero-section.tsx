@@ -1,8 +1,12 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type YTPlayer = any;
 import Link from "next/link";
 import { SplitTextLink } from "@/components/ui/split-text-link";
+import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import type { HomeHeroItem } from "@/lib/instagram/home-hero";
@@ -26,10 +30,9 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
   const customCursorRef = useRef<HTMLDivElement>(null);
   const marqueeCircleRef = useRef<SVGSVGElement>(null);
   const activeIndexRef = useRef(0);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+  const playerRefs = useRef<(YTPlayer | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [failedVideoIds, setFailedVideoIds] = useState<Set<string>>(() => new Set());
   const isDragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0 });
 
@@ -40,13 +43,14 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
   }, [activeIndex]);
 
   useEffect(() => {
-    videoRefs.current.forEach((video, i) => {
-      if (!video) return;
-      video.currentTime = 0;
+    playerRefs.current.forEach((player, i) => {
+      if (!player) return;
       if (activeIndex === i) {
-        video.play().catch(() => { });
+        player.seekTo?.(0, true);
+        player.playVideo?.();
       } else {
-        video.pause();
+        player.pauseVideo?.();
+        player.seekTo?.(0, true);
       }
     });
   }, [activeIndex]);
@@ -113,7 +117,6 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
     };
   }, []);
 
-  // Custom Cursor & Drag Logic via GSAP
   useEffect(() => {
     const cursor = customCursorRef.current;
     const container = stackContainerRef.current;
@@ -202,7 +205,6 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
     >
       <div className="w-full max-w-[1440px] mx-auto px-6 lg:py-0 py-32">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          {/* ── Left Column: Title + Bullets ── */}
           <div className="lg:col-span-4 z-10">
             <h1
               data-hero-title
@@ -233,9 +235,7 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
             </div>
           </div>
 
-          {/* ── Center Column: Horizontal Stacked Phone Cards ── */}
           <div className="lg:col-span-5 relative flex justify-center items-center">
-            {/* Curved text marquee */}
             <div
               data-hero-marquee
               className="absolute inset-0 pointer-events-none z-0"
@@ -253,15 +253,14 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
                     fill="none"
                   />
                 </defs>
-                  <text className="fill-muted text-xs tracking-[0.3em] uppercase font-mono">
-                    <textPath href="#curve" startOffset="0%">
-                      KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR REVIEW • CONTROLLER REVIEW • KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR REVIEW • CONTROLLER REVIEW •
-                    </textPath>
-                  </text>
+                <text className="fill-muted text-xs tracking-[0.3em] uppercase font-mono">
+                  <textPath href="#curve" startOffset="0%">
+                    KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR REVIEW • CONTROLLER REVIEW • KEYBOARD REVIEW • MOUSE REVIEW • HEADSET REVIEW • MONITOR REVIEW • CONTROLLER REVIEW •
+                  </textPath>
+                </text>
               </svg>
             </div>
 
-            {/* Card Stack (no click, swipe-only) */}
             <div
               ref={stackContainerRef}
               className="relative w-60 sm:w-96 h-[420px] sm:h-[680px] select-none touch-pan-y"
@@ -269,6 +268,7 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
               {items.map((item, i) => {
                 const offset = (((i - activeIndex) % total) + total) % total;
                 const style = OFFSET_STYLE[offset];
+                const isActive = activeIndex === i;
                 return (
                   <div
                     key={item.id}
@@ -281,37 +281,21 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
                       opacity: style.opacity,
                     }}
                   >
-                    {failedVideoIds.has(item.id) ? (
-                      item.thumbnailUrl ? (
-                        <img
-                          src={item.thumbnailUrl}
-                          alt={item.title}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : null
-                    ) : (
-                      <video
-                        ref={(el) => { videoRefs.current[i] = el; }}
-                        className="w-full h-full object-cover pointer-events-none"
-                        muted
-                        loop
-                        playsInline
-                        poster={item.thumbnailUrl}
-                        preload="metadata"
-                        src={item.videoUrl}
-                        onError={() => {
-                          setFailedVideoIds((current) => new Set(current).add(item.id));
-                        }}
-                        style={{ width: "100%", height: "100%" }}
-                      />
-                    )}
+                    <YouTubePlayer
+                      videoId={item.videoId}
+                      poster={item.thumbnailUrl}
+                      autoplay={isActive}
+                      muted
+                      loop
+                      className="w-full h-full"
+                      onReady={(player) => { playerRefs.current[i] = player; }}
+                    />
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* ── Right Column: Info + CTA ── */}
           <div className="lg:col-span-3 z-10 space-y-10 flex flex-col justify-end h-full">
             <div
               data-hero-right
@@ -367,7 +351,6 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
         </div>
       </div>
 
-      {/* ── Custom GSAP Swipe Cursor ── */}
       <div
         ref={customCursorRef}
         className="fixed top-0 left-0 z-[100] pointer-events-none flex items-center justify-center"

@@ -1,21 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type YTPlayer = any;
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import { CursorIndicator } from "@/components/ui/cursor-indicator";
 import { MediaIndicator } from "@/components/ui/media-indicator";
-import instagramMedia from "@/content/media/instagram-media.json";
+import { YouTubePlayer } from "@/components/ui/youtube-player";
+import youtubeMedia from "@/content/media/youtube-media.json";
 import type { ReviewSummary } from "@/types";
 
-type InstagramMedia = {
+type YouTubeVideo = {
   id: string;
-  media_type: string;
-  media_url: string;
-  blob_url?: string;
-  thumbnail_url?: string;
-  timestamp: string;
+  title: string;
+  thumbnail: string;
+  publishedAt: string;
+  views: number;
+  url: string;
 };
 
 function formatPrice(value: number) {
@@ -25,12 +29,12 @@ function formatPrice(value: number) {
   }).format(value);
 }
 
-const videos = (instagramMedia as InstagramMedia[])
-  .filter((item) => item.media_type === "VIDEO")
+const videos = (youtubeMedia as YouTubeVideo[])
+  .filter((item) => item.id)
   .sort(
     (a, b) =>
-      new Date(b.timestamp).getTime() -
-      new Date(a.timestamp).getTime()
+      new Date(b.publishedAt).getTime() -
+      new Date(a.publishedAt).getTime()
   );
 
 const latestVideo = videos[0];
@@ -45,7 +49,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const playerRef = useRef<YTPlayer | null>(null);
   const prevArrowRef = useRef<SVGSVGElement>(null);
   const nextArrowRef = useRef<SVGSVGElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
@@ -57,7 +61,6 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -121,26 +124,32 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
     return () => ctx.revert();
   }, []);
 
-  const togglePlay = async () => {
-    const video = videoRef.current;
-    if (!video) return;
+  const handlePlayerReady = useCallback((player: YTPlayer) => {
+    playerRef.current = player;
+  }, []);
 
-    if (video.paused) {
-      try {
-        await video.play();
-      } catch {
-        setIsPlaying(false);
-      }
+  const togglePlay = () => {
+    const player = playerRef.current;
+    if (!player) return;
+
+    if (isPlaying) {
+      player.pauseVideo?.();
     } else {
-      video.pause();
+      player.playVideo?.();
     }
   };
 
   const toggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
+    const player = playerRef.current;
+    if (!player) return;
+
+    if (isMuted) {
+      player.unMute?.();
+      setIsMuted(false);
+    } else {
+      player.mute?.();
+      setIsMuted(true);
     }
   };
 
@@ -150,7 +159,6 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
   return (
     <section ref={sectionRef} className="w-full border-t border-b border-border text-foreground mt-24 bg-surface-alt">
       <div className="mx-auto grid max-w-[1440px] grid-cols-1 md:grid-cols-2 px-4 lg:px-8">
-        {/* LEFT COLUMN: Static Image Banner with Quote */}
         <div
           ref={leftColRef}
           className="relative min-h-[420px] w-full overflow-hidden border-l border-r border-border md:min-h-[650px] sm:h-[850px] h-[450px]"
@@ -159,42 +167,23 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
             variant={isPlaying ? "pause" : "play"}
             className="isolate h-full w-full cursor-none"
           >
-            <video
-              ref={videoRef}
-              src={latestVideo?.blob_url || latestVideo?.media_url || "/videos/vid-2.mp4"}
-              poster={latestVideo ? `/images/instagram/${latestVideo.id}.jpg` : undefined}
-              muted={isMuted}
-              loop
-              playsInline
-              preload="auto"
-              onLoadedMetadata={(e) => {
-                e.currentTarget.currentTime = 0.1;
-              }}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              onEnded={() => setIsPlaying(false)}
-              onError={() => {
-                setIsPlaying(false);
-                setVideoFailed(true);
-              }}
-              suppressHydrationWarning
-              style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
-              className="absolute inset-0 z-0 outline-none border-none"
-            />
             {latestVideo && (
-              <img
-                src={`/images/instagram/${latestVideo.id}.jpg`}
-                alt="Thumbnail video Instagram Tahutech"
-                loading="eager"
-                fetchPriority="high"
-                decoding="sync"
-                className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-300 ${isPlaying && !videoFailed ? "opacity-0" : "opacity-100"}`}
+              <YouTubePlayer
+                videoId={latestVideo.id}
+                poster={latestVideo.thumbnail}
+                autoplay={false}
+                muted={false}
+                loop
+                className="w-full h-full"
+                onReady={handlePlayerReady}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
               />
             )}
             <button
               type="button"
               onClick={togglePlay}
-              aria-label={isPlaying ? "Pause Instagram video" : "Play Instagram video"}
+              aria-label={isPlaying ? "Pause YouTube video" : "Play YouTube video"}
               className="absolute inset-0 z-20 cursor-none border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none md:cursor-none"
             >
               {!isPlaying && (
@@ -209,7 +198,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
             <button
               type="button"
               onClick={toggleMute}
-              aria-label={isMuted ? "Unmute Instagram video" : "Mute Instagram video"}
+              aria-label={isMuted ? "Unmute YouTube video" : "Mute YouTube video"}
               className="absolute bottom-12 right-4 z-30 flex h-10 min-w-10 items-center justify-center border border-border bg-background/90 px-3 text-[10px] font-bold uppercase tracking-widest md:bottom-12"
             >
               {isMuted ? "Sound on" : "Sound off"}
@@ -217,9 +206,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
           )}
         </div>
 
-        {/* RIGHT COLUMN: Slide Area */}
         <div ref={rightColRef} className="flex min-h-[700px] flex-col justify-between border-r border-l border-border py-8 md:min-h-[620px]">
-          {/* Header Title */}
           <div className="p-8 pb-0 sm:p-12 sm:pb-0 lg:p-16 lg:pb-0">
             <h3 className="font-heading text-4xl sm:text-3xl font-black leading-[0.95] tracking-tight uppercase">
               Reviewed
@@ -228,7 +215,6 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
             </h3>
           </div>
 
-          {/* Cards Flex Container (Only slide container changes offset) */}
           <div className="relative flex flex-1 items-start overflow-hidden px-8 pt-6 sm:px-12 sm:pt-8 lg:px-16">
             <div ref={containerRef} className="relative flex h-full w-full justify-center">
               {reviews.map((review, i) => (
@@ -247,15 +233,11 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
                           : "translateX(110%) scale(0.95)",
                   }}
                 >
-                  {/* Card Border wrapper */}
                   <div className="relative flex sm:aspect-[5.2/6] aspect-[4.9/6]  flex-col border border-border bg-background p-3 sm:p-4">
-
-                    {/* NEW Badge top right */}
                     <div className="absolute top-0 right-0 border-b border-l border-border bg-background px-2 py-0.5 text-[8px] font-bold tracking-widest uppercase text-green">
                       NEW
                     </div>
 
-                    {/* Image Area */}
                     <div className="flex-1 flex items-center justify-center overflow-hidden">
                       {review.thumbnail.src ? (
                         <img
@@ -266,7 +248,6 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
                       ) : null}
                     </div>
 
-                    {/* Bottom Info Bar */}
                     <div className="mt-auto flex flex-col gap-1 border-t border-border pt-3 sm:flex-row sm:items-baseline sm:justify-between sm:gap-3">
                       <Link href={`/reviews/${review.slug}`} className="min-w-0 break-words text-[11px] font-semibold tracking-wide text-foreground uppercase hover:underline">
                         {review.name}
@@ -281,9 +262,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
             </div>
           </div>
 
-          {/* BOTTOM CONTROLS BAR */}
           <div className="grid grid-cols-[76px_1fr_76px] border-t border-b border-border text-xs font-semibold uppercase tracking-wider sm:grid-cols-[100px_1fr_100px]">
-            {/* Left Button */}
             <button
               ref={prevBtnRef}
               type="button"
@@ -306,7 +285,6 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
               </svg>
             </button>
 
-            {/* Slider Indicator */}
             <div className="flex items-center justify-center gap-4">
               <span className="font-mono tabular-nums text-[11px] font-bold">
                 {String(index + 1).padStart(2, "0")}
@@ -325,7 +303,6 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
               </span>
             </div>
 
-            {/* Right Button */}
             <button
               ref={nextBtnRef}
               type="button"

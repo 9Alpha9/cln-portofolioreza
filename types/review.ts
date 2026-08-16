@@ -30,7 +30,7 @@ export interface SpecificationGroup {
 }
 
 export interface ReviewVideo {
-  platform: "youtube" | "tiktok";
+  platform: "youtube" | "tiktok" | "instagram";
   url: string;
   videoId?: string;
   thumbnail?: string;
