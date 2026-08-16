@@ -8,7 +8,7 @@ import "swiper/css";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
 
-interface YouTubeVideo {
+interface VideoItem {
   id: string;
   title: string;
   thumbnail: string;
@@ -18,7 +18,7 @@ interface YouTubeVideo {
   url: string;
 }
 
-export function InstagramVideos({ videos }: { videos: YouTubeVideo[] }) {
+export function InstagramVideos({ videos }: { videos: VideoItem[] }) {
   const [mounted, setMounted] = useState(false);
   const [slideIndex, setSlideIndex] = useState(0);
   const playerRefs = useRef<(YouTubePlayerHandle | null)[]>([]);
@@ -70,10 +70,10 @@ export function InstagramVideos({ videos }: { videos: YouTubeVideo[] }) {
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                    <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">YouTube Shorts</span>
-                    <p className="mt-2 line-clamp-2 text-sm font-medium text-white">{video.title.replace(/#[^\s]+/g, "").trim()}</p>
+                    <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">Instagram</span>
+                    <p className="mt-2 line-clamp-2 text-sm font-medium text-white">{video.title}</p>
                     <Link href={video.url} target="_blank" rel="noopener noreferrer" className="pointer-events-auto mt-4 inline-block cursor-pointer text-xs font-semibold uppercase tracking-wider text-white/80 hover:text-white">
-                      Buka YouTube ↗
+                      Buka Instagram ↗
                     </Link>
                   </div>
                 </div>
@@ -99,10 +99,10 @@ export function InstagramVideos({ videos }: { videos: YouTubeVideo[] }) {
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             <div className="pointer-events-none absolute inset-x-0 bottom-0 p-4 sm:p-5">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">YouTube Shorts</span>
-              <p className="mt-2 line-clamp-2 text-sm font-medium text-white">{video.title.replace(/#[^\s]+/g, "").trim()}</p>
+              <span className="text-[10px] font-semibold uppercase tracking-widest text-white/70">Instagram</span>
+              <p className="mt-2 line-clamp-2 text-sm font-medium text-white">{video.title}</p>
               <Link href={video.url} target="_blank" rel="noopener noreferrer" className="pointer-events-auto mt-4 inline-block cursor-pointer text-xs font-semibold uppercase tracking-wider text-white/80 hover:text-white">
-                Buka YouTube ↗
+                Buka Instagram ↗
               </Link>
             </div>
           </div>

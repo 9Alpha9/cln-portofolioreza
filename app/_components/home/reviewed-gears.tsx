@@ -7,17 +7,18 @@ import { onTransitionEnd } from "@/lib/animation-sync";
 import { CursorIndicator } from "@/components/ui/cursor-indicator";
 import { MediaIndicator } from "@/components/ui/media-indicator";
 import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
-import youtubeMedia from "@/content/media/youtube-media.json";
+import instagramMedia from "@/content/media/instagram-media.json";
 import type { ReviewSummary } from "@/types";
 
-type YouTubeVideo = {
+type InstagramVideo = {
   id: string;
-  title: string;
-  thumbnail: string;
-  videoUrl?: string;
-  publishedAt: string;
-  views: number;
-  url: string;
+  media_type: string;
+  media_url?: string;
+  blob_url?: string;
+  thumbnail_url?: string;
+  permalink: string;
+  caption?: string;
+  timestamp: string;
 };
 
 function formatPrice(value: number) {
@@ -27,15 +28,18 @@ function formatPrice(value: number) {
   }).format(value);
 }
 
-const videos = (youtubeMedia as YouTubeVideo[])
-  .filter((item) => item.id)
-  .sort(
-    (a, b) =>
-      new Date(b.publishedAt).getTime() -
-      new Date(a.publishedAt).getTime()
-  );
+const videos = (instagramMedia as InstagramVideo[])
+  .filter((item) => item.media_type === "VIDEO" && (item.blob_url || item.media_url))
+  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-const latestVideo = videos[0];
+const latestVideo = videos[0]
+  ? {
+      id: videos[0].id,
+      thumbnail: videos[0].thumbnail_url || `/images/instagram/${videos[0].id}.jpg`,
+      videoUrl: videos[0].blob_url || videos[0].media_url,
+      url: videos[0].permalink,
+    }
+  : null;
 
 interface ReviewedGearsProps {
   initialReviews?: ReviewSummary[];
@@ -165,7 +169,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
             variant={isPlaying ? "pause" : "play"}
             className="isolate h-full w-full cursor-none"
           >
-            {latestVideo && (
+                        {latestVideo && (
               <YouTubePlayer
                 videoUrl={latestVideo.videoUrl}
                 poster={latestVideo.thumbnail}

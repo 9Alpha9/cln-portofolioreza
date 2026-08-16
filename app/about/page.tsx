@@ -14,7 +14,7 @@ import {
   coverage,
   socialLinks,
   transparency,
-  youtubeVideos,
+  instagramVideos,
 } from "@/content/site/about";
 import type { Metadata } from "next";
 
@@ -127,7 +127,7 @@ export default function AboutPage() {
         </GsapReveal>
 
         <GsapReveal delay={0.15} y={36}>
-          <InstagramVideos videos={youtubeVideos} />
+          <InstagramVideos videos={instagramVideos} />
         </GsapReveal>
 
         <GsapReveal delay={0.15} y={36}>
