@@ -298,13 +298,12 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
                         playsInline
                         poster={item.thumbnailUrl}
                         preload="metadata"
+                        src={item.videoUrl}
                         onError={() => {
                           setFailedVideoIds((current) => new Set(current).add(item.id));
                         }}
                         style={{ width: "100%", height: "100%" }}
-                      >
-                        <source src={item.videoUrl} type="video/mp4" />
-                      </video>
+                      />
                     )}
                   </div>
                 );

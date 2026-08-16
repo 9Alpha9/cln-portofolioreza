@@ -79,6 +79,7 @@ type InstagramMediaItem = {
   id: string;
   media_type: string;
   media_url: string;
+  blob_url?: string;
   thumbnail_url?: string;
   permalink: string;
   caption?: string;
@@ -91,4 +92,8 @@ export const instagramVideos = (instagramMedia as InstagramMediaItem[])
     (a, b) =>
       new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
   )
-  .slice(0, 3);
+  .slice(0, 3)
+  .map((item) => ({
+    ...item,
+    media_url: item.blob_url || item.media_url,
+  }));

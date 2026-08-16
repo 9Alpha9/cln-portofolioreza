@@ -12,6 +12,7 @@ import { SplitTextLink } from "@/components/ui/split-text-link";
 interface InstagramVideo {
   id: string;
   media_url: string;
+  blob_url?: string;
   thumbnail_url?: string;
   permalink: string;
   caption?: string;
@@ -122,7 +123,7 @@ export function InstagramVideos({ videos }: { videos: InstagramVideo[] }) {
                 >
                   <video
                     ref={(element) => { mobileVideoRefs.current[index] = element; }}
-                    src={video.media_url}
+                    src={video.blob_url || video.media_url}
                     poster={`/images/instagram/${video.id}.jpg`}
                     loop
                     playsInline
@@ -171,7 +172,7 @@ export function InstagramVideos({ videos }: { videos: InstagramVideo[] }) {
             <div onClick={() => toggleVideo(index)} className="h-full w-full">
               <video
                 ref={(element) => { desktopVideoRefs.current[index] = element; }}
-                src={video.media_url}
+                src={video.blob_url || video.media_url}
                 poster={`/images/instagram/${video.id}.jpg`}
                 loop
                 playsInline

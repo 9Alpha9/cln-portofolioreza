@@ -14,6 +14,7 @@ type InstagramMedia = {
   id: string;
   media_type: string;
   media_url: string;
+  blob_url?: string;
   thumbnail_url?: string;
   permalink: string;
   caption?: string;
@@ -58,8 +59,8 @@ export function getHomeHeroItems(reviews: ReviewSummary[]): HomeHeroItem[] {
         title: match
       ? `Review Terbaru: ${match.review.name}`
       : getCaptionTitle(item.caption),
-        videoUrl: item.media_url,
-        thumbnailUrl: `/api/instagram/thumbnail/${item.id}`,
+        videoUrl: item.blob_url || item.media_url,
+        thumbnailUrl: `/images/instagram/${item.id}.jpg`,
         permalink: item.permalink,
         href: match ? `/reviews/${match.review.slug}` : item.permalink,
       };

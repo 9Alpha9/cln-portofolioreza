@@ -13,6 +13,7 @@ type InstagramMedia = {
   id: string;
   media_type: string;
   media_url: string;
+  blob_url?: string;
   thumbnail_url?: string;
   timestamp: string;
 };
@@ -56,6 +57,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [videoFailed, setVideoFailed] = useState(false);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -159,7 +161,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
           >
             <video
               ref={videoRef}
-              src={latestVideo?.media_url ?? "/videos/vid-2.mp4"}
+              src={latestVideo?.blob_url || latestVideo?.media_url || "/videos/vid-2.mp4"}
               poster={latestVideo ? `/images/instagram/${latestVideo.id}.jpg` : undefined}
               muted={isMuted}
               loop
@@ -171,7 +173,10 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
               onPlay={() => setIsPlaying(true)}
               onPause={() => setIsPlaying(false)}
               onEnded={() => setIsPlaying(false)}
-              onError={() => setIsPlaying(false)}
+              onError={() => {
+                setIsPlaying(false);
+                setVideoFailed(true);
+              }}
               suppressHydrationWarning
               style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center", display: "block" }}
               className="absolute inset-0 z-0 outline-none border-none"
@@ -183,7 +188,7 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
                 loading="eager"
                 fetchPriority="high"
                 decoding="sync"
-                className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-300 ${isPlaying ? "opacity-0" : "opacity-100"}`}
+                className={`pointer-events-none absolute inset-0 z-10 h-full w-full object-cover transition-opacity duration-300 ${isPlaying && !videoFailed ? "opacity-0" : "opacity-100"}`}
               />
             )}
             <button
