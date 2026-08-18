@@ -1,24 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import { CursorIndicator } from "@/components/ui/cursor-indicator";
 import { MediaIndicator } from "@/components/ui/media-indicator";
-import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
-import instagramMedia from "@/content/media/instagram-media.json";
+
+import youtubeMedia from "@/content/media/youtube-media.json";
+import { getHomeHeroItems } from "@/lib/instagram/home-hero";
+import { youtubeThumbnailUrl } from "@/lib/youtube/thumbnail";
 import type { ReviewSummary } from "@/types";
 
-type InstagramVideo = {
+type YouTubeVideo = {
   id: string;
-  media_type: string;
-  media_url?: string;
-  blob_url?: string;
-  thumbnail_url?: string;
-  permalink: string;
-  caption?: string;
-  timestamp: string;
+  title: string;
+  thumbnail: string;
+  publishedAt: string;
+  views: number;
+  url: string;
 };
 
 function formatPrice(value: number) {
@@ -28,18 +28,17 @@ function formatPrice(value: number) {
   }).format(value);
 }
 
-const videos = (instagramMedia as InstagramVideo[])
-  .filter((item) => item.media_type === "VIDEO" && (item.blob_url || item.media_url))
-  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+const videos = (youtubeMedia as YouTubeVideo[])
+  .filter((item) => item.id)
+  .sort(
+    (a, b) =>
+      new Date(b.publishedAt).getTime() -
+      new Date(a.publishedAt).getTime()
+  );
 
-const latestVideo = videos[0]
-  ? {
-      id: videos[0].id,
-      thumbnail: videos[0].thumbnail_url || `/images/instagram/${videos[0].id}.jpg`,
-      videoUrl: videos[0].blob_url || videos[0].media_url,
-      url: videos[0].permalink,
-    }
-  : null;
+const heroVideoIds = new Set(getHomeHeroItems([]).map((item) => item.videoId));
+const featuredVideo =
+  videos.find((video) => !heroVideoIds.has(video.id)) ?? videos[0];
 
 interface ReviewedGearsProps {
   initialReviews?: ReviewSummary[];
@@ -51,7 +50,8 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
   const [index, setIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const playerRef = useRef<YouTubePlayerHandle | null>(null);
+  const videoFrameRef = useRef<HTMLDivElement>(null);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
   const prevArrowRef = useRef<SVGSVGElement>(null);
   const nextArrowRef = useRef<SVGSVGElement>(null);
   const prevBtnRef = useRef<HTMLButtonElement>(null);
@@ -62,7 +62,9 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
   const rightColRef = useRef<HTMLDivElement>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
+  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
+  const [thumbIndex, setThumbIndex] = useState(0);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -126,33 +128,68 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
     return () => ctx.revert();
   }, []);
 
-  const handlePlayerReady = useCallback((player: YouTubePlayerHandle) => {
-    playerRef.current = player;
-  }, []);
+  const sendPlayerCommand = (
+    func: "playVideo" | "pauseVideo" | "mute" | "unMute"
+  ) => {
+    iframeRef.current?.contentWindow?.postMessage(
+      JSON.stringify({ event: "command", func, args: [] }),
+      "https://www.youtube.com"
+    );
+  };
 
   const togglePlay = () => {
-    const player = playerRef.current;
-    if (!player) return;
+    if (!isVideoLoaded) {
+      setIsVideoLoaded(true);
+      setIsPlaying(true);
+      return;
+    }
 
     if (isPlaying) {
-      player.pauseVideo?.();
+      sendPlayerCommand("pauseVideo");
+      setIsPlaying(false);
     } else {
-      player.playVideo?.();
+      sendPlayerCommand("playVideo");
+      setIsPlaying(true);
     }
   };
 
-  const toggleMute = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const player = playerRef.current;
-    if (!player) return;
+  useEffect(() => {
+    const frame = videoFrameRef.current;
+    const iframe = iframeRef.current;
+    if (!frame || !iframe) return;
 
-    if (isMuted) {
-      player.unMute?.();
-      setIsMuted(false);
-    } else {
-      player.mute?.();
-      setIsMuted(true);
-    }
+    const applyCover = () => {
+      const { width, height } = frame.getBoundingClientRect();
+      if (!width || !height) return;
+
+      const shortsRatio = 9 / 16;
+      const frameRatio = width / height;
+
+      let iframeW: number;
+      let iframeH: number;
+
+      if (frameRatio > shortsRatio) {
+        iframeW = width;
+        iframeH = width / shortsRatio;
+      } else {
+        iframeH = height;
+        iframeW = height * shortsRatio;
+      }
+
+      iframe.style.width = `${iframeW}px`;
+      iframe.style.height = `${iframeH}px`;
+    };
+
+    applyCover();
+    const observer = new ResizeObserver(applyCover);
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, [isVideoLoaded]);
+
+  const toggleMute = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    sendPlayerCommand(isMuted ? "unMute" : "mute");
+    setIsMuted((muted) => !muted);
   };
 
   const prev = () => setIndex((i) => (i - 1 + total) % total);
@@ -169,18 +206,25 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
             variant={isPlaying ? "pause" : "play"}
             className="isolate h-full w-full cursor-none"
           >
-                        {latestVideo && (
-              <YouTubePlayer
-                videoUrl={latestVideo.videoUrl}
-                poster={latestVideo.thumbnail}
-                autoplay={false}
-                muted={false}
-                loop
-                className="w-full h-full"
-                ref={handlePlayerReady}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
+            {featuredVideo && (
+              <div ref={videoFrameRef} className="absolute inset-0 overflow-hidden">
+                {isVideoLoaded ? (
+                  <iframe
+                    ref={iframeRef}
+                    src={`https://www.youtube.com/embed/${featuredVideo.id}?autoplay=1&mute=1&loop=1&playlist=${featuredVideo.id}&controls=0&playsinline=1&enablejsapi=1&rel=0&modestbranding=1`}
+                    title={featuredVideo.title}
+                    allow="autoplay; encrypted-media; picture-in-picture"
+                    className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-0 pointer-events-none"
+                  />
+                ) : (
+                  <img
+                    src={youtubeThumbnailUrl(featuredVideo.id, thumbIndex)}
+                    alt={featuredVideo.title}
+                    onError={() => setThumbIndex((current) => Math.min(current + 1, 2))}
+                    className="absolute left-1/2 top-1/2 h-full w-full max-w-none -translate-x-1/2 -translate-y-1/2 scale-[1.50] object-cover object-center"
+                  />
+                )}
+              </div>
             )}
             <button
               type="button"
@@ -188,20 +232,18 @@ export function ReviewedGears({ initialReviews = [] }: ReviewedGearsProps) {
               aria-label={isPlaying ? "Pause YouTube video" : "Play YouTube video"}
               className="absolute inset-0 z-20 cursor-none border-0 bg-transparent p-0 outline-none focus:outline-none focus-visible:outline-none md:cursor-none"
             >
-              {!isPlaying && (
-                <MediaIndicator
-                  variant="play"
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-foreground bg-background/90 text-foreground md:hidden"
-                />
-              )}
+              <MediaIndicator
+                variant="play"
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity duration-500 ${isPlaying ? "opacity-0 pointer-events-none" : "opacity-100"}`}
+              />
             </button>
           </CursorIndicator>
-          {isPlaying && (
+          {isVideoLoaded && (
             <button
               type="button"
               onClick={toggleMute}
-              aria-label={isMuted ? "Unmute YouTube video" : "Mute YouTube video"}
-              className="absolute bottom-12 right-4 z-30 flex h-10 min-w-10 items-center justify-center border border-border bg-background/90 px-3 text-[10px] font-bold uppercase tracking-widest md:bottom-12"
+              aria-label={isMuted ? "Turn video sound on" : "Mute video"}
+              className="absolute bottom-4 right-4 z-30 flex h-10 items-center justify-center border border-white/70 bg-black/60 px-3 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur-sm"
             >
               {isMuted ? "Sound on" : "Sound off"}
             </button>

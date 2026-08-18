@@ -1,25 +1,22 @@
-import instagramMedia from "@/content/media/instagram-media.json";
+import youtubeMedia from "@/content/media/youtube-media.json";
 import type { ReviewSummary } from "@/types";
 
 export type HomeHeroItem = {
   id: string;
   title: string;
   videoId: string;
-  videoUrl?: string;
   thumbnailUrl: string;
   permalink: string;
   href: string;
 };
 
-type InstagramMediaItem = {
+type YouTubeVideo = {
   id: string;
-  media_type: string;
-  media_url?: string;
-  blob_url?: string;
-  thumbnail_url?: string;
-  permalink: string;
-  caption?: string;
-  timestamp: string;
+  title: string;
+  thumbnail: string;
+  publishedAt: string;
+  views: number;
+  url: string;
 };
 
 function normalize(value: string): string {
@@ -43,25 +40,21 @@ function findMatchingReview(title: string, reviews: ReviewSummary[]) {
 }
 
 export function getHomeHeroItems(reviews: ReviewSummary[]): HomeHeroItem[] {
-  return (instagramMedia as InstagramMediaItem[])
-    .filter((item) => item.media_type === "VIDEO" && (item.blob_url || item.media_url))
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  return (youtubeMedia as YouTubeVideo[])
+    .filter((item) => item.id)
+    .sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime())
     .slice(0, 3)
     .map((item) => {
-      const caption = item.caption || "";
-      const match = findMatchingReview(caption, reviews);
-      const videoSrc = item.blob_url || item.media_url;
-
+      const match = findMatchingReview(item.title, reviews);
       return {
         id: item.id,
         title: match
           ? `Review Terbaru: ${match.review.name}`
-          : caption.replace(/#[^\s]+/g, "").trim().slice(0, 60) || "Review Terbaru",
+          : item.title.replace(/#[^\s]+/g, "").trim().slice(0, 60),
         videoId: item.id,
-        videoUrl: videoSrc,
-        thumbnailUrl: item.thumbnail_url || `/images/instagram/${item.id}.jpg`,
-        permalink: item.permalink,
-        href: match ? `/reviews/${match.review.slug}` : item.permalink,
+        thumbnailUrl: item.thumbnail,
+        permalink: item.url,
+        href: match ? `/reviews/${match.review.slug}` : item.url,
       };
     });
 }

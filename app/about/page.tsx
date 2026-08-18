@@ -1,5 +1,5 @@
 import { Container } from "@/components/ui/container";
-import { InstagramVideos } from "./_components/instagram-videos";
+import { YouTubeVideos } from "./_components/youtube-videos";
 import { GsapReveal } from "@/components/animation";
 import { SplitTextLink } from "@/components/ui/split-text-link";
 import { ArrowUpRight } from "lucide-react";
@@ -14,7 +14,7 @@ import {
   coverage,
   socialLinks,
   transparency,
-  instagramVideos,
+  youtubeVideos,
 } from "@/content/site/about";
 import type { Metadata } from "next";
 
@@ -127,7 +127,7 @@ export default function AboutPage() {
         </GsapReveal>
 
         <GsapReveal delay={0.15} y={36}>
-          <InstagramVideos videos={instagramVideos} />
+          <YouTubeVideos videos={youtubeVideos} />
         </GsapReveal>
 
         <GsapReveal delay={0.15} y={36}>

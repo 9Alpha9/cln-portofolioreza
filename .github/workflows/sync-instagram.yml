@@ -1,4 +1,4 @@
-name: Sync Instagram Videos
+name: Sync YouTube Videos
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: sync-instagram-media
+  group: sync-youtube-videos
   cancel-in-progress: false
 
 jobs:
@@ -21,42 +21,25 @@ jobs:
         with:
           persist-credentials: true
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install instaloader
-        run: python -m pip install --disable-pip-version-check instaloader
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "22"
 
-      - name: Install dependencies
-        run: npm install @vercel/blob
-
-      - name: Fetch Instagram Media
+      - name: Sync YouTube Videos
         env:
-          INSTAGRAM_USERNAME: tahutech.idn
-          INSTAGRAM_STRICT: "true"
-        run: python scripts/sync-instagram.py
-
-      - name: Upload latest videos to Vercel Blob
-        env:
-          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
-          INSTAGRAM_BLOB_MAX_VIDEOS: "15"
-        run: node scripts/upload-instagram-videos.mjs
+          YOUTUBE_CHANNEL_ID: "UCLd2quRGf0O-4DdDHpgkMTQ"
+          YOUTUBE_MAX_VIDEOS: "15"
+        run: node scripts/sync-youtube.mjs
 
       - name: Commit and push if changed
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "github-actions[bot]"
-          git add content/media/instagram-media.json
+          git add content/media/youtube-media.json
           if git diff --staged --quiet; then
-            echo "No Instagram media changes."
+            echo "No YouTube media changes."
             exit 0
           fi
-          git commit -m "chore: sync instagram media [skip ci]"
+          git commit -m "chore: sync youtube media [skip ci]"
           git push

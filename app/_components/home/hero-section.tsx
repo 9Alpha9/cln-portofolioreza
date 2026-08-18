@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import { SplitTextLink } from "@/components/ui/split-text-link";
-import { YouTubePlayer, type YouTubePlayerHandle } from "@/components/ui/youtube-player";
+import { YouTubePlayer } from "@/components/ui/youtube-player";
 import { gsap } from "@/lib/gsap";
 import { onTransitionEnd } from "@/lib/animation-sync";
 import type { HomeHeroItem } from "@/lib/instagram/home-hero";
@@ -27,7 +27,8 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
   const customCursorRef = useRef<HTMLDivElement>(null);
   const marqueeCircleRef = useRef<SVGSVGElement>(null);
   const activeIndexRef = useRef(0);
-  const playerRefs = useRef<(YouTubePlayerHandle | null)[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const playerRefs = useRef<(any | null)[]>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
   const isDragging = useRef(false);
@@ -157,6 +158,12 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
         gsap.to(cursor, { scale: 0.8, duration: 0.2 });
       }
     };
+    const onPointerMove = (e: PointerEvent) => {
+      if (!e.isPrimary || !isDragging.current) return;
+      const diffX = e.clientX - dragStart.current.x;
+      const diffY = e.clientY - dragStart.current.y;
+      if (Math.abs(diffX) > Math.abs(diffY)) e.preventDefault();
+    };
     const onPointerUp = (e: PointerEvent) => {
       if (!e.isPrimary || !isDragging.current) return;
       isDragging.current = false;
@@ -178,6 +185,7 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
     };
 
     container.addEventListener("pointerdown", onPointerDown);
+    container.addEventListener("pointermove", onPointerMove, { passive: false });
     container.addEventListener("pointerup", onPointerUp);
     container.addEventListener("pointercancel", onPointerCancel);
     window.addEventListener("mousemove", onMouseMove);
@@ -186,6 +194,7 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
 
     return () => {
       container.removeEventListener("pointerdown", onPointerDown);
+      container.removeEventListener("pointermove", onPointerMove);
       container.removeEventListener("pointerup", onPointerUp);
       container.removeEventListener("pointercancel", onPointerCancel);
       window.removeEventListener("mousemove", onMouseMove);
@@ -279,14 +288,23 @@ export function HeroSection({ items = [] }: HeroSectionProps) {
                     }}
                   >
                     <YouTubePlayer
-                      videoUrl={item.videoUrl}
+                      videoId={item.videoId}
                       poster={item.thumbnailUrl}
                       autoplay={isActive}
                       muted
                       loop
-                      className="w-full h-full"
-                      ref={(player) => { playerRefs.current[i] = player; }}
+                      className="w-full h-full scale-[1.12]"
+                      onReady={(player) => {
+                        playerRefs.current[i] = player;
+                        if (activeIndexRef.current === i) {
+                          player.mute?.();
+                          player.playVideo?.();
+                        }
+                      }}
                     />
+                    {!isActive && (
+                      <div className="absolute inset-0 z-20 touch-none" />
+                    )}
                   </div>
                 );
               })}
