@@ -16,7 +16,7 @@ export const shopPlatforms: ShopPlatform[] = [
     description: "Marketplace terbesar di Indonesia dengan ribuan toko resmi gaming gear.",
     logo: "/logos/tokopedia-logo.png",
     badgeColor: "bg-green-600/10 text-green-700 dark:text-green-500",
-    buttonColor: "hover:bg-green-600 hover:border-green-600 hover:text-white dark:text-foreground dark:hover:bg-green-600 dark:hover:border-green-600 dark:hover:text-white",
+    buttonColor: "text-foreground group-hover:bg-green-600 group-hover:border-green-600 group-hover:text-white dark:text-foreground dark:group-hover:bg-green-600 dark:group-hover:border-green-600 dark:group-hover:text-white",
   },
   {
     id: "shopee",
@@ -24,7 +24,7 @@ export const shopPlatforms: ShopPlatform[] = [
     description: "Platform e-commerce populer dengan flash sale & free shipping harian.",
     logo: "/logos/shopee-logos.png",
     badgeColor: "bg-orange-500/10 text-orange-600 dark:text-orange-500",
-    buttonColor: "hover:bg-orange-500 hover:border-orange-500 hover:text-white dark:text-foreground dark:hover:bg-orange-500 dark:hover:border-orange-500 dark:hover:text-white",
+    buttonColor: "text-foreground group-hover:bg-orange-500 group-hover:border-orange-500 group-hover:text-white dark:text-foreground dark:group-hover:bg-orange-500 dark:group-hover:border-orange-500 dark:group-hover:text-white",
   },
   {
     id: "tiktok",
@@ -32,7 +32,7 @@ export const shopPlatforms: ShopPlatform[] = [
     description: "Belanja langsung dari livestream & video creator gaming favorit.",
     logo: "/logos/tiktok-logo-shop.webp",
     badgeColor: "bg-gray-200 dark:bg-gray-800 text-foreground dark:text-gray-100",
-    buttonColor: "hover:bg-foreground hover:border-foreground hover:text-background dark:text-foreground dark:hover:bg-white dark:hover:border-white dark:hover:text-black",
+    buttonColor: "text-foreground group-hover:bg-foreground group-hover:border-foreground group-hover:text-background dark:text-foreground dark:group-hover:bg-white dark:group-hover:border-white dark:group-hover:text-black",
   },
 ];
 
