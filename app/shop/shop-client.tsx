@@ -77,15 +77,14 @@ export function ShopClient({ platforms }: ShopClientProps) {
             <StaggerItem key={platform.id}>
               <button
                 onClick={() => handlePlatformChange(platform.id)}
-                className={`group w-full text-left arcade-card flex h-full flex-col p-6 transition-all duration-300 hover:shadow-lg ${
-                  selectedPlatform === platform.id ? "border-foreground" : "hover:border-foreground/50 border-border"
-                }`}
+                className={`group w-full text-left arcade-card flex h-full flex-col p-6 transition-all duration-300 hover:shadow-lg ${selectedPlatform === platform.id ? "border-foreground" : "hover:border-foreground/50 border-border"
+                  }`}
               >
                 <PlatformBadge platform={platform} />
                 <h3 className="font-heading text-lg font-bold mb-1 mt-4">{platform.name}</h3>
                 <p className="text-sm text-muted mb-4">{platform.description}</p>
                 <span className="mt-auto flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted group-hover:text-foreground">
-                  {selectedPlatform === platform.id ? "Dipilih" : "Pilih Platform"}  
+                  {selectedPlatform === platform.id ? "Dipilih" : "Pilih Platform"}
                   <span className="text-[10px] bg-muted px-2 py-1 rounded-full">{platform.offers.length} produk</span>
                 </span>
               </button>
@@ -146,11 +145,10 @@ export function ShopClient({ platforms }: ShopClientProps) {
                       <button
                         key={page}
                         onClick={() => handlePageChange(page)}
-                        className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-colors ${
-                          currentPage === page
+                        className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-colors ${currentPage === page
                             ? "border-foreground bg-foreground text-background font-bold"
                             : "border-border hover:bg-muted"
-                        }`}
+                          }`}
                       >
                         {page}
                       </button>

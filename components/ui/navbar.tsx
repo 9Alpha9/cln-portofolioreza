@@ -212,8 +212,8 @@ export function Navbar() {
               <SplitTextLink
                 key={item.href}
                 href={item.href}
-                className="relative rounded-full px-4 py-2 text-sm font-medium text-muted-foreground"
-                activeTextClassName="font-semibold text-foreground"
+                className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${scrolled ? "text-muted-foreground" : "text-white/90 dark:text-muted-foreground"}`}
+                activeTextClassName={`font-semibold transition-colors duration-300 ${scrolled ? "text-foreground" : "text-white dark:text-foreground"}`}
               >
                 {item.label}
               </SplitTextLink>
@@ -227,7 +227,9 @@ export function Navbar() {
               <button
                 ref={themeBtnRef}
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
-                className="relative cursor-pointer flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-all duration-300 hover:bg-accent/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className={`relative cursor-pointer flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-all duration-300 hover:bg-accent/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+                  open ? "text-foreground" : !scrolled ? "text-white dark:text-foreground" : "text-foreground"
+                }`}
                 aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
               >
                 <Sun
@@ -254,9 +256,9 @@ export function Navbar() {
               ref={ctaRef}
               target="_blank"
               href="https://www.instagram.com/tahutech.idn"
-              className="hidden sm:inline-flex items-center px-5 h-10 rounded-full bg-foreground text-background text-sm font-medium transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-lg group"
-              textClassName="flex items-center"
-              activeTextClassName="text-background"
+              className={`hidden sm:inline-flex items-center px-5 h-10 rounded-full text-sm font-medium transition-all duration-300 hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] shadow-lg group ${!scrolled ? "bg-white text-black dark:bg-foreground dark:text-background" : "bg-foreground text-background"}`}
+              textClassName={`flex items-center transition-colors duration-300 ${!scrolled ? "text-black dark:text-background" : "text-background"}`}
+              activeTextClassName={`transition-colors duration-300 ${!scrolled ? "text-black dark:text-background" : "text-background"}`}
             >
               Watch Reviews
             </SplitTextLink>
@@ -265,7 +267,9 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setOpen((value) => !value)}
-              className="relative md:hidden flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-colors duration-300 hover:bg-accent/10 active:scale-95 z-[60]"
+              className={`relative md:hidden flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-colors duration-300 hover:bg-accent/10 active:scale-95 z-[60] ${
+                open ? "text-foreground" : !scrolled ? "text-white dark:text-foreground" : "text-foreground"
+              }`}
               aria-label={open ? "Tutup menu" : "Buka menu"}
               aria-expanded={open}
             >
@@ -278,7 +282,7 @@ export function Navbar() {
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-foreground"
+                className="text-current"
               >
                 <line ref={line1Ref} x1="3" y1="6" x2="21" y2="6" />
                 <line ref={line2Ref} x1="3" y1="12" x2="21" y2="12" />

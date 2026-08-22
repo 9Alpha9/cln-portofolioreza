@@ -78,13 +78,13 @@ export const SplitTextLink = forwardRef<HTMLAnchorElement, SplitTextLinkProps>(
       >
         <span className="relative block h-[1.25em] overflow-hidden leading-[1.25]">
           <span ref={trackRef} className="block will-change-transform">
-            <span className={cn("flex h-[1.25em] items-center whitespace-nowrap", textClassName)}>
+            <span className={cn("flex h-[1.25em] items-center whitespace-nowrap transition-colors duration-300", textClassName)}>
               {children}
             </span>
             <span
               aria-hidden="true"
               className={cn(
-                "flex h-[1.25em] items-center whitespace-nowrap",
+                "flex h-[1.25em] items-center whitespace-nowrap transition-colors duration-300",
                 textClassName,
                 activeTextClassName
               )}

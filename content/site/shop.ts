@@ -32,7 +32,7 @@ export const shopPlatforms: ShopPlatform[] = [
     description: "Belanja langsung dari livestream & video creator gaming favorit.",
     logo: "/logos/tiktok-logo-shop.webp",
     badgeColor: "bg-gray-200 dark:bg-gray-800 text-foreground dark:text-gray-100",
-    buttonColor: "hover:bg-foreground hover:border-foreground hover:text-background",
+    buttonColor: "hover:bg-foreground hover:border-foreground hover:text-background dark:hover:bg-white dark:hover:border-white dark:hover:text-black",
   },
 ];
 
