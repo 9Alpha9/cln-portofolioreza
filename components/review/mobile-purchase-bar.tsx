@@ -180,24 +180,28 @@ export function MobilePurchaseBar({ price, offers }: MobilePurchaseBarProps) {
                       href={offer.url}
                       target="_blank"
                       rel={offer.affiliate ? "noopener noreferrer sponsored" : "noopener noreferrer"}
-                      className="group flex items-center gap-3 border border-border p-3 transition-colors hover:border-foreground"
+                      className="group flex flex-col sm:flex-row sm:items-center gap-3 border border-border p-3 transition-colors hover:border-foreground"
                     >
-                      <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${platform.badgeColor}`}>
-                        <img src={platform.logo} alt="" className="h-8 w-8 object-contain" />
+                      <div className="flex items-center gap-3 w-full sm:w-auto min-w-0">
+                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${platform.badgeColor}`}>
+                          <img src={platform.logo} alt="" className="h-8 w-8 object-contain" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold truncate">{platform.name}</p>
+                          <p className="truncate text-xs text-muted">{offer.storeName ?? "Toko tersedia"}</p>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="font-semibold">{platform.name}</p>
-                        <p className="truncate text-xs text-muted">{offer.storeName ?? "Toko tersedia"}</p>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <p className="font-mono text-sm font-bold">
-                          {offer.price ? formatCurrency(offer.price) : "Cek harga"}
-                        </p>
-                        {offer.originalPrice && offer.price && offer.originalPrice > offer.price && (
-                          <p className="text-[10px] text-muted line-through">{formatCurrency(offer.originalPrice)}</p>
-                        )}
-                        <span className="mt-1 block text-[10px] font-semibold uppercase tracking-wider text-muted group-hover:text-foreground">
-                          Buka toko →
+                      <div className="flex flex-row sm:flex-col justify-between sm:justify-center items-center sm:items-end w-full sm:w-auto sm:ml-auto">
+                        <div className="text-left sm:text-right mr-3 sm:mr-0 min-w-0">
+                          <p className="font-mono text-[13px] sm:text-sm font-bold truncate">
+                            {offer.price ? formatCurrency(offer.price) : "Cek harga"}
+                          </p>
+                          {offer.originalPrice && offer.price && offer.originalPrice > offer.price && (
+                            <p className="text-[10px] text-muted line-through truncate">{formatCurrency(offer.originalPrice)}</p>
+                          )}
+                        </div>
+                        <span className="block text-[10px] font-semibold uppercase tracking-wider text-muted group-hover:text-foreground shrink-0 mt-0 sm:mt-1">
+                          Buka toko  
                         </span>
                       </div>
                     </a>

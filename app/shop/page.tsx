@@ -77,23 +77,23 @@ export default async function ShopPage() {
                 </span>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {platform.offers.map((offer) => (
                   <Link
                     key={`${offer.productSlug}-${offer.platform}-${offer.label}`}
                     href={`/reviews/${offer.productSlug}`}
-                    className="group arcade-card flex items-center justify-between p-4 transition-all hover:border-foreground/50"
+                    className="group arcade-card flex flex-col justify-between p-4 transition-all hover:border-foreground/50 gap-4"
                   >
-                    <div className="flex items-center gap-4 min-w-0 flex-1">
+                    <div className="flex items-center gap-4 min-w-0 flex-1 w-full">
                       <PlatformBadgeSmall platform={platform} />
                       <div className="min-w-0">
-                        <p className="font-medium truncate">{offer.productName}</p>
-                        <p className="text-xs text-muted truncate">{offer.storeName ?? offer.platform}</p>
+                        <p className="font-medium truncate" title={offer.productName}>{offer.productName}</p>
+                        <p className="text-xs text-muted truncate" title={offer.storeName ?? offer.platform}>{offer.storeName ?? offer.platform}</p>
                       </div>
                     </div>
-              <div className="flex flex-col items-end gap-2 shrink-0 sm:flex-row sm:items-center sm:gap-3">
+              <div className="flex justify-between items-center w-full shrink-0">
                 <span className="font-mono font-semibold whitespace-nowrap">
-                  {offer.price ? formatCurrency(offer.price) : "—"}
+                  {offer.price ? formatCurrency(offer.price) : "-"}
                 </span>
                 <span
                   className={`arcade-btn max-w-[130px] truncate px-3 py-1 text-[11px] font-semibold sm:max-w-none sm:text-xs sm:whitespace-nowrap transition-transform duration-500 ease-expo group-hover:scale-105 ${platform.buttonColor}`}

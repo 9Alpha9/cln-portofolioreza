@@ -15,7 +15,7 @@ export const shopPlatforms: ShopPlatform[] = [
     name: "Tokopedia",
     description: "Marketplace terbesar di Indonesia dengan ribuan toko resmi gaming gear.",
     logo: "/logos/tokopedia-logo.png",
-    badgeColor: "bg-green-600/10 text-green-700",
+    badgeColor: "bg-green-600/10 text-green-700 dark:text-green-500",
     buttonColor: "bg-green-600 text-white",
   },
   {
@@ -23,7 +23,7 @@ export const shopPlatforms: ShopPlatform[] = [
     name: "Shopee",
     description: "Platform e-commerce populer dengan flash sale & free shipping harian.",
     logo: "/logos/shopee-logos.png",
-    badgeColor: "bg-orange-500/10 text-orange-600",
+    badgeColor: "bg-orange-500/10 text-orange-600 dark:text-orange-500",
     buttonColor: "bg-orange-500 text-white",
   },
   {
@@ -31,8 +31,8 @@ export const shopPlatforms: ShopPlatform[] = [
     name: "TikTok Shop",
     description: "Belanja langsung dari livestream & video creator gaming favorit.",
     logo: "/logos/tiktok-logo-shop.webp",
-    badgeColor: "bg-gray-200 text-foreground",
-    buttonColor: "bg-gray-200 text-white",
+    badgeColor: "bg-gray-200 dark:bg-gray-800 text-foreground dark:text-gray-100",
+    buttonColor: "bg-foreground text-background",
   },
 ];
 
