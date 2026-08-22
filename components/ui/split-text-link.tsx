@@ -85,7 +85,6 @@ export const SplitTextLink = forwardRef<HTMLAnchorElement, SplitTextLinkProps>(
               aria-hidden="true"
               className={cn(
                 "flex h-[1.25em] items-center whitespace-nowrap transition-colors duration-300",
-                textClassName,
                 activeTextClassName
               )}
             >

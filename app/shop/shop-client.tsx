@@ -83,9 +83,10 @@ export function ShopClient({ platforms }: ShopClientProps) {
                 <PlatformBadge platform={platform} />
                 <h3 className="font-heading text-lg font-bold mb-1 mt-4">{platform.name}</h3>
                 <p className="text-sm text-muted mb-4">{platform.description}</p>
-                <span className="mt-auto flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted group-hover:text-foreground">
+                <span className="mt-auto flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted group-hover:text-foreground transition-colors">
                   {selectedPlatform === platform.id ? "Dipilih" : "Pilih Platform"}
-                  <span className={`text-[10px] px-2 py-1 rounded-full ${selectedPlatform === platform.id ? "bg-foreground text-background" : "bg-muted text-white group-hover:bg-foreground transition-colors"}`}>{platform.offers.length} produk</span>
+                  <span className={`text-[10px] px-2 py-1 rounded-full transition-colors ${selectedPlatform === platform.id ? "bg-foreground text-background" : "bg-muted text-foreground group-hover:bg-foreground group-hover:text-background"}`}>
+                    {platform.offers.length} produk</span>
                 </span>
               </button>
             </StaggerItem>
