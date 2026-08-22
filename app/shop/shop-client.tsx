@@ -85,7 +85,7 @@ export function ShopClient({ platforms }: ShopClientProps) {
                 <p className="text-sm text-muted mb-4">{platform.description}</p>
                 <span className="mt-auto flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-muted group-hover:text-foreground">
                   {selectedPlatform === platform.id ? "Dipilih" : "Pilih Platform"}
-                  <span className={`text-[10px] px-2 py-1 rounded-full ${selectedPlatform === platform.id ? "bg-foreground text-background" : "bg-muted text-muted-foreground group-hover:bg-foreground group-hover:text-background transition-colors"}`}>{platform.offers.length} produk</span>
+                  <span className={`text-[10px] px-2 py-1 rounded-full ${selectedPlatform === platform.id ? "bg-foreground text-background" : "bg-muted text-white group-hover:bg-foreground transition-colors"}`}>{platform.offers.length} produk</span>
                 </span>
               </button>
             </StaggerItem>
@@ -146,8 +146,8 @@ export function ShopClient({ platforms }: ShopClientProps) {
                         key={page}
                         onClick={() => handlePageChange(page)}
                         className={`flex h-10 w-10 items-center justify-center rounded-lg border transition-colors ${currentPage === page
-                            ? "border-foreground bg-foreground text-background font-bold"
-                            : "border-border hover:bg-muted"
+                          ? "border-foreground bg-foreground text-background font-bold"
+                          : "border-border hover:bg-muted"
                           }`}
                       >
                         {page}
