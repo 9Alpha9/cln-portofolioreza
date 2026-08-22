@@ -212,8 +212,8 @@ export function Navbar() {
               <SplitTextLink
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${scrolled ? "text-muted-foreground" : "text-foreground/80 dark:text-muted-foreground"}`}
-                activeTextClassName={`font-semibold transition-colors duration-300 ${scrolled ? "text-foreground" : "text-foreground dark:text-foreground"}`}
+                className={`relative rounded-full px-4 py-2 text-sm font-medium transition-colors duration-300 ${scrolled ? "text-muted-foreground" : "text-white dark:text-muted-foreground"}`}
+                activeTextClassName={`font-semibold transition-colors duration-300 ${scrolled ? "text-foreground" : "text-white dark:text-foreground"}`}
               >
                 {item.label}
               </SplitTextLink>
@@ -228,7 +228,7 @@ export function Navbar() {
                 ref={themeBtnRef}
                 onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
                 className={`relative cursor-pointer flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-all duration-300 hover:bg-accent/10 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
-                  open ? "text-foreground" : !scrolled ? "text-foreground dark:text-foreground" : "text-foreground"
+                  open ? "text-foreground" : !scrolled ? "text-white dark:text-foreground" : "text-foreground"
                 }`}
                 aria-label={`Switch to ${resolvedTheme === "dark" ? "light" : "dark"} mode`}
               >
@@ -268,7 +268,7 @@ export function Navbar() {
               type="button"
               onClick={() => setOpen((value) => !value)}
               className={`relative md:hidden flex h-10 w-10 items-center justify-center rounded-full bg-transparent transition-colors duration-300 hover:bg-accent/10 active:scale-95 z-[60] ${
-                open ? "text-foreground" : !scrolled ? "text-foreground dark:text-foreground" : "text-foreground"
+                open ? "text-foreground" : !scrolled ? "text-white dark:text-foreground" : "text-foreground"
               }`}
               aria-label={open ? "Tutup menu" : "Buka menu"}
               aria-expanded={open}
